@@ -83,6 +83,12 @@ godot --headless --path . --script res://examples/tools/gen_examples.gd
 - 에디터의 문서 변경은 모두 직렬화 가능한 명령(`{ "op": "set", "path": ..., "value": ... }` 등)이다. 조작 기록(OpLog)은 시작 문서 + 명령 목록이며 `TFX1:` 문자열로 복사·붙여넣기할 수 있다.
 - `EditorBot`은 UI가 아닌 로직 계층에 명령을 보내는 시드 기반 봇이고, `Replay`는 조작 기록을 새 모델에 다시 적용해 같은 문서·내보내기 해시를 재현한다. 테스트가 이 기능을 사용한다.
 
+## 프로파일 보고서
+
+옵션의 **프로파일 보내기**로 공용 운영 서버에 수동 전송한다. 프로젝트 ID는 `godot-text-fx`다.
+받은 보고서는 `python3 tools/profile_reports.py summary latest`로 확인한다.
+공용 저장소 준비와 조회 명령은 [`docs/PROFILE_REPORTS.md`](docs/PROFILE_REPORTS.md)를 따른다.
+
 ## 테스트
 
 ```sh

@@ -54,6 +54,14 @@
 - 봇의 조작이나 직렬화된 조작 기록을 리플레이할 수 있게 한다.
 - 테스트 코드는 이 명령·봇·리플레이 기능을 적극적으로 활용한다.
 
+## 프로파일러 운영
+
+- 공용 비공개 저장소는 `https://github.com/gosuni2025/godot-web-profiler`다. 연결·갱신 전 해당 저장소의 `AGENTS.md`, `docs/GAME_BASE_INTEGRATION.md`, `docs/PROFILE_REPORTS.md`를 읽는다.
+- 프로젝트 ID는 `godot-text-fx`, 운영 endpoint는 `https://dungeon-reign-profiler.gosuni2025.workers.dev/v1/reports`다. 웹 Origin 변경 시 공용 `server/src/projects.js`에 등록하고 서버를 먼저 배포한다.
+- 보고서 확인은 `python3 tools/profile_reports.py summary latest`부터 실행한다. 게임 래퍼가 공용 `tools/profile_reports.py`를 호출하며, 임시 조회 스크립트나 직접 D1 조회를 만들지 않는다.
+- 공용 체크아웃 기본 경로는 `../godot-web-profiler`이고 `PROFILER_REPO`로 지정할 수 있다. 받은 보고서는 Git에서 제외한 `captures/`에 저장한다. 자세한 사용법은 `docs/PROFILE_REPORTS.md`를 따른다.
+- 보고서는 옵션의 전송 버튼으로만 업로드한다. 테스트 보고서는 운영 서버에 보내지 않고 로컬 payload로 검증한다.
+
 ## 테스트
 
 - 테스트는 `tests/` 아래 SceneTree 스크립트로 둔다: `godot --headless --path . --script res://tests/run_all.gd`.

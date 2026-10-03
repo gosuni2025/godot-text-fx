@@ -370,5 +370,5 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 
 - 부트(로딩) → 타이틀 → 에디터. 타이틀 시작 버튼이 에디터 씬을 연다.
 - 옵션: 프레임 제한(기본 60), 마스터/BGM/효과음 음량, BGM 켜기, 언어(ko/ja/en). 실제 적용 코드가 있는 옵션만 노출한다.
-- 프로파일러: endpoint가 설정되지 않으면 연결하지 않는다(다른 게임의 운영 주소를 복사하지 않음).
+- 프로파일러: 공용 운영 서버의 `/v1/reports`에 프로젝트 `godot-text-fx`로 수동 전송한다. `base_project.tres`에서 활성화·endpoint를 설정하며, 비활성 또는 유효하지 않은 설정이면 연결하지 않는다. 보고서 조회는 `tools/profile_reports.py` 래퍼를 사용한다(`docs/PROFILE_REPORTS.md`).
 - 빌드 정보: `addons/game_base/tools/stamp_build.py`로 `build_info.json` 생성, 타이틀·옵션에 표시.

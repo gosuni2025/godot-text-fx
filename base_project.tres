@@ -68,5 +68,5 @@ menu_size_multiplier = 0.8
 title_material = ExtResource("3")
 game_scene = "res://app/shell/title_screen.tscn"
 options = Array[Resource]([SubResource("FPS"), SubResource("MasterVolume"), SubResource("BgmEnabled"), SubResource("BgmVolume"), SubResource("SfxVolume"), SubResource("Language")])
-profiler_enabled = false
-profiler_endpoint = ""
+profiler_enabled = true
+profiler_endpoint = "https://dungeon-reign-profiler.gosuni2025.workers.dev/v1/reports"
