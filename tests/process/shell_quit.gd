@@ -1,7 +1,7 @@
 extends SceneTree
-## 별도 프로세스에서 실행한다. -- --quit-path=title|options|window|reentrant
+## 별도 프로세스에서 실행한다. -- --quit-path=options|window|reentrant
 ## 정상 종료 경로의 코드 0과 PASS 출력, 리소스 경고 없는 종료 로그를 확인한다.
-var _path := "title"
+var _path := "options"
 var _deadline := 0
 var _checks := 0
 
@@ -21,14 +21,11 @@ func _run() -> void:
 		if arg.begins_with("--quit-path="): _path = arg.substr(12)
 	var shell: Node = root.get_node("AppShell")
 	if not _check(not auto_accept_quit, "창 닫기를 호스트가 처리함"): return
-	change_scene_to_file(shell.TITLE_SCENE)
+	change_scene_to_file(shell.EDITOR_SCENE)
 	await scene_changed
-	var title: Control = current_scene.get_node("Title")
-	var button: Button = title.get_node("%Quit")
-	if not _check(not button.pressed.is_connected(quit), "공용 tree.quit 연결 해제됨"): return
-	if not _check(button.pressed.is_connected(shell.request_quit), "타이틀 종료 연결됨"): return
 	if not _check(shell.options.quit_requested.is_connected(shell.request_quit), "옵션 종료 연결됨"): return
-	# 사용자 설정에 BGM이 꺼져 있어도 실제 재생 수명 정리를 검사한다.
+	# 배포 음원 없이 무음 테스트 리소스로 재생 수명 정리를 검사한다.
+	shell.bgm.stream = _silent_stream()
 	shell.bgm.play()
 	var playback_id: int = shell.bgm.get_stream_playback().get_instance_id()
 	shell.audio_shutdown_finished.connect(func(success: bool):
@@ -40,7 +37,6 @@ func _run() -> void:
 		print("PASS shell_quit %s (%d checks)" % [_path, _checks])
 	)
 	match _path:
-		"title": button.pressed.emit()
 		"options": shell.options.quit_requested.emit()
 		"window": shell.notification(Node.NOTIFICATION_WM_CLOSE_REQUEST)
 		"reentrant":
@@ -48,6 +44,13 @@ func _run() -> void:
 			shell.play_bgm()
 			shell.request_quit()
 		_: _check(false, "알 수 없는 종료 경로")
+
+func _silent_stream() -> AudioStreamWAV:
+	var stream := AudioStreamWAV.new()
+	stream.data = PackedByteArray([0, 0, 0, 0])
+	stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	stream.loop_end = 4
+	return stream
 
 func _check(ok: bool, message: String) -> bool:
 	_checks += 1

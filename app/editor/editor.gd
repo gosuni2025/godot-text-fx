@@ -39,14 +39,15 @@ var _shortcuts
 @onready var preview: Control = %Preview
 @onready var picker: PopupPanel = %PickerPopup
 @onready var font_picker: PopupPanel = %FontPicker
+@onready var _autosave_timer: Timer = %AutosaveTimer
 
 
 func _ready() -> void:
 	_init_model()
 	_shortcuts = Shortcuts.new(self)
 	model.changed.connect(_on_model_changed)
-	(%AutosaveTimer as Timer).wait_time = autosave_delay
-	(%AutosaveTimer as Timer).timeout.connect(save_autosave)
+	_autosave_timer.wait_time = autosave_delay
+	_autosave_timer.timeout.connect(save_autosave)
 	(%FileDialog as FileDialog).file_selected.connect(_on_file_selected)
 	(%Undo as Button).pressed.connect(func(): send({"op": "undo"}))
 	(%Redo as Button).pressed.connect(func(): send({"op": "redo"}))
@@ -73,7 +74,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if not (%AutosaveTimer as Timer).is_stopped():
+	if not _autosave_timer.is_stopped():
 		save_autosave()
 
 
@@ -115,7 +116,7 @@ func _on_model_changed(paths: PackedStringArray) -> void:
 	if not doc_paths.is_empty():
 		_doc_dirty = true
 		if autosave_path != "":
-			(%AutosaveTimer as Timer).start()
+			_autosave_timer.start()
 		for id in _panels:
 			_panels[id].on_doc_changed(doc_paths)
 	if "$locale" in state:
@@ -311,7 +312,7 @@ func load_autosave() -> Dictionary:
 
 
 func save_autosave() -> void:
-	(%AutosaveTimer as Timer).stop()
+	_autosave_timer.stop()
 	if autosave_path == "":
 		return
 	var f := FileAccess.open(autosave_path, FileAccess.WRITE)
@@ -332,7 +333,7 @@ func open_options() -> void:
 	var back := get_viewport().gui_get_focus_owner()
 	if back and not shell.options_closed.is_connected(back.grab_focus):
 		shell.options_closed.connect(back.grab_focus, CONNECT_ONE_SHOT)
-	shell.open_options(true)
+	shell.open_options(false)
 
 
 func go_to_title() -> void:

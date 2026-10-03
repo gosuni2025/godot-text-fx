@@ -1,5 +1,5 @@
 extends RefCounted
-## 부트(game_base 로딩) → 타이틀 → 편집기 → 타이틀 흐름을 헤드리스로 확인한다.
+## 부트 → 편집기 직행 및 이전 타이틀 경로의 편집기 연결을 확인한다.
 const BOOT := "res://app/shell/boot.tscn"
 const TITLE := "res://app/shell/title_screen.tscn"
 const EDITOR := "res://app/editor/editor.tscn"
@@ -12,25 +12,19 @@ func run(t) -> void:
 		return
 	t.eq(ProjectSettings.get_setting("application/run/main_scene"), BOOT, "main scene is boot")
 	t.eq(tree.change_scene_to_file(BOOT), OK, "boot scene loads")
-	t.ok(await _wait_for(tree, TITLE, 600), "boot reaches title")
-	if tree.current_scene == null or tree.current_scene.scene_file_path != TITLE:
+	t.ok(await _wait_for(tree, EDITOR, 600), "boot opens editor without a menu")
+	if tree.current_scene == null or tree.current_scene.scene_file_path != EDITOR:
 		return
-	var title: Control = tree.current_scene.get_node("Title")
-	t.ok(title.get_node("%Build").text.length() > 0, "title shows build text")
-	title.options_requested.emit()
+	var editor := tree.current_scene
+	t.ok(not editor.get_node("%Back").visible, "redundant title button hidden")
+	editor.open_options()
 	await tree.process_frame
-	t.ok(shell.options.visible, "title opens shared options")
-	t.ok(not shell.options.get_node("%ReturnTitle").visible or shell.options.get_node("%ReturnTitle").disabled, "return-to-title disabled on title")
+	t.ok(shell.options.visible, "editor opens shared options")
+	t.ok(not shell.options.get_node("%ReturnTitle").visible or shell.options.get_node("%ReturnTitle").disabled, "no redundant return-to-title action")
 	shell.options.get_node("%Back").pressed.emit()
 	t.ok(not shell.options.visible, "back closes options")
-	title.start_requested.emit()
-	t.ok(await _wait_for(tree, EDITOR, 120), "start opens editor scene")
-	shell.open_options(true)
-	await tree.process_frame
-	t.ok(not shell.options.get_node("%ReturnTitle").disabled, "return-to-title enabled in editor")
-	shell.options.title_requested.emit()
-	t.ok(await _wait_for(tree, TITLE, 120), "options return to title")
-	t.ok(not shell.options.visible, "options hidden after returning")
+	t.eq(tree.change_scene_to_file(TITLE), OK, "legacy title path loads")
+	t.ok(await _wait_for(tree, EDITOR, 120), "legacy title path redirects to editor")
 	shell.stop_bgm()
 	tree.unload_current_scene()
 	await tree.process_frame

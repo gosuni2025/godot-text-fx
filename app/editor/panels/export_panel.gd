@@ -33,6 +33,9 @@ func _refresh() -> void:
 
 ## 저장 경로가 있으면 바로 저장하고, 없으면 파일 대화상자를 연다.
 func save_doc(ask := false) -> void:
+	if OS.has_feature("web"):
+		save_doc_to(_suggest_name(".json"))
+		return
 	if last_save_path != "" and not ask:
 		save_doc_to(last_save_path)
 		return
@@ -66,6 +69,9 @@ func open_doc_from(path: String) -> bool:
 
 
 func export_baked() -> void:
+	if OS.has_feature("web"):
+		export_baked_to(_suggest_name("_baked.json"))
+		return
 	ctx.request_file(FileDialog.FILE_MODE_SAVE_FILE, PackedStringArray(["*.json"]), _suggest_name("_baked.json"), export_baked_to)
 
 
@@ -129,6 +135,9 @@ func _suggest_name(suffix: String) -> String:
 
 
 static func _write(path: String, text: String) -> bool:
+	if OS.has_feature("web"):
+		JavaScriptBridge.download_buffer(text.to_utf8_buffer(), path.get_file(), "application/json")
+		return true
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false

@@ -94,7 +94,7 @@ func stop_bgm() -> void:
 
 func _update_bgm() -> void:
 	if bgm == null: return
-	if not _audio_shutdown_started and _bgm_requested and _bgm_enabled:
+	if not _audio_shutdown_started and _bgm_requested and _bgm_enabled and bgm.stream != null:
 		if not bgm.playing: bgm.play()
 	elif bgm.playing:
 		bgm.stop()

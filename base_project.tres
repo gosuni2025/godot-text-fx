@@ -1,4 +1,4 @@
-[gd_resource type="Resource" load_steps=13 format=3]
+[gd_resource type="Resource" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://addons/game_base/project_config.gd" id="1"]
 [ext_resource type="Script" path="res://addons/game_base/option_definition.gd" id="2"]
@@ -24,21 +24,6 @@ label = "Master volume"
 category = "Audio"
 kind = 1
 default_number = 0.85
-
-[sub_resource type="Resource" id="BgmEnabled"]
-script = ExtResource("2")
-id = &"bgm_enabled"
-label = "Music"
-category = "Audio"
-default_toggle = true
-
-[sub_resource type="Resource" id="BgmVolume"]
-script = ExtResource("2")
-id = &"bgm_volume"
-label = "Music volume"
-category = "Audio"
-kind = 1
-default_number = 0.6
 
 [sub_resource type="Resource" id="SfxVolume"]
 script = ExtResource("2")
@@ -70,7 +55,7 @@ loading_background = ExtResource("5_loading")
 accent = Color(0.88, 0.63, 0.31, 1)
 menu_size_multiplier = 0.8
 title_material = ExtResource("3")
-game_scene = "res://app/shell/title_screen.tscn"
-options = Array[Resource]([SubResource("FPS"), SubResource("MasterVolume"), SubResource("BgmEnabled"), SubResource("BgmVolume"), SubResource("SfxVolume"), SubResource("Language")])
+game_scene = "res://app/editor/editor.tscn"
+options = Array[Resource]([SubResource("FPS"), SubResource("MasterVolume"), SubResource("SfxVolume"), SubResource("Language")])
 profiler_enabled = true
 profiler_endpoint = "https://dungeon-reign-profiler.gosuni2025.workers.dev/v1/reports"

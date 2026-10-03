@@ -4,7 +4,7 @@ extends RefCounted
 const SettingsStore := preload("res://addons/game_base/settings_store.gd")
 const ProjectConfig := preload("res://addons/game_base/project_config.gd")
 const TEST_PATH := "user://test_shell_settings.cfg"
-const EXPECTED_IDS := [&"fps_limit", &"master_volume", &"bgm_enabled", &"bgm_volume", &"sfx_volume", &"language"]
+const EXPECTED_IDS := [&"fps_limit", &"master_volume", &"sfx_volume", &"language"]
 
 
 func run(t) -> void:
@@ -22,7 +22,7 @@ func run(t) -> void:
 	for bus in ["Master", "BGM", "SFX"]:
 		t.ok(AudioServer.get_bus_index(bus) >= 0, "audio bus %s" % bus)
 	t.eq(shell.bgm.bus, &"BGM", "BGM player on BGM bus")
-	t.ok(shell.bgm.stream != null and shell.bgm.stream.loop, "BGM stream loops")
+	t.ok(shell.bgm.stream == null, "public source does not bundle licensed BGM")
 
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 	var store := SettingsStore.new()
@@ -43,14 +43,14 @@ func run(t) -> void:
 	t.near(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")), linear_to_db(0.5), 0.01, "master volume dB")
 	store.set_value(&"sfx_volume", 0.0)
 	t.ok(AudioServer.is_bus_mute(AudioServer.get_bus_index("SFX")), "sfx 0 mutes bus")
-	store.set_value(&"bgm_volume", 0.25)
+	shell.apply_setting(&"bgm_volume", 0.25)
 	t.near(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("BGM")), linear_to_db(0.25), 0.01, "bgm volume dB")
 
-	store.set_value(&"bgm_enabled", false)
+	shell.apply_setting(&"bgm_enabled", false)
 	shell.play_bgm()
 	t.ok(not shell.bgm.playing, "BGM off keeps player stopped")
-	store.set_value(&"bgm_enabled", true)
-	t.ok(shell.bgm.playing, "BGM on starts player")
+	shell.apply_setting(&"bgm_enabled", true)
+	t.ok(not shell.bgm.playing, "missing optional BGM stays stopped")
 	shell.stop_bgm()
 	t.ok(not shell.bgm.playing, "stop_bgm stops player")
 
@@ -68,7 +68,6 @@ func run(t) -> void:
 	t.eq(reloaded.load_settings(), OK, "reload saved file")
 	t.eq(reloaded.values[&"fps_limit"], 120.0, "fps persisted")
 	t.eq(reloaded.values[&"language"], "ko", "language persisted")
-	t.eq(reloaded.values[&"bgm_enabled"], true, "bgm toggle persisted")
 
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 	# 사용자 설정으로 되돌린다.
