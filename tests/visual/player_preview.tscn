@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://tests/visual/player_preview.gd" id="1_prev"]
+[ext_resource type="Script" path="res://addons/text_fx/render/text_fx_player.gd" id="2_player"]
+
+[sub_resource type="Shader" id="Shader_checker"]
+code = "shader_type canvas_item;
+uniform float cell = 24.0;
+void fragment() {
+	vec2 c = floor(FRAGCOORD.xy / cell);
+	float k = mod(c.x + c.y, 2.0);
+	COLOR = vec4(mix(vec3(0.36), vec3(0.52), k), 1.0);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_checker"]
+shader = SubResource("Shader_checker")
+
+[node name="PlayerPreview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_prev")
+
+[node name="Checker" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_checker")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Player" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_player")
+autoplay = false

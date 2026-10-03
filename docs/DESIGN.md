@@ -155,32 +155,58 @@ tests/                       # SceneTree 테스트, run_all.gd
   플레이어의 `finish()` 호출 시 퇴장으로 넘어간다(게임에서 "표시해 두다가 닫기" 용도).
 - `scroll`이 있으면 페이지 구분 없이 블록 전체가 캔버스 아래에서 위로 speed px/s로 이동한다.
 
+### 2.5 런타임 구현 세부(addons/text_fx)
+
+- 기본값의 원본은 `core/fx_doc.gd`의 `defaults()`다(위 예시와 같되 `hold.effects`, `decorations` 기본은 빈 배열).
+  `normalize`는 기본값 타입으로 숫자를 맞추고 허용되지 않는 enum 값을 기본값으로 교정하며 알 수 없는 필드는 보존한다.
+- 페이지: trailer 모드(스크롤 없음)에서 빈 줄로 나눈다. `sub_text`도 같은 방식으로 나눠 같은 번호의 페이지에 붙인다.
+- 그라데이션 `angle`은 화면 좌표(y 아래) 기준 도: 0 = 왼→오, 90 = 위→아래. `block`은 페이지의 역할(본문/보조) 영역 기준.
+- 테두리 `size`·그림자 `offset/blur`·글로우 `size`는 캔버스 px. 테두리는 글자 바깥으로 size px만큼 두른다.
+- 방향이 있는 등장 효과(slide/drop/rise/wipe)는 퇴장에서 들어온 길로 되돌아가지 않고 운동 방향을 잇는다(`dir` = 움직이는 방향).
+  `center_stamp`를 퇴장에 쓰면 `slam_scale`배로 부풀며 사라진다.
+- 유지 효과는 hold 구간에서만 적용한다(스크롤 모드는 전체가 hold). loop_hold의 hold 시간은 끊기지 않고 계속 증가한다.
+- `finish()`: 현재 페이지의 등장이 끝난 뒤(이미 유지 중이면 즉시) 그 페이지의 퇴장을 하고 끝난다. 남은 페이지는 건너뛴다.
+  `exit.enabled = false`면 finish 시 즉시 끝난다. 스크롤 모드의 loop_hold는 loop_all처럼 반복한다.
+- 장식 기준 영역은 페이지 본문 영역. `margin`은 em, `thickness`는 px, `length`는 영역 크기 비율(side_lines는 한쪽 선 = 폭 × length × 0.5).
+  세로쓰기에서는 underline = 왼쪽 세로선, overline = 오른쪽, side_lines = 위·아래. center_stamp에서는 내려찍기 시작 기준으로 시간을 잰다.
+
 ## 3. 런타임 계산 (core)
 
 - `TextFxLayout.compute(doc, fonts) -> LayoutResult`
-  - 글자마다 `{ index, char, role("main"/"sub"), page, line, word, pos(글자 박스 중심, 캔버스 좌표), advance, font_size, vertical_rotate(bool) }`.
+  - 글자마다 `{ index, char, role("main"/"sub"), page, line, line_in_page, col, word, pos(글자 박스 중심, 캔버스 좌표), box, advance, font_size, vertical_rotate(bool), base_rotation, punct }`.
   - 줄 정보 `{ page, role, rect, center }`, 페이지별 블록 rect, 최종 font_size(자동 축소 후).
   - 금칙: 줄머리 금지(、。，．・：；？！ー）」』】〉》〕…‥ 등과 닫는 괄호류), 줄끝 금지(（「『【〈《〔 등 여는 괄호류). 한국어·영어는 공백 단위 단어 유지(keep-all), 단어가 한 줄보다 길면 글자 단위로 자른다.
   - 세로쓰기: 열은 오른쪽→왼쪽. 장음·괄호·대시류는 회전(vertical_rotate) 또는 세로형 문자로 대체하고, 작은 가나·구두점은 오른쪽 위로 보정한다. 라틴 문자는 회전 처리.
   - 자동 축소: max_width/max_height를 넘으면 font_size를 줄여 다시 배치(min_font_size까지).
 - `TextFxTimeline.new(doc, layout)`: total_duration, 페이지·구간 경계, 글자별 지연을 미리 계산.
 - `TextFxEvaluator.evaluate(t) -> Array[GlyphState]`
-  - GlyphState: `{ index, visible, pos, scale(Vector2), rotation, alpha, tint(Color), clip(0~1 드러난 비율), clip_dir, ghost(잔상 흐림 반경), slices(글리치 조각 오프셋 배열), split(색수차 px), overlay(bool), overlay_scale }`.
+  - GlyphState: `{ index, visible, pos, scale(Vector2), rotation, alpha, tint(Color), clip(0~1 드러난 비율), clip_dir, ghost(잔상 흐림 반경), slices(글리치 조각 오프셋 배열), split(색수차 px), overlay(bool), overlay_scale }`
+    (+ `char`, `role`, `page`, `ghost_dir`, `split_color_a/b`). 앞 N개는 글자 순서와 같고 오버레이 글자는 뒤에 덧붙는다.
+  - `evaluate_frame(t, finish_at)`은 장식 사각형·현재 페이지·구간·스크롤 오프셋도 함께 돌려준다.
   - 순수 함수: 같은 doc·t → 같은 결과. 노드·Engine 시간·전역 난수를 쓰지 않는다.
 - `TextFxHash.f(seed, a, b) -> float [0,1)`: 정수 해시(예: PCG/xxhash 계열 비트 연산).
 
 ## 4. 렌더링 (render)
 
-- 글자 하나 = 스타일이 모두 합성된 스프라이트 하나. 페이드 중에 테두리·그림자가 본문 아래로 비치지 않도록,
-  글로우·그림자·2차 테두리·테두리·채우기를 글자 단위로 먼저 합성해 굽고, 재생 중에는 스프라이트 하나에 투명도를 준다.
+- 글자 하나 = 스타일이 모두 합성된 스프라이트(뒤·앞 두 장). 페이드 중에 테두리·그림자가 본문 아래로 비치지 않도록,
+  글로우·그림자·2차 테두리·테두리·채우기를 글자 단위로 먼저 합성해 굽고, 재생 중에는 스프라이트에 투명도를 준다.
+- **결정(구현)**: 스프라이트를 한 장으로 구우면 테두리가 두꺼울 때 뒤 글자의 테두리가 앞 글자의 채우기를 가린다.
+  그래서 `뒤`(글로우·그림자·테두리, 채우기 모양을 곱하기 블렌드로 지움)와 `앞`(채우기) 두 아틀라스로 굽고,
+  플레이어는 모든 글자의 뒤 레이어를 먼저, 앞 레이어를 나중에 같은 투명도로 그린다. 한 글자 안에서는 채우기 아래 테두리가
+  지워져 있어 페이드 중에도 비치지 않는다(이웃 글자 테두리끼리 겹친 곳만 반투명 중첩된다).
+- 아틀라스는 투명 렌더 타깃이라 프리멀티플라이드 알파다. 플레이어 재질은 `BLEND_MODE_PREMULT_ALPHA`이고 모든 색을 프리멀티플라이해 넘긴다.
+- 굽는 배율 = 화면 맞춤 배율(0.25~4, 0.05 단위)이라 실제 표시 해상도로 선명하게 그린다. 크기가 12% 넘게 바뀌면 다시 굽는다.
+- Godot `draw_char_outline`의 size는 실측상 바깥 두께의 약 4배라 문서 size(px) × 4를 넘긴다.
 - `FxGlyphBaker`: 글자 인스턴스마다 셀(패딩 = 테두리 + 글로우 + 그림자 오프셋 + 블러 여유)을 배정해
   SubViewport 아틀라스에 그린다(UPDATE_ONCE).
   1) 실루엣 뷰포트: 글로우·그림자용 실루엣 → 블러 셰이더로 흐린 텍스처
-  2) 합성 뷰포트: 흐린 글로우/그림자 + 2차 테두리 + 테두리 + 채우기(그라데이션 셰이더는 블록 좌표 기준 uniform)
+  2) 가로 블러 뷰포트(R = 그림자 반경, G = 글로우 반경) → 합성 단계에서 세로 블러
+  3) 합성 뷰포트: 뒤 = 흐린 글로우/그림자 + 2차 테두리 + 테두리 − 채우기 모양, 앞 = 채우기(그라데이션 셰이더는 셀마다 `t = VERTEX·a + b` uniform)
   - 그라데이션 `space: block`이면 글자의 블록 내 위치를 반영해 셀마다 같은 그라데이션이 이어지게 한다.
   - 아틀라스가 최대 크기(4096)를 넘으면 여러 장으로 나눈다. 텍스트·스타일·크기가 바뀔 때만 다시 굽는다.
 - `TextFxPlayer`(Control):
   - `load_file(path)`, `set_document(dict)`, `set_text(main, sub := "")`, `play(from := 0.0)`, `stop()`, `seek(t)`, `finish()`, `is_playing()`, `get_duration()`
+    (+ `get_document()`, `get_time()`, `is_baked()`, `get_evaluator()`, 수동 진행 `advance(delta)`, 신호 `baked`). 굽는 동안 play()의 시계는 굽기가 끝날 때까지 기다린다.
   - 속성: `document_path`, `autoplay`, `fit`("contain"/"cover"/"none"), `speed`, `paused`.
   - 신호: `started`, `entered`(등장 완료), `page_changed(page)`, `exit_started`, `finished`, `looped`.
   - `_draw()`에서 evaluator 결과대로 스프라이트를 그린다(`draw_set_transform` + `draw_texture_rect_region`, clip은 소스·대상 사각형 축소, 글리치 조각은 수평 띠 단위 분할 그리기, 색수차는 color_a/b 틴트 두 번 + 본체).
@@ -195,6 +221,8 @@ tests/                       # SceneTree 테스트, run_all.gd
 2. **베이크 JSON**(엔진 비의존): `{ "format": "text_fx_baked", "format_version": 1, "fps", "canvas", "duration", "loop",
    "glyphs": [{ "index", "char", "role", "font_size", "base": [x, y] }], "frames": [[[dx, dy, sx, sy, rot, alpha], ...], ...] }`
    — 값은 소수 셋째 자리 반올림. 다른 엔진에서 글자 배치·변환만 재생할 때 쓴다.
+   구현 추가 필드: glyph `rot`(세로쓰기 기본 회전, frame rot은 그에 대한 차이), `seed`, `markers.hold_start/hold_end`(loop_hold 반복 구간),
+   center_stamp 오버레이는 role `"overlay"` 글자(`source` = 원래 글자 번호, base = 중앙)로 추가. 진입점 `TextFxBakedExport.bake(doc, fps := 30)`.
 3. 클립보드 문자열: `TFX1:` + base64(deflate(JSON)) 한 줄. 문서·조작 기록 모두 같은 방식.
 
 ## 6. 에디터 로직 (app/logic)
