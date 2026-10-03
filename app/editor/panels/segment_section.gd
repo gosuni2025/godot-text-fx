@@ -41,7 +41,16 @@ func build() -> void:
 	panel.clear_box(params)
 	var effect := str(ctx.model.get_value(base() + ".effect"))
 	for key in Enter.default_params(effect):
-		panel.add_field(params, base() + ".params." + key)
+		var opts := {}
+		if key == "from_text":
+			opts["multiline"] = true
+		if effect in ["fragment_assemble", "ink_bleed", "ember_dissolve", "dimensional_rift", "afterimage_overtake",
+				"liquid_merge", "frost_crystal", "thread_stitch", "surface_pressure", "text_morph"]:
+			if key == "intensity":
+				opts = {"max": 3.0}
+			elif key == "distance":
+				opts = {"max": 5.0}
+		panel.add_field(params, base() + ".params." + key, opts)
 	refresh()
 
 
@@ -65,6 +74,8 @@ func refresh() -> void:
 func open_effect_picker() -> void:
 	var items: Array = []
 	for id in (["same"] + Array(Enter.IDS) if seg == "sub_enter" else Array(Enter.IDS)):
+		if seg == "exit" and id == "text_morph":
+			continue
 		items.append({"id": id, "label": Labels.enter_effect(id), "preview": ["enter" if seg == "sub_enter" else seg, str(ctx.model.get_value("timeline.enter.effect")) if id == "same" else id, ctx.preview_sample()]})
 	var title := "Supporting text reveal" if seg == "sub_enter" else ("Enter effect" if seg == "enter" else "Exit effect")
 	ctx.open_picker(title, items, str(ctx.model.get_value(base() + ".effect")), _set_value.bind(".effect"))

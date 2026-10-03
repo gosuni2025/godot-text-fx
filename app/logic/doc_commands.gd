@@ -236,6 +236,8 @@ static func _select_effect(doc: Dictionary, cmd: Dictionary) -> Dictionary:
 	var effect := str(cmd.get("effect", ""))
 	if segment not in ["enter", "exit", "sub_enter"] or (not effect in DocSchema.ENTER_EFFECTS and not (segment == "sub_enter" and effect == "same")):
 		return fail("bad effect selection")
+	if effect == "text_morph" and segment == "exit":
+		return fail("text_morph is an entrance effect")
 	var next := doc.duplicate(true)
 	if not next["timeline"].get(segment) is Dictionary:
 		next["timeline"][segment] = DocSchema.TextFxDoc.default_sub_enter()
@@ -245,6 +247,11 @@ static func _select_effect(doc: Dictionary, cmd: Dictionary) -> Dictionary:
 	seg["easing"] = "auto"
 	if effect in DocSchema.TextFxDoc.Enter.BLOCK_EFFECTS:
 		seg["order"] = "all"
+	if effect == "text_morph":
+		seg["order"] = "all"
+		seg["stagger"] = 0.0
+		seg["duration"] = maxf(1.6, float(seg["duration"]))
+		seg["params"]["from_text"] = str(doc.get("sub_text" if segment == "sub_enter" else "text", ""))
 	if effect in ["typewriter", "erase"]:
 		seg["duration"] = 0.0
 		seg["params"]["pop"] = 0.0

@@ -9,6 +9,7 @@ const DocApi := preload("res://app/logic/doc_api.gd")
 const FILES := [
 	"res://app/logic/templates/message_action.json",
 	"res://app/logic/templates/message_story.json",
+	"res://app/logic/templates/message_cinematic.json",
 	"res://app/logic/templates/trailer.json",
 	"res://app/logic/templates/caption.json",
 ]

@@ -38,6 +38,12 @@ var split_color_b := Color(0.16, 0.88, 1.0)
 ## center_stamp 오버레이 글자(화면 중앙 큰 글자)
 var overlay := false
 var overlay_scale := 1.0
+## 추가 연출의 순수 평가 결과. fragment rect는 원본 스프라이트의 0..1 영역이다.
+var cinematic: Dictionary = {}
+var fragments: Array = []
+var echoes: Array = []
+## 본문과 다른 문자 스프라이트를 사용하는 문장 변이용 명시 키.
+var sprite_key := ""
 
 
 func to_dict() -> Dictionary:
@@ -50,6 +56,7 @@ func to_dict() -> Dictionary:
 		"slices": slices, "split": split, "split_color_a": split_color_a, "split_color_b": split_color_b,
 		"slices_global": slices_global, "slice_origin_y": slice_origin_y, "slice_height": slice_height,
 		"overlay": overlay, "overlay_scale": overlay_scale,
+		"cinematic": cinematic, "fragments": fragments, "echoes": echoes, "sprite_key": sprite_key,
 	}
 
 
@@ -84,4 +91,8 @@ func copy() -> RefCounted:
 	s.split_color_b = split_color_b
 	s.overlay = overlay
 	s.overlay_scale = overlay_scale
+	s.cinematic = cinematic.duplicate(true)
+	s.fragments = fragments.duplicate(true)
+	s.echoes = echoes.duplicate(true)
+	s.sprite_key = sprite_key
 	return s

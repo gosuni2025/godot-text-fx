@@ -48,7 +48,7 @@
 		"weight": 700.0
 	},
 	"format": "text_fx",
-	"format_version": 2.0,
+	"format_version": 3.0,
 	"layout": {
 		"align": "center",
 		"anchor": [

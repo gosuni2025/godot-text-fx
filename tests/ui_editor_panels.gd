@@ -65,6 +65,25 @@ func _motion(t, ed) -> void:
 	t.eq(ed.model.get_value("timeline.enter.params.cursor_color"), "#FF0000FF", "cursor custom color")
 	cursor_color.get_node("%Inherit").pressed.emit()
 	t.eq(ed.model.get_value("timeline.enter.params.cursor_color"), null, "cursor color returns to inherited")
+	mp.get_node("%Enter").open_effect_picker()
+	ed.picker.pick("fragment_assemble")
+	ed.picker.hide()
+	await t.tree.process_frame
+	for key in ["intensity", "detail", "color", "distance"]:
+		t.ok(mp.field_for("timeline.enter.params." + key) != null, "cinematic %s field is available" % key)
+	mp.get_node("%Enter").open_effect_picker()
+	ed.picker.pick("text_morph")
+	ed.picker.hide()
+	await t.tree.process_frame
+	t.ok(mp.field_for("timeline.enter.params.from_text") != null, "morph has an editable initial sentence")
+	t.ok(mp.field_for("timeline.enter.params.readable_ratio") != null, "morph reading period is editable")
+	var initial: TextEdit = mp.field_for("timeline.enter.params.from_text").get_node("%Edit")
+	initial.text = "첫 번째 등불\n두 번째 등불"
+	initial.text_changed.emit()
+	t.eq(ed.model.get_value("timeline.enter.params.from_text"), initial.text, "morph initial text keeps Korean and line breaks")
+	mp.get_node("%Exit").open_effect_picker()
+	t.eq(ed.picker.card("text_morph"), null, "exit picker excludes entrance-only text morph")
+	ed.picker.hide()
 
 
 func _hold(t, ed) -> void:

@@ -23,6 +23,7 @@ godot --editor --path .        # Godot 에디터로 열기
 - 미리보기와 재생 바(재생/정지, 처음으로, 시간 탐색, 반복 방식, 퇴장 켜기), 실행 취소/다시 실행, 자동 저장(`user://autosave.json`).
 - 단축키(물리 키): Space 재생/정지, Home 처음으로, Ctrl/Cmd+Z 실행 취소, Ctrl/Cmd+Shift+Z 다시 실행, Ctrl/Cmd+S 저장, Ctrl/Cmd+E 베이크 내보내기, Ctrl/Cmd+Shift+C 문서 문자열 복사.
 - UI 언어: 한국어·일본어·영어.
+- 특수 문자 연출: 파편 재조립, 잉크 침투, 재·불씨 소멸, 차원 균열, 잔상 추월, 액체 응집, 서리 결정, 실로 꿰매기, 표면 아래 압력, 문장 변이. 메시지의 특수 연출 템플릿에서 시작할 수 있다.
 
 ## 내보내기 형식
 
@@ -97,6 +98,15 @@ godot --headless --path . --script res://tests/run_all.gd -- --filter=example_de
 ```
 
 `tests/` 바로 아래의 `*.gd`(`func run(t) -> void`)를 이름순으로 실행한다. 렌더 확인용 창 미리보기는 `tests/visual/player_preview.tscn`.
+
+특수 문자 연출 10종의 실제 창 검증·캡처(완료 후 자동 종료):
+
+```sh
+godot --audio-driver Dummy --path . --script res://tests/visual/cinematic_preview.gd -- --capture=/tmp/text-fx-cinematic
+```
+
+`--sample=text_morph`처럼 효과를 좁힐 수 있고, `--film`을 추가하면 영상용 20fps PNG도 저장한다.
+문장 변이의 원문·최종문 일치 검사는 `tests/visual/text_morph_preview.gd`로 실행한다.
 
 ## 구조
 

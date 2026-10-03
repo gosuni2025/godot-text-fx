@@ -1,5 +1,5 @@
 extends RefCounted
-## 포맷 2 연출 필드. UI·봇·명령이 같은 범위와 선택지를 공유한다.
+## 연출 필드. UI·봇·명령이 같은 범위와 선택지를 공유한다.
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
 
 static func n(lo: float, hi: float) -> Dictionary:
@@ -39,6 +39,10 @@ static func extend_rules(r: Dictionary) -> void:
 		r[q + "cursor_color"] = {"t": "null_or_color"}
 		for key in ["color_a", "color_b"]:
 			r[q + key] = c
+		r[q + "color"] = c
+		r[q + "detail"] = {"t": "int", "min": 2, "max": 16}
+		r[q + "from_text"] = {"t": "str", "max": 4000}
+		r[q + "readable_ratio"] = n(0, 0.8)
 	r["timeline.hold.effects.*.min_strength"] = n(0, 4)
 	var d := "decorations.*."
 	for key in ["fill_color"]:

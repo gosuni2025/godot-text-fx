@@ -280,3 +280,4 @@ Color B,색 B,色 B,Color B
 Saturation,채도,彩度,Saturation
 Off,꺼짐,オフ,Off
 Enabled,사용,有効,Enabled
+Baked frames contain movement and opacity only. Save document JSON to preserve all effects.,베이크는 움직임과 투명도만 저장합니다. 모든 연출을 보존하려면 문서 JSON을 저장하세요.,ベイクは動きと不透明度のみ保存します。すべての演出を保つにはドキュメントJSONを保存してください。,Baked frames contain movement and opacity only. Save document JSON to preserve all effects.

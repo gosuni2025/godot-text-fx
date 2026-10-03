@@ -1,0 +1,693 @@
+{
+  "mode": "message",
+  "groups": [
+    "cinematic"
+  ],
+  "locale_patch": {
+    "ja": {
+      "font": {
+        "source": "bundled",
+        "family": "Galmuri11",
+        "path": "res://assets/fonts/galmuri/Galmuri11.ttf",
+        "weight": 400
+      }
+    }
+  },
+  "templates": [
+    {
+      "id": "msg_cinematic_fragment_assemble",
+      "group": "cinematic",
+      "icon": "tpl_battle_engage",
+      "loop": "once",
+      "name": {
+        "ko": "파편 재조립",
+        "ja": "破片の再構成",
+        "en": "Fragment Assembly"
+      },
+      "text": {
+        "ko": "봉인 해제",
+        "ja": "封印解除",
+        "en": "Seal Broken"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "fragment_assemble",
+            "order": "forward",
+            "duration": 1.35,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.1,
+              "detail": 10,
+              "color": "#D9C5FFFF",
+              "distance": 1.4
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_ink_bleed",
+      "group": "cinematic",
+      "icon": "tpl_explore_clue",
+      "loop": "once",
+      "name": {
+        "ko": "잉크 침투",
+        "ja": "インクの浸透",
+        "en": "Ink Bleed"
+      },
+      "text": {
+        "ko": "숨겨진 기록",
+        "ja": "隠された記録",
+        "en": "Hidden Record"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "ink_bleed",
+            "order": "forward",
+            "duration": 1.65,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.0,
+              "detail": 9,
+              "color": "#A887D9FF",
+              "distance": 1.2
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_ember_dissolve",
+      "group": "cinematic",
+      "icon": "tpl_narrator_close",
+      "loop": "once",
+      "name": {
+        "ko": "재·불씨 소멸",
+        "ja": "灰と火の粉",
+        "en": "Ember Dissolve"
+      },
+      "text": {
+        "ko": "등불의 끝",
+        "ja": "灯火の終わり",
+        "en": "The Last Ember"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.5,
+            "stagger": 0,
+            "easing": "sine_out",
+            "params": {}
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "ember_dissolve",
+            "order": "forward",
+            "duration": 1.5,
+            "stagger": 0.05,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.1,
+              "detail": 12,
+              "color": "#FF9A32FF",
+              "distance": 1.4
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_dimensional_rift",
+      "group": "cinematic",
+      "icon": "tpl_explore_door",
+      "loop": "once",
+      "name": {
+        "ko": "차원 균열",
+        "ja": "次元の裂け目",
+        "en": "Dimensional Rift"
+      },
+      "text": {
+        "ko": "틈이 열린다",
+        "ja": "裂け目が開く",
+        "en": "The Rift Opens"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "dimensional_rift",
+            "order": "all",
+            "duration": 1.4,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.1,
+              "detail": 8,
+              "color": "#B46CFFFF",
+              "distance": 1.2
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_afterimage_overtake",
+      "group": "cinematic",
+      "icon": "tpl_trailer_flow",
+      "loop": "once",
+      "name": {
+        "ko": "잔상 추월",
+        "ja": "追い越す残像",
+        "en": "Overtaking Afterimages"
+      },
+      "text": {
+        "ko": "빛을 따라",
+        "ja": "光を追って",
+        "en": "Follow the Light"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "afterimage_overtake",
+            "order": "forward",
+            "duration": 1.15,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.2,
+              "detail": 6,
+              "color": "#61DFFFFF",
+              "distance": 1.7
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_liquid_merge",
+      "group": "cinematic",
+      "icon": "tpl_scene_memory",
+      "loop": "once",
+      "name": {
+        "ko": "액체 응집",
+        "ja": "液体の凝集",
+        "en": "Liquid Merge"
+      },
+      "text": {
+        "ko": "물든 기억",
+        "ja": "染まる記憶",
+        "en": "Soaked Memories"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "liquid_merge",
+            "order": "forward",
+            "duration": 1.6,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.1,
+              "detail": 8,
+              "color": "#68E3D4FF",
+              "distance": 1.2
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "liquid_merge",
+            "order": "reverse",
+            "duration": 1.0,
+            "stagger": 0.04,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.1,
+              "detail": 8,
+              "color": "#68E3D4FF",
+              "distance": 1.2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_frost_crystal",
+      "group": "cinematic",
+      "icon": "tpl_caption_converge",
+      "loop": "once",
+      "name": {
+        "ko": "서리 결정",
+        "ja": "霜の結晶",
+        "en": "Frost Crystals"
+      },
+      "text": {
+        "ko": "서리목 등대",
+        "ja": "霜木の灯台",
+        "en": "Frostwood Light"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "frost_crystal",
+            "order": "forward",
+            "duration": 1.6,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.0,
+              "detail": 12,
+              "color": "#BDEFFFFF",
+              "distance": 1.2
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "frost_crystal",
+            "order": "reverse",
+            "duration": 1.0,
+            "stagger": 0.04,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.0,
+              "detail": 12,
+              "color": "#BDEFFFFF",
+              "distance": 1.2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_thread_stitch",
+      "group": "cinematic",
+      "icon": "tpl_narrator_choice",
+      "loop": "once",
+      "name": {
+        "ko": "실로 꿰매기",
+        "ja": "糸で縫う",
+        "en": "Thread Stitching"
+      },
+      "text": {
+        "ko": "등지기의 맹세",
+        "ja": "灯守の誓い",
+        "en": "Keeper’s Oath"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "thread_stitch",
+            "order": "forward",
+            "duration": 1.8,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.0,
+              "detail": 10,
+              "color": "#FFD985FF",
+              "distance": 1.2
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_surface_pressure",
+      "group": "cinematic",
+      "icon": "tpl_narrator_secret",
+      "loop": "once",
+      "name": {
+        "ko": "표면 아래 압력",
+        "ja": "膜の内側の圧力",
+        "en": "Surface Pressure"
+      },
+      "text": {
+        "ko": "심연의 기척",
+        "ja": "深淵の気配",
+        "en": "Below the Surface"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 92,
+          "letter_spacing": 0.035
+        },
+        "style": {
+          "fill": {
+            "color": "#F6F2FFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#211A2AFF"
+          },
+          "shadow": {
+            "enabled": false
+          },
+          "glow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "surface_pressure",
+            "order": "all",
+            "duration": 1.7,
+            "stagger": 0.035,
+            "easing": "auto",
+            "params": {
+              "intensity": 1.2,
+              "detail": 8,
+              "color": "#D599DFFF",
+              "distance": 1.3
+            }
+          },
+          "hold": {
+            "duration": 1.5,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.55,
+            "stagger": 0,
+            "easing": "sine_in",
+            "params": {}
+          }
+        }
+      }
+    },
+    {
+      "id": "msg_cinematic_text_morph",
+      "group": "cinematic",
+      "icon": "tpl_narrator_secret",
+      "loop": "once",
+      "name": {
+        "ko": "문장 변이",
+        "ja": "文章の変異",
+        "en": "Text Morph"
+      },
+      "text": {
+        "ko": "등불은 꺼져 있다",
+        "ja": "灯火は消えている",
+        "en": "The Light Is Gone"
+      },
+      "patch": {
+        "layout": {
+          "font_size": 84,
+          "letter_spacing": 0.02
+        },
+        "style": {
+          "fill": {
+            "color": "#E8CFFFFF"
+          },
+          "outline": {
+            "size": 2,
+            "color": "#2A163CFF"
+          },
+          "shadow": {
+            "enabled": false
+          }
+        },
+        "timeline": {
+          "enter": {
+            "effect": "text_morph",
+            "order": "all",
+            "duration": 3.0,
+            "stagger": 0,
+            "easing": "auto",
+            "params": {
+              "from_text": "등불은 살아 있다",
+              "readable_ratio": 0.4,
+              "intensity": 1.0
+            }
+          },
+          "hold": {
+            "duration": 1.8,
+            "effects": []
+          },
+          "exit": {
+            "enabled": true,
+            "effect": "fade",
+            "order": "all",
+            "duration": 0.6,
+            "stagger": 0,
+            "easing": "sine_in"
+          }
+        }
+      },
+      "locale_patch": {
+        "ja": {
+          "timeline": {
+            "enter": {
+              "params": {
+                "from_text": "灯火は生きている"
+              }
+            }
+          }
+        },
+        "en": {
+          "timeline": {
+            "enter": {
+              "params": {
+                "from_text": "The Light Is Alive"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

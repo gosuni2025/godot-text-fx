@@ -8,9 +8,10 @@ extends RefCounted
 const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
 const Hold := preload("res://addons/text_fx/core/fx_effects_hold.gd")
 const Easing := preload("res://addons/text_fx/core/fx_easing.gd")
+const CinematicValidation := preload("res://addons/text_fx/core/fx_cinematic_validation.gd")
 
 const FORMAT := "text_fx"
-const FORMAT_VERSION := 2
+const FORMAT_VERSION := 3
 const DEFAULT_FONT_PATH := "res://assets/fonts/pretendard/Pretendard-Regular.otf"
 
 const MODES: PackedStringArray = ["message", "trailer", "caption"]
@@ -170,6 +171,8 @@ static func normalize(doc: Variant) -> Dictionary:
 	for seg in ["enter", "exit"]:
 		var s: Dictionary = tl[seg]
 		s["params"] = _merge(Enter.default_params(s["effect"]), s.get("params", {}))
+		if s["params"].has("color"):
+			s["params"]["color"] = color_to_hex(parse_color(s["params"]["color"]))
 	if tl.get("sub_enter") is Dictionary:
 		var sub: Dictionary = _merge(default_sub_enter(), tl["sub_enter"])
 		if sub["effect"] != "same" and not Enter.IDS.has(str(sub["effect"])):
@@ -179,6 +182,8 @@ static func normalize(doc: Variant) -> Dictionary:
 		if not Easing.NAMES.has(str(sub["easing"])):
 			sub["easing"] = "auto"
 		sub["params"] = _merge(Enter.default_params(str(sub["effect"])), sub["params"])
+		if sub["params"].has("color"):
+			sub["params"]["color"] = color_to_hex(parse_color(sub["params"]["color"]))
 		tl["sub_enter"] = sub
 	else:
 		tl["sub_enter"] = null
@@ -353,6 +358,8 @@ static func validate(doc: Variant) -> PackedStringArray:
 		var number: Variant = get_value(d, path)
 		if number != null and (not (number is int or number is float) or float(number) < 0.0 or float(number) > 1.0):
 			errs.append(path + "는 0~1 숫자여야 함")
+	for segment in ["enter", "exit", "sub_enter"]:
+		CinematicValidation.validate(get_value(d, "timeline." + segment), segment, errs)
 	return errs
 
 

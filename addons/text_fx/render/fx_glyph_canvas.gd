@@ -4,6 +4,7 @@ extends RefCounted
 ## 노드나 프레임별 뷰포트 없이 RenderingServer CanvasItem을 재사용한다.
 
 const ShaderFx := preload("res://addons/text_fx/render/shaders/fx_glyph_effect.gdshader")
+const MarksShader := preload("res://addons/text_fx/render/shaders/fx_cinematic_marks.gdshader")
 const GlyphState := preload("res://addons/text_fx/core/fx_glyph_state.gd")
 
 var item := RID()
@@ -25,12 +26,27 @@ func _notification(what: int) -> void:
 
 
 func configure(st: GlyphState, sprite: Dictionary, front: bool, index: int) -> void:
+	material.shader = ShaderFx
 	RenderingServer.canvas_item_clear(item)
 	RenderingServer.canvas_item_set_visible(item, true)
 	RenderingServer.canvas_item_set_draw_index(item, index)
 	var tex: Texture2D = sprite["texture_front"] if front else sprite["texture"]
 	var ts := tex.get_size()
 	var region: Rect2 = sprite["region"]
+	var inner: Rect2 = sprite["inner"]
+	var center: Vector2 = sprite["center"]
+	var glyph_rect := Rect2(inner.position + center, inner.size)
+	material.set_shader_parameter("glyph_rect", Vector4(glyph_rect.position.x / ts.x, glyph_rect.position.y / ts.y,
+		glyph_rect.end.x / ts.x, glyph_rect.end.y / ts.y))
+	var cinematic := st.cinematic
+	material.set_shader_parameter("cine_mode", int(cinematic.get("mode", 0)))
+	material.set_shader_parameter("cine_hidden", float(cinematic.get("hidden", 0.0)))
+	material.set_shader_parameter("cine_progress", float(cinematic.get("progress", 0.0)))
+	material.set_shader_parameter("cine_seed", float(cinematic.get("seed", 0.0)))
+	material.set_shader_parameter("cine_intensity", float(cinematic.get("intensity", 1.0)))
+	material.set_shader_parameter("cine_detail", float(cinematic.get("detail", 8.0)))
+	material.set_shader_parameter("cine_distance", float(cinematic.get("distance", 1.2)))
+	material.set_shader_parameter("cine_color", cinematic.get("color", Color.WHITE))
 	var scale: float = sprite["scale"]
 	var factor := (st.overlay_scale if st.overlay else 1.0) / scale
 	var transform := Transform2D(st.rotation, st.scale * factor, 0.0, st.pos)
@@ -61,6 +77,14 @@ func configure(st: GlyphState, sprite: Dictionary, front: bool, index: int) -> v
 		var offsets := st.slices.duplicate()
 		offsets.resize(32)
 		material.set_shader_parameter("slice_offsets", offsets)
+
+
+func configure_marks(index: int, transform: Transform2D) -> void:
+	RenderingServer.canvas_item_clear(item)
+	RenderingServer.canvas_item_set_visible(item, true)
+	RenderingServer.canvas_item_set_draw_index(item, index)
+	RenderingServer.canvas_item_set_transform(item, transform)
+	material.shader = MarksShader
 
 
 func hide() -> void:

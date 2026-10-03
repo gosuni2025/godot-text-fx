@@ -29,7 +29,7 @@ func show_banner(title: String, sub := "") -> void:
   `stop()`, `seek(t)`, `finish()`, `is_playing()`, `get_duration()`, `get_time()`, `is_baked()`.
 - 신호: `started`, `entered`(등장 완료, 페이지마다), `page_changed(page)`, `exit_started`, `finished`, `looped`, `baked`.
 - `load_file()`과 `set_document()`는 성공 여부를 `bool`로 반환한다. 잘못된 형식·지원하지 않는 버전·유효하지 않은 문서는 거부하며,
-  실패하면 기존 문서와 재생 상태를 유지한다. v1은 자동 이전하고, 생략된 필드는 기본값으로 채운다.
+  실패하면 기존 문서와 재생 상태를 유지한다. v1·v2는 현재 문서 v3으로 자동 이전하고, 생략된 필드는 기본값으로 채운다.
   `text_fx_baked`는 다른 엔진용 프레임 데이터이므로 이 플레이어에 넣지 않는다.
 - 텍스트·스타일·화면 크기가 바뀌면 글자 스프라이트를 몇 프레임에 걸쳐 다시 굽는다. 굽는 동안 `play()`의 시계는 기다린다.
 - 시간은 `_process(delta) * speed`로 흐르므로 게임 일시정지는 노드의 `process_mode`를 따른다.
@@ -59,3 +59,4 @@ var states := ev.evaluate(1.2)          # Array[TextFxGlyphState]: pos, scale, r
 ```
 
 다른 엔진용 프레임 데이터는 `TextFxBakedExport.bake(doc, 30.0)`(형식은 `docs/DESIGN.md` §5).
+베이크 v1은 위치·축척·회전·투명도만 담는다. 조각·잔상·입자·재질 변화까지 재현하려면 문서 JSON과 `TextFxPlayer`를 사용한다.

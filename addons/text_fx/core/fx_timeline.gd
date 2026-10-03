@@ -101,7 +101,9 @@ func _build() -> void:
 			_shift_delays(enter_delay, first, timed_main, text_start)
 		var main_enter_len := enter_len
 		var sub_start := 0.0
-		if independent_sub and count > main_count:
+		# 빈 최종 보조문도 원문을 읽고 지우는 변이 시간을 갖는다.
+		var morph_sub: bool = sub.get("effect") == "text_morph" and not str(sub.get("params", {}).get("from_text", "")).strip_edges().is_empty()
+		if independent_sub and (count > main_count or morph_sub):
 			var same_block: bool = tl["sub_enter"].get("effect", "same") == "same" and enter["effect"] in Enter.BLOCK_EFFECTS
 			sub_start = text_start if same_block else maxf(text_start, main_enter_len + float(tl["sub_enter"].get("delay", 0.0)))
 			var sub_len := _assign_delays(enter_delay, glyphs, first + main_count, count - main_count, sub, seed)
@@ -149,6 +151,9 @@ static func _shift_delays(out: PackedFloat32Array, first: int, count: int, delay
 ## 페이지 안 글자 지연을 채우고 구간 길이(마지막 지연 + duration)를 돌려준다.
 func _assign_delays(out: PackedFloat32Array, glyphs: Array, first: int, count: int, seg: Dictionary, seed: int, is_exit: bool = false) -> float:
 	if count <= 0:
+		# 원문→빈 문장도 등장 구간 안에서 완료한다. 최종 글자 수로 원문 시간을 없애지 않는다.
+		if not is_exit and seg.get("effect") == "text_morph" and not str(seg.get("params", {}).get("from_text", "")).strip_edges().is_empty():
+			return maxf(0.0, float(seg["duration"]))
 		return 0.0
 	var dur := maxf(0.0, float(seg["duration"]))
 	if seg["effect"] == "erase":

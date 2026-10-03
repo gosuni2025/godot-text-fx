@@ -22,11 +22,13 @@ const Timing := preload("res://addons/text_fx/core/fx_timing_helpers.gd")
 const Cursor := preload("res://addons/text_fx/core/fx_typing_cursor.gd")
 const Background := preload("res://addons/text_fx/core/fx_background.gd")
 const DecorationMotion := preload("res://addons/text_fx/core/fx_decoration_motion.gd")
+const TextMorph := preload("res://addons/text_fx/core/fx_text_morph.gd")
 
 var doc: Dictionary
 var layout: Dictionary
 var timeline: Timeline
 var seed := 0
+var text_morph: Dictionary = {}
 var _opacity := {"main": 1.0, "sub": 1.0}
 
 
@@ -35,6 +37,7 @@ func _init(p_doc: Dictionary, p_layout: Dictionary = {}, fonts: Dictionary = {})
 	doc = Doc.normalize(p_doc)
 	layout = p_layout if not p_layout.is_empty() else Layout.compute(doc, fonts)
 	timeline = Timeline.new(doc, layout)
+	text_morph = TextMorph.prepare(doc, layout, fonts, timeline)
 	seed = int(doc["seed"])
 	_opacity["main"] = float(Doc.style_for(doc, "main")["opacity"])
 	_opacity["sub"] = float(Doc.style_for(doc, "sub")["opacity"])
@@ -100,6 +103,12 @@ func evaluate_frame(t: float, finish_at: float = -1.0) -> Dictionary:
 						_apply_segment(st, g, segment, float(s["local"]) - enter_delay_of(i), false, ctx)
 					"exit":
 						_apply_segment(st, g, tl["exit"], float(s["local"]) - timeline.exit_delay[i], true, ctx)
+		var morph_states := TextMorph.apply(text_morph, states, s, timeline, seed)
+		for original: GlyphState in morph_states:
+			var source: Dictionary = text_morph["glyphs"][original.index - glyphs.size()]
+			ctx["em"] = float(source["font_size"])
+			_apply_hold(original, source, tl["hold"], s, ctx)
+		overlays.append_array(morph_states)
 		for i in range(first, first + count):
 			var st2: GlyphState = states[i]
 			_glyph_context(ctx, glyphs[i], pg)
@@ -149,6 +158,12 @@ func _apply_segment(st: GlyphState, g: Dictionary, seg: Dictionary, local: float
 	ctx["local"] = maxf(0.0, local)
 	ctx["duration"] = dur
 	Enter.apply(str(seg["effect"]), st, k, g, ctx)
+	# 본문 변이는 본문 원문만 바꾼다. 독립 보조 변이가 없으면 보조 문구는 함께 드러난다.
+	if seg["effect"] == "text_morph":
+		var no_source := str(seg["params"].get("from_text", "")).strip_edges().is_empty()
+		var inherited_sub: bool = st.role == "sub" and not (doc["timeline"].get("sub_enter") is Dictionary and doc["timeline"]["sub_enter"].get("effect") == "text_morph")
+		if no_source or inherited_sub:
+			st.alpha *= clampf(1.0 - k, 0.0, 1.0)
 	if is_exit and local >= dur:
 		st.alpha = 0.0
 

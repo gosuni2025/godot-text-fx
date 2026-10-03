@@ -29,6 +29,11 @@ static func bake(doc: Dictionary, fps: float = 30.0, fonts: Dictionary = {}) -> 
 		glyph_list.append({"index": g["index"], "char": g["char"], "role": g["role"], "font_size": g["font_size"],
 			"base": [_r(p.x), _r(p.y)], "rot": _r(float(g["base_rotation"]))})
 	var n := glyph_list.size()
+	# 변이 원문은 별도 정적 글자 슬롯이다. 베이크 v1의 변환·alpha만으로 실제 문자를 교체한다.
+	for g in ev.text_morph.get("glyphs", []):
+		var position: Vector2 = g["pos"]
+		glyph_list.append({"index": g["index"], "char": g["char"], "role": "morph_" + str(g["role"]),
+			"font_size": g["font_size"], "base": [_r(position.x), _r(position.y)], "rot": _r(float(g["base_rotation"]))})
 	var overlay_slot := {}
 	if tl.stamp_enabled:
 		var params: Dictionary = ev.doc["timeline"]["enter"]["params"]

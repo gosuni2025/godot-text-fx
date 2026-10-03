@@ -12,18 +12,21 @@ const REQUIRED_GROUPS := {
 	"caption": ["converge", "rise", "tracking", "center_split"],
 }
 const GALMURI := "res://assets/fonts/galmuri/Galmuri11.ttf"
+const CINEMATIC_EFFECTS := ["fragment_assemble", "ink_bleed", "ember_dissolve", "dimensional_rift",
+	"afterimage_overtake", "liquid_merge", "frost_crystal", "thread_stitch", "surface_pressure", "text_morph"]
 
 
 func run(t) -> void:
 	t.eq(Templates.load_errors().size(), 0, "templates load cleanly: %s" % str(Templates.load_errors()))
 	var n := Templates.ids().size()
-	t.ok(n >= 30 and n <= 40, "template count %d in 30..40" % n)
+	t.ok(n >= 47, "original and cinematic templates are registered (%d)" % n)
 	for mode in REQUIRED_GROUPS:
 		for g in REQUIRED_GROUPS[mode]:
 			t.ok(not Templates.by_mode(mode, g).is_empty(), "group %s/%s has templates" % [mode, g])
 	for tpl in Templates.all():
 		_check_template(t, tpl)
 	_locale_switch(t)
+	_cinematic(t)
 
 
 func _check_template(t, tpl: Dictionary) -> void:
@@ -88,3 +91,35 @@ func _locale_switch(t) -> void:
 	k.apply({"op": "set_text", "text": "내 문장"})
 	k.apply({"op": "apply_template", "id": "msg_battle_engage", "keep_text": true})
 	t.eq(k.doc.text, "내 문장", "keep_text preserves text")
+
+
+func _cinematic(t) -> void:
+	for effect in CINEMATIC_EFFECTS:
+		var id: String = "msg_cinematic_" + effect
+		t.ok(Templates.has(id), "cinematic template exists: %s" % effect)
+		var m = EditorModel.new({}, "ko")
+		t.ok(m.apply({"op": "apply_template", "id": id}), "%s template applies" % effect)
+		var segment := "exit" if effect == "ember_dissolve" else "enter"
+		t.eq(m.get_value("timeline." + segment + ".effect"), effect, "%s template uses the new effect" % effect)
+		t.ok(m.apply({"op": "select_effect", "segment": segment, "effect": effect}), "%s is command-selectable" % effect)
+		if effect != "text_morph":
+			for param in ["intensity", "detail", "color", "distance"]:
+				var path: String = "timeline." + segment + ".params." + param
+				t.ok(DocSchema.rule_for(path) != null, "%s has editable %s" % [effect, param])
+				t.ok(m.apply({"op": "set", "path": path, "value": m.get_value(path)}), "%s parameter uses set command" % param)
+	var morph = EditorModel.new({}, "ko")
+	morph.apply({"op": "apply_template", "id": "msg_cinematic_text_morph"})
+	morph.apply({"op": "set_locale", "locale": "ja"})
+	t.eq(morph.get_value("timeline.enter.params.from_text"), "灯火は生きている", "morph source follows template locale")
+	t.eq(morph.doc.text, "灯火は消えている", "morph target follows template locale")
+	morph.apply({"op": "set", "path": "timeline.enter.params.from_text", "value": "내가 쓴 첫 문장"})
+	morph.apply({"op": "set_locale", "locale": "en"})
+	t.eq(morph.get_value("timeline.enter.params.from_text"), "내가 쓴 첫 문장", "edited morph source survives locale change")
+	morph.apply({"op": "set_text", "text": "마지막 기록", "sub_text": "등지기"})
+	t.ok(morph.apply({"op": "select_effect", "segment": "sub_enter", "effect": "text_morph"}), "sub text morph selectable")
+	t.eq(morph.get_value("timeline.sub_enter.params.from_text"), "등지기", "sub morph captures current sub text")
+	t.ok(not morph.apply({"op": "select_effect", "segment": "exit", "effect": "text_morph"}), "morph cannot be selected for exit")
+	t.ok(morph.apply({"op": "select_effect", "segment": "enter", "effect": "text_morph"}), "main morph selectable")
+	t.eq(morph.get_value("timeline.enter.params.from_text"), "마지막 기록", "main morph captures current text")
+	t.eq(morph.get_value("timeline.enter.order"), "all", "morph selects one shared transition")
+	t.ok(not morph.apply({"op": "set", "path": "timeline.enter.params.readable_ratio", "value": 0.9}), "morph readable ratio is bounded")

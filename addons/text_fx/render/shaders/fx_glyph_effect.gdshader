@@ -1,6 +1,7 @@
 // 구운 프리멀티플라이드 색을 필터링한다. 블러 셀은 격리된 mipmap 텍스처라 이웃 글자가 섞이지 않는다.
 shader_type canvas_item;
 render_mode blend_premul_alpha, unshaded;
+#include "res://addons/text_fx/render/shaders/fx_cinematic.gdshaderinc"
 
 uniform sampler2D glow_texture : filter_linear_mipmap, repeat_disable;
 uniform bool has_glow = false;
@@ -94,7 +95,8 @@ void fragment() {
 			uv -= canvas_x_to_uv * slice_offsets[index];
 		}
 	}
-	vec4 c = blurred_glyph(TEXTURE, TEXTURE_PIXEL_SIZE, uv);
+	vec4 c = blurred_glyph(TEXTURE, TEXTURE_PIXEL_SIZE, cine_uv(uv));
+	c = cine_surface(c, uv);
 	c *= glyph_color;
 	c.rgb = mix(c.rgb, vec3(c.a), clamp(brightness, 0.0, 1.0));
 	COLOR = c * mask_alpha();

@@ -191,6 +191,15 @@ func _set_locale(cmd: Dictionary) -> bool:
 			if JsonUtil.canonical_json(doc.get(k)) == JsonUtil.canonical_json(was.get(k)):
 				next[k] = now.get(k)
 				paths.append(k)
+		# 변이 전 문장도 템플릿 견본일 때만 언어를 바꾼다. 사용자가 쓴 문장은 유지한다.
+		for segment in ["enter", "sub_enter"]:
+			var path: String = "timeline." + segment + ".params.from_text"
+			var current := DocSchema.get_at(doc, path)
+			var previous := DocSchema.get_at(was, path)
+			var translated := DocSchema.get_at(now, path)
+			if current.ok and previous.ok and translated.ok and current.value == previous.value:
+				next["timeline"][segment]["params"]["from_text"] = translated.value
+				paths.append(path)
 		if not paths.is_empty():
 			var r := DocCommands.finish(next, paths)
 			if r.ok:

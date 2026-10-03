@@ -26,7 +26,7 @@ func _migration(t) -> void:
 	var original := old.duplicate(true)
 	var d := DocApi.normalize(old)
 	t.eq(old, original, "migration leaves input untouched")
-	t.eq(d["format_version"], 2.0, "v1 migrates to document v2")
+	t.eq(d["format_version"], float(Doc.FORMAT_VERSION), "v1 migrates to current document version")
 	t.eq(DocApi.normalize(d), d, "migration is idempotent")
 	t.near(d["layout"]["sub"]["letter_spacing"], 0.2, 0.00001, "v1 sub keeps inherited letter spacing")
 	t.eq(d["timeline"]["enter"]["easing"], "elastic_out", "v1 explicit entrance easing survives")

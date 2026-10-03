@@ -18,6 +18,10 @@ const ENTER_EFFECTS := {
 	"fade": "Fade", "slide": "Slide", "zoom": "Zoom", "pop": "Pop", "drop": "Drop", "rise": "Rise",
 	"blur": "Blur", "spin": "Spin", "converge": "Converge", "tracking": "Tracking", "center_split": "Center split",
 	"scatter": "Scatter", "wipe": "Wipe", "typewriter": "Typewriter", "glitch": "Glitch", "center_stamp": "Center stamp",
+	"fragment_assemble": "Fragment assembly", "ink_bleed": "Ink bleed", "ember_dissolve": "Ember dissolve",
+	"dimensional_rift": "Dimensional rift", "afterimage_overtake": "Overtaking afterimages", "liquid_merge": "Liquid merge",
+	"frost_crystal": "Frost crystals", "thread_stitch": "Thread stitching", "surface_pressure": "Surface pressure",
+	"text_morph": "Text morph",
 }
 const HOLD_EFFECTS := {
 	"heartbeat": "Heartbeat",
@@ -46,6 +50,7 @@ const GROUPS := {
 	"converge": "Converge", "rise": "Rise", "tracking": "Tracking", "center_split": "Center split",
 	"vertical": "Vertical", "slide": "Slide", "typewriter": "Typewriter", "line": "Reveal successive lines",
 	"flow": "Flow", "all_at_once": "Reveal the full text", "scroll": "Scroll", "center_stamp": "Center stamp",
+	"cinematic": "Special effects",
 }
 const GROUP_ICONS := {
 	"battle": "group_battle", "explore": "group_explore", "narrator": "group_narrator",
@@ -75,6 +80,8 @@ const ENUMS := {
 
 ## 필드 이름: 마지막 키(또는 더 긴 경로 끝) → 키. 긴 접미사를 먼저 찾는다.
 const FIELDS := {
+	"from_text": "Initial text", "readable_ratio": "Initial text hold ratio", "detail": "Effect detail",
+	"params.color": "Effect accent color",
 	"solo_animated": "Animate each central glyph",
 	"viewport_scale": "Central glyph canvas ratio", "blink_strength": "Tape blink strength",
 	"protect_sub": "Protect sub text spacing", "clamp_canvas": "Keep frame inside canvas",

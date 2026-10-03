@@ -9,15 +9,19 @@ extends RefCounted
 const Hash := preload("res://addons/text_fx/core/fx_hash.gd")
 const GlyphState := preload("res://addons/text_fx/core/fx_glyph_state.gd")
 const Block := preload("res://addons/text_fx/core/fx_effects_block.gd")
+const Cinematic := preload("res://addons/text_fx/core/fx_effects_cinematic.gd")
 
 const IDS: PackedStringArray = [
 	"fade", "slide", "zoom", "pop", "drop", "rise", "blur", "spin", "converge",
 	"tracking", "center_split", "scatter", "wipe", "typewriter", "glitch", "center_stamp",
 	"flip", "flicker", "slam", "block_zoom", "emerge", "shutter", "flash", "erase",
 	"block_wipe", "block_glitch", "bounce",
+	"fragment_assemble", "ink_bleed", "ember_dissolve", "dimensional_rift", "afterimage_overtake",
+	"liquid_merge", "frost_crystal", "thread_stitch", "surface_pressure",
+	"text_morph",
 ]
 
-const BLOCK_EFFECTS: PackedStringArray = ["slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch"]
+const BLOCK_EFFECTS: PackedStringArray = ["slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch", "text_morph"]
 
 ## 거리 단위는 em(글자 크기 비율), 각도는 도.
 const DEFAULTS := {
@@ -49,6 +53,16 @@ const DEFAULTS := {
 	"block_wipe": {"dir": "right", "feather": 0.12},
 	"block_glitch": {"intensity": 1.0, "slices": 5, "color_a": "#FF2A6DFF", "color_b": "#2AE0FFFF"},
 	"bounce": {"distance": 1.2},
+	"text_morph": {"from_text": "", "readable_ratio": 0.3, "intensity": 1.0},
+	"fragment_assemble": Cinematic.DEFAULTS["fragment_assemble"],
+	"ink_bleed": Cinematic.DEFAULTS["ink_bleed"],
+	"ember_dissolve": Cinematic.DEFAULTS["ember_dissolve"],
+	"dimensional_rift": Cinematic.DEFAULTS["dimensional_rift"],
+	"afterimage_overtake": Cinematic.DEFAULTS["afterimage_overtake"],
+	"liquid_merge": Cinematic.DEFAULTS["liquid_merge"],
+	"frost_crystal": Cinematic.DEFAULTS["frost_crystal"],
+	"thread_stitch": Cinematic.DEFAULTS["thread_stitch"],
+	"surface_pressure": Cinematic.DEFAULTS["surface_pressure"],
 }
 
 ## 모든 효과 공통 params(순서 관련).
@@ -61,6 +75,10 @@ const SUGGESTED_EASING := {
 	"center_stamp": "cubic_in", "scatter": "quart_out", "spin": "back_out",
 	"bounce": "bounce_out", "flip": "back_out", "flicker": "linear", "erase": "linear",
 	"slam": "linear", "block_glitch": "linear", "shutter": "expo_out", "block_wipe": "cubic_in_out",
+	"text_morph": "linear",
+	"fragment_assemble": "linear", "ink_bleed": "linear", "ember_dissolve": "linear",
+	"dimensional_rift": "linear", "afterimage_overtake": "linear", "liquid_merge": "linear",
+	"frost_crystal": "linear", "thread_stitch": "linear", "surface_pressure": "linear",
 }
 
 const DIRS := {"up": Vector2(0, -1), "down": Vector2(0, 1), "left": Vector2(-1, 0), "right": Vector2(1, 0)}
@@ -72,6 +90,8 @@ const SALT_GLITCH := 303
 static func default_params(id: String) -> Dictionary:
 	var d: Dictionary = COMMON.duplicate(true)
 	d.merge(DEFAULTS.get(id, {}).duplicate(true), true)
+	if Cinematic.IDS.has(id):
+		d.merge(Cinematic.default_params(id), true)
 	return d
 
 
@@ -79,6 +99,8 @@ static func default_params(id: String) -> Dictionary:
 static func resolve_easing(id: String, selected: String, is_exit: bool = false) -> String:
 	if selected != "auto":
 		return selected
+	if Cinematic.IDS.has(id):
+		return "linear"
 	if is_exit:
 		if id in ["flicker", "erase", "typewriter", "glitch", "block_glitch", "slam"]:
 			return "linear"
@@ -102,6 +124,13 @@ static func max_blur_em(seg: Dictionary) -> float:
 ## ctx: { seed, em, params, is_exit, vertical, line_center(Vector2), local(이 글자 애니메이션 경과 초) }
 ## g: 레이아웃 글자 Dictionary.
 static func apply(id: String, st: GlyphState, k: float, g: Dictionary, ctx: Dictionary) -> void:
+	if id == "text_morph":
+		if ctx.get("is_exit", false):
+			st.alpha *= 1.0 - clampf(k, 0.0, 1.0)
+		return # 원문과 대상문을 함께 다루는 evaluator의 문장 변이 경로가 처리한다.
+	if Cinematic.IDS.has(id):
+		Cinematic.apply(id, st, k, g, ctx)
+		return
 	if BLOCK_EFFECTS.has(id):
 		Block.apply(id, st, k, ctx)
 		return

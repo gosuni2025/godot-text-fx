@@ -343,6 +343,8 @@ func _draw() -> void:
 		if not st.visible:
 			continue
 		var key: String = okeys.get(st.index, "") if st.overlay else (keys[st.index] if st.index < keys.size() else "")
+		if not st.sprite_key.is_empty():
+			key = st.sprite_key
 		var spr: Dictionary = _sprites.get(key, {})
 		if spr.is_empty():
 			continue

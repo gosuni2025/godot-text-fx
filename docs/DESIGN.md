@@ -38,14 +38,14 @@ tests/                       # SceneTree 테스트, run_all.gd
 
 first-party 코드 파일은 20KB를 넘기 전에 책임을 분리한다.
 
-## 2. 데이터 포맷 (format_version 2)
+## 2. 데이터 포맷 (format_version 3)
 
 문서는 JSON 객체 하나다. 누락 필드는 `TextFxDoc.normalize()`가 기본값으로 채운다.
 알 수 없는 필드는 보존하되 무시한다. 색은 `"#RRGGBBAA"` 또는 `"#RRGGBB"` 문자열.
 
 ```jsonc
 {
-  "format": "text_fx", "format_version": 2,
+  "format": "text_fx", "format_version": 3,
   "name": "교전 개시",
   "mode": "message",                // message | trailer | caption(장소·시간)
   "seed": 12345,
@@ -101,9 +101,10 @@ first-party 코드 파일은 20KB를 넘기 전에 책임을 분리한다.
 }
 ```
 
-포맷 1 문서도 읽을 수 있으며 정규화 결과와 저장 결과는 2가 된다. 기존 명시 이징·효과 ID를 유지하고,
+포맷 1·2 문서도 읽을 수 있으며 정규화 결과와 저장 결과는 3이 된다. 기존 명시 이징·효과 ID를 유지하고,
 기존 문서에 영향을 주는 새 연출은 0/false/null 기본값으로 비활성화한다. 새 순서 sweep의 행 간격/훑기 시간은 즉시 구분되도록 0.65/0.5초를 기본으로 한다. 포맷 1에 보조 자간이 없으면 본문 자간을 복사해 기존 배치를 유지한다.
 `text_fx_baked`와 조작 기록은 별도 포맷이므로 아래 §5·§6에 명시한 버전 1을 유지한다.
+포맷 3은 특수 문자 연출 9종과 `text_morph`의 원문·읽기 비율을 추가한다. 기존 문서에 새 효과를 자동 적용하지 않는다.
 
 ### 2.1 순서(order)
 
@@ -176,6 +177,30 @@ true(기본)는 기존 짧은 확대·페이드 동작을 유지한다.
 
 `easing: "auto"`는 `Enter.resolve_easing(effect, selected, is_exit)`로 해석한다. 팝/flip은 back, bounce/drop은 bounce,
 shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한다. 명시한 곡선은 바꾸지 않는다.
+
+### 2.2.1 특수 문자 연출 (포맷 3)
+
+| id | 연출 | 주요 조절값 |
+|---|---|---|
+| fragment_assemble | 글자 표면을 조각내 다른 방향에서 모으거나 흩음 | intensity, detail, distance, color |
+| ink_bleed | 불규칙한 잉크 경계가 획을 채움 | intensity, detail, color |
+| ember_dissolve | 타는 경계와 위로 떠오르는 불씨 | intensity, detail, distance, color |
+| dimensional_rift | 빛나는 균열이 열리며 문자를 드러냄 | intensity, detail, distance, color |
+| afterimage_overtake | 여러 잔상이 앞질렀다가 본체와 합쳐짐 | intensity, detail, distance, color |
+| liquid_merge | 방울이 응집하고 글자 표면이 출렁임 | intensity, detail, distance, color |
+| frost_crystal | 각진 결정이 자라며 획을 드러냄 | intensity, detail, distance, color |
+| thread_stitch | 빛나는 실과 바늘 끝을 따라 획이 연결됨 | intensity, detail, color |
+| surface_pressure | 막 아래에서 글자가 밀려나오며 표면이 굴절됨 | intensity, detail, distance, color |
+| text_morph | 먼저 읽힌 문장이 뒤틀리며 최종 문장으로 바뀜 | from_text, readable_ratio, intensity |
+
+- 특수 연출 9종은 등장·퇴장·보조 등장에 사용할 수 있다. `intensity` 0~3, `detail` 정수 2~16, `distance` 0~5 em, `color`는 RGBA 문자열이며 효과에 맞는 기본값을 쓴다.
+- `text_morph`는 등장·보조 등장 전용이다. 문서 `text`/`sub_text`가 최종 문장이고 해당 segment의 `params.from_text`가 먼저 보여 줄 문장(최대 4000자)이다.
+  `readable_ratio`(0~0.8, 기본 0.3)는 등장 시간 중 원문을 읽는 비율이다. 나머지 시간에 실제 원문·최종 문자의 배치와 표시를 전환한다. `from_text`가 비어 있으면 일반 등장으로 처리한다.
+  페이지 수와 재생 순서는 최종 문장을 따른다. 원문이 한 페이지면 각 최종 페이지에서 반복하고, 여러 페이지면 같은 번호끼리 대응한다. 초과 원문 페이지는 마지막 최종 페이지의 원문에 빈 줄로 합쳐 보존한다.
+  원문의 줄 높이가 달라지면 변이하지 않는 반대 역할 문구도 원문 배치에서 최종 배치로 함께 이동해 겹침을 피한다.
+  본문·보조를 순서대로 변이할 때 보조 원문은 이미 완료된 최종 본문의 경계를 기준으로 배치하며, 본문 위치는 유지한다.
+- 모든 조각·잔상·입자는 문서 시드·글자 번호·샘플 시각으로 계산한다. 프레임 누적 시뮬레이션이나 셰이더 `TIME`에 의존하지 않아 역방향 탐색에서도 같은 결과다.
+- 편집기는 메시지의 특수 연출 분류에 10개 견본 템플릿과 ko/ja/en 문구를 제공한다. 효과 선택·설정·템플릿·문자열 저장·리플레이는 기존 명령 경로를 사용한다.
 
 ### 2.3 유지 중 효과 (중첩 가능)
 
@@ -279,7 +304,7 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
   - `load_file(path)`, `set_document(dict)`, `set_text(main, sub := "")`, `play(from := 0.0)`, `stop()`, `seek(t)`, `finish()`, `is_playing()`, `get_duration()`
     (+ `get_document()`, `get_time()`, `is_baked()`, `get_evaluator()`, 수동 진행 `advance(delta)`, 신호 `baked`). 굽는 동안 play()의 시계는 굽기가 끝날 때까지 기다린다.
   - `load_file`·`set_document`는 정규화 전에 원본 문서를 검증하고 성공 여부를 `bool`로 반환한다. 실패하면 문서·재생 시간·종료 예약을 보존한다.
-    명시된 형식은 `text_fx`, 버전은 1 또는 2여야 한다. v1·부분 문서·빈 객체는 지원하며 누락 필드는 기본값으로 채운다. 베이크 JSON은 받지 않는다.
+    명시된 형식은 `text_fx`, 버전은 1~3이어야 한다. 이전 버전·부분 문서·빈 객체는 지원하며 누락 필드는 기본값으로 채운다. 베이크 JSON은 받지 않는다.
   - 속성: `document_path`, `autoplay`, `fit`("contain"/"cover"/"none"), `speed`, `paused`.
   - 신호: `started`, `entered`(등장 완료), `page_changed(page)`, `exit_started`, `finished`, `looped`.
   - `_draw()`에서 evaluator 결과대로 풀링된 CanvasItem/RID와 글자 효과 셰이더로 그린다. 셰이더는 실제 블러, 백색 혼합,
@@ -297,8 +322,9 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
    — 값은 소수 셋째 자리 반올림. 다른 엔진에서 글자 배치·변환만 재생할 때 쓴다.
    구현 추가 필드: glyph `rot`(세로쓰기 기본 회전, frame rot은 그에 대한 차이), `seed`, `markers.hold_start/hold_end`(loop_hold 반복 구간),
    center_stamp 오버레이는 role `"overlay"` 글자(`source` = 원래 글자 번호, base = 중앙)로 추가. 진입점 `TextFxBakedExport.bake(doc, fps := 30)`.
+   문장 변이의 원문도 고유 index와 role `"morph_main"`/`"morph_sub"`인 정적 글자 슬롯으로 추가하여 원문과 최종문 사이의 교체·위치·축척·alpha를 보존한다.
    **베이크 포맷 1은 위치·축척·회전·alpha만 기록한다.** 블러·색수차·조각·와이프 마스크·밝기·글로우·배경·장식·커서·틴트는
-   이 숫자 프레임에 포함되지 않는다. 원본 연출 전체를 재생하려면 문서 포맷 2와 TextFxPlayer를 사용한다.
+   이 숫자 프레임에 포함되지 않는다. 포맷 3의 조각·잔상·입자·재질 왜곡도 포함되지 않는다. 연출 전체를 재생하려면 문서 포맷 3과 TextFxPlayer를 사용한다.
    문서 버전 상승을 베이크 버전 상승으로 오해하지 않도록 두 format_version을 독립 관리한다.
 3. 클립보드 문자열: `TFX1:` + base64(deflate(JSON)) 한 줄. 문서·조작 기록 모두 같은 방식.
 

@@ -58,6 +58,11 @@ layout_mode = 2
 theme_type_variation = &"SectionTitle"
 text = "Baked frames (other engines)"
 
+[node name="Scope" type="Label" parent="Body/BakedSection/Rows"]
+layout_mode = 2
+text = "Baked frames contain movement and opacity only. Save document JSON to preserve all effects."
+autowrap_mode = 2
+
 [node name="FpsRow" type="HBoxContainer" parent="Body/BakedSection/Rows"]
 layout_mode = 2
 theme_override_constants/separation = 6

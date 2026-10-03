@@ -98,6 +98,11 @@ func _doc_for(sample: String) -> Dictionary:
 				tl[kind]["params"]["pop"] = 0.0
 		if value == "center_split":
 			tl[kind]["params"]["overlap_hold"] = 0.3
+		if value == "text_morph":
+			tl[kind]["order"] = "all"
+			tl[kind]["stagger"] = 0.0
+			tl[kind]["duration"] = 1.6
+			tl[kind]["params"]["from_text"] = tr("Morph preview source")
 	if kind == "hold" and value == "glow_pulse":
 		d["style"]["glow"]["enabled"] = true
 		d["style"]["glow"]["size"] = 16.0
@@ -152,6 +157,8 @@ func _request_visible_player() -> void:
 		_static_t = 0.1
 	if value == "slam" and kind == "enter":
 		_static_t = 0.22
+	if value == "text_morph" and kind == "enter":
+		_static_t = 0.95
 	if not active:
 		_t = _static_t
 	_seek()

@@ -84,7 +84,40 @@ static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dicti
 			jobs.append({"id": "overlay", "font": fonts["main"], "style": style, "scale": sc,
 				"gradient": style["fill"]["type"] == "gradient", "entries": entries, "blur_em": blur_em,
 				"blur_px": max_font * sc * blur_em})
+	_add_morph_jobs(jobs, ev.text_morph, doc, fonts, bake_scale, blur_em)
 	return {"jobs": jobs, "glyph_keys": keys, "overlay_keys": overlay_keys, "signature": signature(doc, layout, bake_scale)}
+
+
+static func _add_morph_jobs(jobs: Array, morph: Dictionary, doc: Dictionary, fonts: Dictionary, scale: float, blur_em: float) -> void:
+	for group in morph.get("groups", []):
+		var role: String = group["role"]
+		var style := Doc.style_for(doc, role)
+		var fill: Dictionary = style["fill"]
+		var gradient: bool = fill["type"] == "gradient"
+		var space: String = fill["gradient"]["space"]
+		var dir := Vector2.from_angle(deg_to_rad(float(fill["gradient"]["angle"])))
+		var entries: Array = []
+		var largest := 0.0
+		var source: Dictionary = group["layout"]
+		for glyph in group["sources"]:
+			var size := float(glyph["font_size"])
+			largest = maxf(largest, size)
+			var entry := {"key": glyph["sprite_key"], "char": glyph["char"], "size_px": maxi(1, roundi(size * scale))}
+			if gradient:
+				var ab: Array
+				if space in ["block", "line"]:
+					var rect: Rect2 = source["pages"][0]["main_rect" if role == "main" else "sub_rect"]
+					if space == "line":
+						rect = source["lines"][int(glyph["line"])]["rect"]
+					ab = block_coeffs(rect, dir, glyph["pos"], float(glyph["base_rotation"]), scale)
+				else:
+					ab = glyph_coeffs(glyph["box"], dir, scale)
+				entry["grad_a"] = ab[0]
+				entry["grad_b"] = ab[1]
+			entries.append(entry)
+		if not entries.is_empty():
+			jobs.append({"id": "morph_%s_%d" % [role, int(group["page"])], "font": fonts[role], "style": style,
+				"scale": scale, "gradient": gradient, "entries": entries, "blur_em": blur_em, "blur_px": largest * scale * blur_em})
 
 
 ## 블록 영역 기준: P = pos + R(θ)·(V / s), t = (P·d - tmin) / len → t = V·a + b
