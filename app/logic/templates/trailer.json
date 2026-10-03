@@ -1,0 +1,164 @@
+{
+  "mode": "trailer",
+  "groups": ["typewriter", "line", "flow", "all_at_once", "scroll", "center_stamp", "center_split"],
+  "locale_patch": {
+    "ja": { "font": { "source": "bundled", "family": "Galmuri11", "path": "res://assets/fonts/galmuri/Galmuri11.ttf", "weight": 400 } }
+  },
+  "templates": [
+    {
+      "id": "trl_typewriter_log", "group": "typewriter", "icon": "tpl_trailer_typewriter", "loop": "once",
+      "name": { "ko": "타자기 서술", "ja": "タイプライター", "en": "Typewriter" },
+      "text": {
+        "ko": "회등 제도에는 등대가 일곱 있다.\n여섯은 오래전에 꺼졌다.\n\n일곱 번째 등대에는\n아무도 불을 켠 적이 없다.",
+        "ja": "灰灯諸島には七つの灯台がある。\n六つは遠い昔に消えた。\n\n七つ目の灯台には\n誰も火を灯したことがない。",
+        "en": "The Ashlamp Isles keep seven lighthouses.\nSix went dark long ago.\n\nThe seventh\nhas never been lit."
+      },
+      "patch": {
+        "layout": { "font_size": 44, "align": "left", "line_height": 1.5, "max_width": 0.8 },
+        "font": { "weight": 400 },
+        "style": { "fill": { "color": "#EDEAE2FF" }, "outline": { "size": 2, "color": "#0C0C0CFF" }, "shadow": { "offset": [2, 3], "blur": 2, "color": "#000000AA" } },
+        "timeline": {
+          "enter": { "effect": "typewriter", "order": "forward", "duration": 0.08, "stagger": 0.06, "easing": "linear", "params": { "pop": 0.1, "punct_pause": 0.35 } },
+          "hold": { "duration": 2.4 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.5, "easing": "sine_in" },
+          "page_gap": 0.4
+        }
+      }
+    },
+    {
+      "id": "trl_line_by_line", "group": "line", "icon": "tpl_trailer_line", "loop": "once",
+      "name": { "ko": "한 줄씩", "ja": "一行ずつ", "en": "Line by Line" },
+      "text": {
+        "ko": "안개는 밤마다 조금씩 짙어진다.\n등유는 바닥을 보이고\n등화술사는 하나둘 자취를 감췄다.\n\n그래서 우리는\n등지기가 되었다.",
+        "ja": "霧は夜ごとに濃くなっていく。\n灯油は底をつき\n灯火術師はひとり、またひとりと消えた。\n\nだから私たちは\n灯守になった。",
+        "en": "Each night the fog grows a little thicker.\nThe lamp oil runs low,\nand the lightwrights vanish one by one.\n\nSo we became\nthe Keepers."
+      },
+      "patch": {
+        "layout": { "font_size": 46, "line_height": 1.6 },
+        "font": { "weight": 400 },
+        "style": { "fill": { "color": "#F2F5FAFF" }, "outline": { "size": 3, "color": "#0A1018FF" } },
+        "timeline": {
+          "enter": { "effect": "slide", "order": "line", "duration": 0.7, "stagger": 0.8, "easing": "cubic_out", "params": { "dir": "up", "distance": 0.4 } },
+          "hold": { "duration": 2.0 },
+          "exit": { "effect": "fade", "order": "line", "duration": 0.4, "stagger": 0.15, "easing": "sine_in" },
+          "page_gap": 0.5
+        }
+      }
+    },
+    {
+      "id": "trl_flowing", "group": "flow", "icon": "tpl_trailer_flow", "loop": "once",
+      "name": { "ko": "흐르듯이", "ja": "流れるように", "en": "Flowing" },
+      "text": {
+        "ko": "썰물이 물러나면\n가라앉은 기록관의 문이 드러난다.\n\n그 안에는\n꺼진 등대들의 마지막 일지가 잠들어 있다.",
+        "ja": "潮が引くと\n沈んだ記録館の扉が姿を見せる。\n\nその奥には\n消えた灯台たちの最後の日誌が眠っている。",
+        "en": "When the tide pulls back,\nthe door of the Sunken Archive appears.\n\nInside sleep\nthe last logs of the darkened lights."
+      },
+      "patch": {
+        "layout": { "font_size": 46, "line_height": 1.55 },
+        "font": { "weight": 400 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 0, "stops": [[0.0, "#DFF6FF"], [1.0, "#8FC2E8"]], "space": "block" } },
+          "outline": { "size": 2, "color": "#06121EFF" },
+          "glow": { "enabled": true, "size": 10, "color": "#7FD4FF44", "strength": 0.6 }
+        },
+        "timeline": {
+          "enter": { "effect": "rise", "order": "forward", "duration": 0.9, "stagger": 0.035, "easing": "sine_out", "params": { "distance": 0.3, "blur": 0.15 } },
+          "hold": { "duration": 2.2, "effects": [ { "type": "wave", "amplitude": 2.0, "wavelength": 14, "speed": 0.4 } ] },
+          "exit": { "effect": "blur", "order": "forward", "duration": 0.6, "stagger": 0.015, "easing": "sine_in", "params": { "radius": 0.18 } },
+          "page_gap": 0.3
+        }
+      }
+    },
+    {
+      "id": "trl_all_at_once", "group": "all_at_once", "icon": "tpl_trailer_all", "loop": "once",
+      "name": { "ko": "한꺼번에", "ja": "一斉に", "en": "All at Once" },
+      "text": {
+        "ko": "서리목.\n\n소금시장.\n\n가라앉은 기록관.\n\n그리고, 일곱 번째 등대.",
+        "ja": "霜木。\n\n塩市場。\n\n沈んだ記録館。\n\nそして、七番目の灯台。",
+        "en": "Frostwood.\n\nThe Salt Market.\n\nThe Sunken Archive.\n\nAnd the Seventh Light."
+      },
+      "patch": {
+        "layout": { "font_size": 72, "letter_spacing": 0.05 },
+        "style": { "fill": { "color": "#FFFFFFFF" }, "outline": { "size": 4, "color": "#000000FF" }, "shadow": { "offset": [0, 6], "blur": 10, "color": "#000000AA" } },
+        "timeline": {
+          "enter": { "effect": "zoom", "order": "all", "duration": 0.6, "stagger": 0.0, "easing": "expo_out", "params": { "from_scale": 1.25 } },
+          "hold": { "duration": 1.2 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.35, "easing": "quad_in" },
+          "page_gap": 0.6
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 600 } }
+      }
+    },
+    {
+      "id": "trl_scroll_log", "group": "scroll", "icon": "tpl_trailer_scroll", "loop": "once",
+      "name": { "ko": "스크롤 일지", "ja": "スクロール", "en": "Scroll" },
+      "text": {
+        "ko": "회등 제도 항해 일지\n\n첫 종 — 서리목에서 출항\n셋째 종 — 소금시장에 정박\n다섯째 종 — 썰물, 기록관 입구 확인\n열두째 종 — 일곱 번째 등대를 보다",
+        "ja": "灰灯諸島 航海日誌\n\n一の鐘 — 霜木を出航\n三の鐘 — 塩市場に停泊\n五の鐘 — 引き潮、記録館の入口を確認\n十二の鐘 — 七番目の灯台を見る",
+        "en": "Ashlamp Isles: Ship's Log\n\nFirst Bell — departed Frostwood\nThird Bell — moored at the Salt Market\nFifth Bell — ebb tide; Archive entrance sighted\nTwelfth Bell — the Seventh Light in view"
+      },
+      "patch": {
+        "layout": { "font_size": 38, "line_height": 1.8, "max_height": 1.0, "auto_shrink": false },
+        "font": { "weight": 400 },
+        "style": { "fill": { "color": "#E8E2D0FF" }, "outline": { "size": 2, "color": "#0B0A08FF" }, "shadow": { "enabled": false } },
+        "timeline": {
+          "enter": { "effect": "fade", "order": "all", "duration": 0.8, "stagger": 0.0, "easing": "linear" },
+          "hold": { "duration": 14.0 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.8, "easing": "linear" },
+          "scroll": { "speed": 48 }
+        }
+      }
+    },
+    {
+      "id": "trl_center_stamp", "group": "center_stamp", "icon": "tpl_trailer_stamp", "loop": "once",
+      "name": { "ko": "한 글자씩 찍기", "ja": "一文字ずつ", "en": "Center Stamp" },
+      "text": { "ko": "불을 켜라", "ja": "火を灯せ", "en": "LIGHT IT" },
+      "patch": {
+        "layout": { "font_size": 96, "letter_spacing": 0.08 },
+        "style": {
+          "fill": { "color": "#FFFFFFFF" },
+          "outline": { "size": 6, "color": "#120A04FF" },
+          "glow": { "enabled": true, "size": 22, "color": "#FF9A3C88", "strength": 1.2 }
+        },
+        "timeline": {
+          "enter": { "effect": "center_stamp", "order": "forward", "duration": 0.3, "stagger": 0.0, "easing": "expo_out", "params": { "big_scale": 3.2, "hold_each": 0.24, "pause": 0.45, "slam_scale": 2.4 } },
+          "hold": { "duration": 1.8, "effects": [ { "type": "shake", "amplitude": 1.0, "frequency": 12 } ] },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.4, "easing": "quad_in" }
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 700 } }
+      }
+    },
+    {
+      "id": "trl_center_split", "group": "center_split", "icon": "tpl_trailer_split", "loop": "once",
+      "name": { "ko": "가운데서 갈라짐", "ja": "中央から展開", "en": "Center Split" },
+      "text": {
+        "ko": "마지막 등대로\n\n항로를 연다",
+        "ja": "最後の灯台へ\n\n航路を開け",
+        "en": "To the Last Lighthouse\n\nSet the Course"
+      },
+      "patch": {
+        "layout": { "font_size": 80, "letter_spacing": 0.06 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFFFFF"], [1.0, "#C9D6E8"]], "space": "block" } },
+          "outline": { "size": 4, "color": "#0A0F18FF" }
+        },
+        "decorations": [
+          { "type": "side_lines", "color": "#C9D6E8FF", "thickness": 2, "margin": 0.6, "length": 1.2, "use_outline": false, "animate": "grow_center", "delay": 0.3, "duration": 0.6 }
+        ],
+        "timeline": {
+          "enter": { "effect": "center_split", "order": "all", "duration": 0.8, "stagger": 0.0, "easing": "expo_out", "params": { "jitter": 0.5 } },
+          "hold": { "duration": 1.6 },
+          "exit": { "effect": "tracking", "order": "all", "duration": 0.5, "easing": "cubic_in", "params": { "spread": 0.8 } },
+          "page_gap": 0.35
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 600 } }
+      }
+    }
+  ]
+}

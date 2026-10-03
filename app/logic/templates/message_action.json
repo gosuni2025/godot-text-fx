@@ -1,0 +1,214 @@
+{
+  "mode": "message",
+  "groups": ["battle", "explore"],
+  "locale_patch": {
+    "ja": {"font": {"source": "bundled", "family": "Galmuri11", "path": "res://assets/fonts/galmuri/Galmuri11.ttf", "weight": 400}}
+  },
+  "templates": [
+    {
+      "id": "msg_battle_engage", "group": "battle", "icon": "tpl_battle_engage", "loop": "once",
+      "name": { "ko": "등대를 사수하라", "ja": "灯台を守りきれ", "en": "Beacon Defense" },
+      "text": { "ko": "등대를 사수하라", "ja": "灯台を守りきれ", "en": "HOLD THE BEACON" },
+      "patch": {
+        "layout": { "font_size": 112, "letter_spacing": 0.04 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFF1C2"], [1.0, "#FF6A2B"]], "space": "block" } },
+          "outline": { "enabled": true, "size": 8, "color": "#2A0A06FF" },
+          "outline2": { "enabled": true, "size": 4, "color": "#FFE9D6FF" },
+          "shadow": { "enabled": true, "offset": [6, 8], "blur": 2, "color": "#000000AA" }
+        },
+        "decorations": [
+          { "type": "side_lines", "color": "#FFB070FF", "thickness": 4, "margin": 0.4, "length": 0.7, "use_outline": true, "animate": "grow_start", "delay": 0.15, "duration": 0.35 }
+        ],
+        "timeline": {
+          "enter": { "effect": "pop", "order": "forward", "duration": 0.32, "stagger": 0.05, "easing": "back_out", "params": { "from_scale": 0.2 } },
+          "hold": { "duration": 1.4, "effects": [ { "type": "shake", "amplitude": 3.0, "frequency": 22 } ] },
+          "exit": { "effect": "zoom", "order": "all", "duration": 0.28, "easing": "cubic_in", "params": { "from_scale": 1.6 } }
+        }
+      }
+    },
+    {
+      "id": "msg_battle_ambush", "group": "battle", "icon": "tpl_battle_ambush", "loop": "once",
+      "name": { "ko": "기습", "ja": "奇襲", "en": "Ambush" },
+      "text": { "ko": "기습이다!", "ja": "奇襲だ！", "en": "AMBUSH!" },
+      "patch": {
+        "layout": { "font_size": 120 },
+        "style": {
+          "fill": { "color": "#E8DDFFFF" },
+          "outline": { "size": 7, "color": "#1B0B2EFF" },
+          "glow": { "enabled": true, "size": 18, "color": "#9B4DFFCC", "strength": 1.2 }
+        },
+        "timeline": {
+          "enter": { "effect": "glitch", "order": "random", "duration": 0.4, "stagger": 0.03, "easing": "expo_out", "params": { "intensity": 1.4 } },
+          "hold": { "duration": 1.3, "effects": [ { "type": "glitch", "interval": 0.7, "duration": 0.12, "intensity": 1.2, "slices": 5, "color_a": "#FF2E6AFF", "color_b": "#2EF2FFFF" } ] },
+          "exit": { "effect": "glitch", "order": "random", "duration": 0.3, "stagger": 0.02, "easing": "linear", "params": { "intensity": 1.0 } }
+        }
+      }
+    },
+    {
+      "id": "msg_battle_victory", "group": "battle", "icon": "tpl_battle_victory", "loop": "once",
+      "name": { "ko": "승리", "ja": "勝利", "en": "Victory" },
+      "text": { "ko": "등불을 지켜냈다", "ja": "灯を守り抜いた", "en": "The Light Holds" },
+      "patch": {
+        "layout": { "font_size": 88 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFFBE6"], [0.55, "#FFD86B"], [1.0, "#C98A1E"]], "space": "block" } },
+          "outline": { "size": 6, "color": "#3A2408FF" },
+          "glow": { "enabled": true, "size": 24, "color": "#FFC94D88", "strength": 0.9 }
+        },
+        "decorations": [
+          { "type": "band", "color": "#1A120899", "thickness": 0, "margin": 0.35, "length": 1.4, "use_outline": false, "animate": "grow_center", "delay": 0.0, "duration": 0.5 }
+        ],
+        "timeline": {
+          "enter": { "effect": "rise", "order": "center_out", "duration": 0.6, "stagger": 0.05, "easing": "cubic_out", "params": { "distance": 0.6, "blur": 0.2 } },
+          "hold": { "duration": 2.0, "effects": [ { "type": "float", "amplitude": 4.0, "period": 2.6 } ] },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.5, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_battle_defeat", "group": "battle", "icon": "tpl_battle_defeat", "loop": "once",
+      "name": { "ko": "꺼진 등화", "ja": "消えた灯火", "en": "Extinguished Lamp" },
+      "text": { "ko": "등불이 꺼졌다", "ja": "灯が消えた", "en": "The Lamp Goes Out" },
+      "patch": {
+        "layout": { "font_size": 84, "letter_spacing": 0.08 },
+        "style": {
+          "fill": { "color": "#B9C3CFFF" },
+          "outline": { "size": 4, "color": "#0B0E14FF" },
+          "shadow": { "offset": [0, 6], "blur": 10, "color": "#000000CC" }
+        },
+        "timeline": {
+          "enter": { "effect": "blur", "order": "forward", "duration": 0.9, "stagger": 0.09, "easing": "sine_out", "params": { "radius": 0.22 } },
+          "hold": { "duration": 2.2, "effects": [ { "type": "flicker", "rate": 6, "min_alpha": 0.55 } ] },
+          "exit": { "effect": "fade", "order": "reverse", "duration": 0.8, "stagger": 0.05, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_battle_boss", "group": "battle", "icon": "tpl_battle_boss", "loop": "once",
+      "name": { "ko": "거대한 그림자", "ja": "巨影", "en": "Looming Shape" },
+      "text": { "ko": "안개 속의 거체", "ja": "霧の中の巨影", "en": "A Shape in the Fog" },
+      "patch": {
+        "layout": { "font_size": 104 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFD0C8"], [1.0, "#B3122A"]], "space": "glyph" } },
+          "outline": { "size": 8, "color": "#14030AFF" },
+          "shadow": { "offset": [8, 10], "blur": 6, "color": "#000000BB" }
+        },
+        "decorations": [
+          { "type": "frame", "color": "#B3122AFF", "thickness": 3, "margin": 0.3, "length": 1.0, "use_outline": true, "animate": "fade", "delay": 0.5, "duration": 0.4 }
+        ],
+        "timeline": {
+          "enter": { "effect": "drop", "order": "forward", "duration": 0.55, "stagger": 0.07, "easing": "bounce_out", "params": { "distance": 1.5 } },
+          "hold": { "duration": 1.8, "effects": [ { "type": "shake", "amplitude": 1.5, "frequency": 9 } ] },
+          "exit": { "effect": "slide", "order": "all", "duration": 0.4, "easing": "quad_in", "params": { "dir": "down", "distance": 0.8 } }
+        }
+      }
+    },
+    {
+      "id": "msg_battle_turn", "group": "battle", "icon": "tpl_battle_turn", "loop": "once",
+      "name": { "ko": "차례 알림", "ja": "手番", "en": "Turn" },
+      "text": { "ko": "등지기의 차례", "ja": "灯守の番", "en": "Keepers' Turn" },
+      "patch": {
+        "layout": { "font_size": 76, "align": "left", "anchor": [0.08, 0.5] },
+        "style": { "fill": { "color": "#F4FBFFFF" }, "outline": { "size": 5, "color": "#0E2238FF" } },
+        "decorations": [
+          { "type": "band", "color": "#1C4E80CC", "thickness": 0, "margin": 0.25, "length": 2.0, "use_outline": false, "animate": "grow_start", "delay": 0.0, "duration": 0.3 }
+        ],
+        "timeline": {
+          "enter": { "effect": "slide", "order": "forward", "duration": 0.3, "stagger": 0.03, "easing": "quart_out", "params": { "dir": "left", "distance": 2.0 } },
+          "hold": { "duration": 1.2 },
+          "exit": { "effect": "slide", "order": "all", "duration": 0.25, "easing": "quart_in", "params": { "dir": "right", "distance": 2.0 } }
+        }
+      }
+    },
+    {
+      "id": "msg_explore_clue", "group": "explore", "icon": "tpl_explore_clue", "loop": "once",
+      "name": { "ko": "단서 발견", "ja": "手がかり", "en": "Clue" },
+      "text": { "ko": "단서 발견", "ja": "手がかり発見", "en": "Clue Found" },
+      "patch": {
+        "layout": { "font_size": 92 },
+        "style": {
+          "fill": { "color": "#E9FDFFFF" },
+          "outline": { "size": 5, "color": "#06323AFF" },
+          "glow": { "enabled": true, "size": 20, "color": "#3FE0FF99", "strength": 1.0 }
+        },
+        "decorations": [
+          { "type": "brackets", "color": "#7FF0FFFF", "thickness": 4, "margin": 0.3, "length": 0.35, "use_outline": true, "animate": "fade", "delay": 0.25, "duration": 0.3 }
+        ],
+        "timeline": {
+          "enter": { "effect": "pop", "order": "all", "duration": 0.35, "stagger": 0.0, "easing": "back_out", "params": { "from_scale": 0.4 } },
+          "hold": { "duration": 1.5, "effects": [ { "type": "pulse", "scale": 1.04, "period": 1.0 } ] }
+        }
+      }
+    },
+    {
+      "id": "msg_explore_archive", "group": "explore", "icon": "tpl_explore_door", "loop": "once",
+      "name": { "ko": "문이 열린다", "ja": "扉が開く", "en": "Door Opens" },
+      "text": { "ko": "기록관의 문이 열린다", "ja": "記録館の扉が開く", "en": "The Archive Opens" },
+      "patch": {
+        "layout": { "font_size": 72, "letter_spacing": 0.06 },
+        "style": { "fill": { "color": "#EFE6D2FF" }, "outline": { "size": 4, "color": "#231B10FF" } },
+        "decorations": [
+          { "type": "underline", "color": "#CDB07AFF", "thickness": 3, "margin": 0.25, "length": 1.1, "use_outline": true, "animate": "grow_center", "delay": 0.3, "duration": 0.6 }
+        ],
+        "timeline": {
+          "enter": { "effect": "center_split", "order": "all", "duration": 0.7, "stagger": 0.0, "easing": "expo_out", "params": { "jitter": 0.3 } },
+          "hold": { "duration": 1.8 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.5, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_explore_trap", "group": "explore", "icon": "tpl_explore_trap", "loop": "once",
+      "name": { "ko": "위험 경고", "ja": "危険", "en": "Hazard" },
+      "text": { "ko": "발밑을 조심하라", "ja": "足元に注意", "en": "Watch Your Step" },
+      "patch": {
+        "layout": { "font_size": 84 },
+        "style": {
+          "fill": { "color": "#FFD23FFF" },
+          "outline": { "size": 6, "color": "#141414FF" },
+          "outline2": { "enabled": true, "size": 3, "color": "#FFD23FFF" }
+        },
+        "decorations": [
+          { "type": "overline", "color": "#FFD23FFF", "thickness": 6, "margin": 0.25, "length": 1.2, "use_outline": true, "animate": "grow_start", "delay": 0.0, "duration": 0.25 },
+          { "type": "underline", "color": "#FFD23FFF", "thickness": 6, "margin": 0.25, "length": 1.2, "use_outline": true, "animate": "grow_start", "delay": 0.05, "duration": 0.25 }
+        ],
+        "timeline": {
+          "enter": { "effect": "typewriter", "order": "forward", "duration": 0.12, "stagger": 0.06, "easing": "linear", "params": { "pop": 0.3 } },
+          "hold": { "duration": 1.4, "effects": [ { "type": "blink", "period": 0.5, "min_alpha": 0.35, "hard": true } ] }
+        }
+      }
+    },
+    {
+      "id": "msg_explore_item", "group": "explore", "icon": "tpl_explore_item", "loop": "once",
+      "name": { "ko": "획득", "ja": "入手", "en": "Item Get" },
+      "text": { "ko": "등유 한 병을 얻었다", "ja": "灯油をひと瓶手に入れた", "en": "Got a Flask of Lamp Oil" },
+      "patch": {
+        "layout": { "font_size": 64 },
+        "style": { "fill": { "color": "#FFF6E0FF" }, "outline": { "size": 4, "color": "#3B2410FF" }, "glow": { "enabled": true, "size": 12, "color": "#FFB45066", "strength": 0.8 } },
+        "timeline": {
+          "enter": { "effect": "slide", "order": "forward", "duration": 0.35, "stagger": 0.03, "easing": "cubic_out", "params": { "dir": "up", "distance": 0.5 } },
+          "hold": { "duration": 1.6, "effects": [ { "type": "wave", "amplitude": 3.0, "wavelength": 10, "speed": 0.8 } ] }
+        }
+      }
+    },
+    {
+      "id": "msg_explore_tide", "group": "explore", "icon": "tpl_explore_tide", "loop": "once",
+      "name": { "ko": "썰물", "ja": "引き潮", "en": "Ebb Tide" },
+      "text": { "ko": "썰물이 시작된다", "ja": "引き潮が始まる", "en": "The Tide Recedes" },
+      "patch": {
+        "layout": { "font_size": 80 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 0, "stops": [[0.0, "#BFF4FF"], [1.0, "#2F7FD6"]], "space": "block" } },
+          "outline": { "size": 5, "color": "#061A33FF" }
+        },
+        "timeline": {
+          "enter": { "effect": "rise", "order": "forward", "duration": 0.6, "stagger": 0.06, "easing": "sine_out", "params": { "distance": 0.4, "blur": 0.15 } },
+          "hold": { "duration": 2.0, "effects": [ { "type": "wave", "amplitude": 6.0, "wavelength": 6, "speed": 0.6 } ] },
+          "exit": { "effect": "slide", "order": "forward", "duration": 0.5, "stagger": 0.03, "easing": "sine_in", "params": { "dir": "down", "distance": 0.4 } }
+        }
+      }
+    }
+  ]
+}

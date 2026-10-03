@@ -1,0 +1,150 @@
+{
+  "mode": "caption",
+  "groups": ["converge", "rise", "tracking", "center_split", "vertical", "slide", "typewriter"],
+  "locale_patch": {
+    "ja": { "font": { "source": "bundled", "family": "Galmuri11", "path": "res://assets/fonts/galmuri/Galmuri11.ttf", "weight": 400 } }
+  },
+  "templates": [
+    {
+      "id": "cap_converge", "group": "converge", "icon": "tpl_caption_converge", "loop": "once",
+      "name": { "ko": "위아래로 모임", "ja": "上下から集まる", "en": "Converge" },
+      "text": { "ko": "서리목 등대", "ja": "霜木灯台", "en": "Frostwood Light" },
+      "sub_text": { "ko": "첫 종, 밀물", "ja": "一の鐘、満ち潮", "en": "First Bell, Flood Tide" },
+      "patch": {
+        "layout": { "font_size": 84, "letter_spacing": 0.1, "sub": { "font_size": 34, "position": "below", "gap": 0.4 } },
+        "style": { "fill": { "color": "#F4F8FFFF" }, "outline": { "size": 4, "color": "#0A1220FF" }, "shadow": { "offset": [0, 4], "blur": 6, "color": "#00000099" } },
+        "timeline": {
+          "enter": { "effect": "converge", "order": "forward", "duration": 0.7, "stagger": 0.04, "easing": "cubic_out", "params": { "distance": 0.8, "mode": "role" } },
+          "hold": { "duration": 2.2 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.6, "easing": "sine_in" }
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 600 },
+                "sub_font": { "source": "bundled", "family": "Pretendard", "path": "res://assets/fonts/pretendard/Pretendard-Regular.otf", "weight": 400, "italic": false } }
+      }
+    },
+    {
+      "id": "cap_rise_market", "group": "rise", "icon": "tpl_caption_rise", "loop": "once",
+      "name": { "ko": "떠오름", "ja": "浮かび上がる", "en": "Rise" },
+      "text": { "ko": "소금시장 거리", "ja": "塩市場通り", "en": "Salt Market Row" },
+      "sub_text": { "ko": "아홉째 종, 밤시장", "ja": "九の鐘、夜市", "en": "Ninth Bell, Night Market" },
+      "patch": {
+        "layout": { "font_size": 80, "sub": { "font_size": 34, "position": "below", "gap": 0.45 } },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFF4DA"], [1.0, "#FFB25C"]], "space": "block" } },
+          "outline": { "size": 4, "color": "#2A1606FF" },
+          "glow": { "enabled": true, "size": 14, "color": "#FF9D3C55", "strength": 0.7 }
+        },
+        "sub_style": {
+          "fill": { "color": "#FFE6C0FF" }, "outline": { "size": 3, "color": "#2A1606FF" }, "glow": { "enabled": false }
+        },
+        "decorations": [
+          { "type": "underline", "color": "#FFC680FF", "thickness": 2, "margin": 0.18, "length": 1.15, "use_outline": true, "animate": "grow_center", "delay": 0.35, "duration": 0.5 }
+        ],
+        "timeline": {
+          "enter": { "effect": "rise", "order": "forward", "duration": 0.7, "stagger": 0.05, "easing": "cubic_out", "params": { "distance": 0.5, "blur": 0.2 } },
+          "hold": { "duration": 2.2 },
+          "exit": { "effect": "rise", "order": "forward", "duration": 0.5, "stagger": 0.03, "easing": "cubic_in", "params": { "distance": 0.3, "blur": 0.15 } }
+        }
+      }
+    },
+    {
+      "id": "cap_tracking_archive", "group": "tracking", "icon": "tpl_caption_tracking", "loop": "once",
+      "name": { "ko": "자간 좁히기", "ja": "字間を詰める", "en": "Tracking" },
+      "text": { "ko": "가라앉은 기록관", "ja": "沈んだ記録館", "en": "The Sunken Archive" },
+      "sub_text": { "ko": "다섯째 종, 썰물", "ja": "五の鐘、引き潮", "en": "Fifth Bell, Ebb Tide" },
+      "patch": {
+        "layout": { "font_size": 76, "letter_spacing": 0.15, "sub": { "font_size": 30, "position": "below", "gap": 0.5 } },
+        "style": { "fill": { "color": "#DCEBF0FF" }, "outline": { "size": 3, "color": "#071418FF" }, "shadow": { "offset": [0, 5], "blur": 10, "color": "#000000AA" } },
+        "decorations": [
+          { "type": "side_lines", "color": "#9FC4CCFF", "thickness": 2, "margin": 0.5, "length": 0.8, "use_outline": false, "animate": "grow_center", "delay": 0.5, "duration": 0.7 }
+        ],
+        "timeline": {
+          "enter": { "effect": "tracking", "order": "all", "duration": 1.4, "stagger": 0.0, "easing": "expo_out", "params": { "spread": 1.6 } },
+          "hold": { "duration": 2.0 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.7, "easing": "sine_in" }
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 500 } }
+      }
+    },
+    {
+      "id": "cap_center_split_seventh", "group": "center_split", "icon": "tpl_caption_split", "loop": "once",
+      "name": { "ko": "가운데서 펼침", "ja": "中央から開く", "en": "Center Split" },
+      "text": { "ko": "일곱 번째 등대", "ja": "七番目の灯台", "en": "The Seventh Lighthouse" },
+      "sub_text": { "ko": "열두째 종, 무풍", "ja": "十二の鐘、凪", "en": "Twelfth Bell, Dead Calm" },
+      "patch": {
+        "layout": { "font_size": 80, "sub": { "font_size": 32, "position": "above", "gap": 0.4 } },
+        "style": {
+          "fill": { "color": "#FFFFFFFF" },
+          "outline": { "size": 4, "color": "#000000FF" },
+          "glow": { "enabled": true, "size": 20, "color": "#FFFFFF33", "strength": 0.6 }
+        },
+        "decorations": [
+          { "type": "frame", "color": "#FFFFFFCC", "thickness": 2, "margin": 0.45, "length": 1.0, "use_outline": false, "animate": "fade", "delay": 0.6, "duration": 0.5 }
+        ],
+        "timeline": {
+          "enter": { "effect": "center_split", "order": "all", "duration": 0.9, "stagger": 0.0, "easing": "expo_out", "params": { "jitter": 0.4 } },
+          "hold": { "duration": 2.4 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.8, "easing": "sine_in" }
+        }
+      },
+      "locale_patch": {
+        "en": { "font": { "source": "bundled", "family": "Cinzel", "path": "res://assets/fonts/cinzel/Cinzel-Variable.ttf", "weight": 700 } }
+      }
+    },
+    {
+      "id": "cap_vertical_isles", "group": "vertical", "icon": "tpl_caption_vertical", "loop": "once",
+      "name": { "ko": "세로쓰기", "ja": "縦書き", "en": "Vertical" },
+      "text": { "ko": "회등 제도", "ja": "灰灯諸島", "en": "Ashlamp Isles" },
+      "sub_text": { "ko": "셋째 종, 짙은 안개", "ja": "三の鐘、濃霧", "en": "Third Bell, Thick Fog" },
+      "patch": {
+        "layout": { "direction": "vertical", "font_size": 72, "anchor": [0.86, 0.45], "align": "right", "valign": "top",
+                    "sub": { "font_size": 30, "position": "below", "gap": 0.6 } },
+        "style": { "fill": { "color": "#F0F0EAFF" }, "outline": { "size": 3, "color": "#101010FF" }, "shadow": { "offset": [3, 3], "blur": 4, "color": "#00000099" } },
+        "timeline": {
+          "enter": { "effect": "wipe", "order": "forward", "duration": 0.4, "stagger": 0.12, "easing": "quad_out", "params": { "dir": "down" } },
+          "hold": { "duration": 2.4 },
+          "exit": { "effect": "fade", "order": "reverse", "duration": 0.5, "stagger": 0.05, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "cap_slide_corner", "group": "slide", "icon": "tpl_caption_corner", "loop": "once",
+      "name": { "ko": "모서리 자막", "ja": "隅のテロップ", "en": "Corner" },
+      "text": { "ko": "서리목 선착장", "ja": "霜木の船着き場", "en": "Frostwood Pier" },
+      "sub_text": { "ko": "둘째 종, 서리", "ja": "二の鐘、霜", "en": "Second Bell, Frost" },
+      "patch": {
+        "layout": { "font_size": 56, "align": "left", "valign": "bottom", "anchor": [0.06, 0.9], "sub": { "font_size": 28, "position": "above", "gap": 0.3 } },
+        "style": { "fill": { "color": "#FFFFFFFF" }, "outline": { "size": 3, "color": "#0A0A0AFF" }, "shadow": { "enabled": false } },
+        "sub_style": { "fill": { "color": "#BFE3FFFF" }, "outline": { "size": 2, "color": "#0A0A0AFF" }, "shadow": { "enabled": false } },
+        "decorations": [
+          { "type": "band", "color": "#000000AA", "thickness": 0, "margin": 0.3, "length": 1.3, "use_outline": false, "animate": "grow_start", "delay": 0.0, "duration": 0.35 }
+        ],
+        "timeline": {
+          "enter": { "effect": "slide", "order": "forward", "duration": 0.4, "stagger": 0.025, "easing": "quart_out", "params": { "dir": "left", "distance": 1.0 } },
+          "hold": { "duration": 2.4 },
+          "exit": { "effect": "slide", "order": "all", "duration": 0.35, "easing": "quart_in", "params": { "dir": "left", "distance": 1.0 } }
+        }
+      }
+    },
+    {
+      "id": "cap_typewriter_log", "group": "typewriter", "icon": "tpl_caption_log", "loop": "once",
+      "name": { "ko": "일지 기록", "ja": "日誌", "en": "Log Entry" },
+      "text": { "ko": "항해 일지, 셋째 날", "ja": "航海日誌、三日目", "en": "Ship's Log, Day Three" },
+      "sub_text": { "ko": "여섯째 종 · 소금시장 앞바다", "ja": "六の鐘・塩市場沖", "en": "Sixth Bell · Off the Salt Market" },
+      "patch": {
+        "layout": { "font_size": 48, "align": "left", "valign": "top", "anchor": [0.06, 0.1], "sub": { "font_size": 26, "position": "below", "gap": 0.4 } },
+        "font": { "source": "bundled", "family": "Galmuri11", "path": "res://assets/fonts/galmuri/Galmuri11.ttf", "weight": 400 },
+        "style": { "fill": { "color": "#B8FFCFFF" }, "outline": { "size": 2, "color": "#031A0BFF" }, "shadow": { "enabled": false }, "glow": { "enabled": true, "size": 8, "color": "#3CFF8A44", "strength": 0.6 } },
+        "timeline": {
+          "enter": { "effect": "typewriter", "order": "forward", "duration": 0.06, "stagger": 0.05, "easing": "linear", "params": { "pop": 0.0, "punct_pause": 0.2 } },
+          "hold": { "duration": 2.4, "effects": [ { "type": "flicker", "rate": 20, "min_alpha": 0.85 } ] },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.3, "easing": "linear" }
+        }
+      }
+    }
+  ]
+}

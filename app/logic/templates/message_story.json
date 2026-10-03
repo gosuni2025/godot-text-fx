@@ -1,0 +1,219 @@
+{
+  "mode": "message",
+  "groups": ["narrator", "scene_time", "check"],
+  "locale_patch": {
+    "ja": {"font": {"source": "bundled", "family": "Galmuri11", "path": "res://assets/fonts/galmuri/Galmuri11.ttf", "weight": 400}}
+  },
+  "templates": [
+    {
+      "id": "msg_narrator_pause", "group": "narrator", "icon": "tpl_narrator_pause", "loop": "loop_hold",
+      "name": { "ko": "항해사 휴식", "ja": "航海士の休息", "en": "Navigator's Rest" },
+      "text": { "ko": "잠시 숨을 고르자", "ja": "ひと息つこう", "en": "Let Us Pause" },
+      "sub_text": { "ko": "— 항해사", "ja": "— 航海士", "en": "— the Navigator" },
+      "patch": {
+        "layout": { "font_size": 72, "sub": { "font_size": 32, "position": "below", "gap": 0.5 } },
+        "style": { "fill": { "color": "#F3EEE4FF" }, "outline": { "size": 3, "color": "#1E1A14FF" }, "shadow": { "offset": [0, 4], "blur": 8, "color": "#00000088" } },
+        "timeline": {
+          "enter": { "effect": "fade", "order": "forward", "duration": 0.6, "stagger": 0.05, "easing": "sine_out" },
+          "hold": { "duration": 2.4, "effects": [ { "type": "float", "amplitude": 3.0, "period": 3.2 } ] },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.5, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_narrator_choice", "group": "narrator", "icon": "tpl_narrator_choice", "loop": "loop_hold",
+      "name": { "ko": "선택의 물음", "ja": "問いかけ", "en": "Question" },
+      "text": { "ko": "어느 쪽으로 갈 것인가", "ja": "どちらへ進む？", "en": "Which Way Now?" },
+      "patch": {
+        "layout": { "font_size": 68 },
+        "style": { "fill": { "color": "#FFFFFFFF" }, "outline": { "size": 4, "color": "#202634FF" } },
+        "decorations": [
+          { "type": "brackets", "color": "#C8D2E6FF", "thickness": 3, "margin": 0.35, "length": 0.3, "use_outline": true, "animate": "fade", "delay": 0.0, "duration": 0.3 }
+        ],
+        "timeline": {
+          "enter": { "effect": "typewriter", "order": "forward", "duration": 0.1, "stagger": 0.07, "easing": "linear", "params": { "pop": 0.15, "punct_pause": 0.3 } },
+          "hold": { "duration": 2.0, "effects": [ { "type": "blink", "period": 1.6, "min_alpha": 0.75, "hard": false } ] }
+        }
+      }
+    },
+    {
+      "id": "msg_narrator_secret", "group": "narrator", "icon": "tpl_narrator_secret", "loop": "loop_hold",
+      "name": { "ko": "봉인된 전언", "ja": "封じられた伝言", "en": "Sealed Message" },
+      "text": { "ko": "비밀 한 가지", "ja": "ひとつの秘密", "en": "A Secret" },
+      "patch": {
+        "layout": { "font_size": 80, "letter_spacing": 0.1 },
+        "style": {
+          "fill": { "color": "#F1E6FFFF" },
+          "outline": { "size": 3, "color": "#20103AFF" },
+          "glow": { "enabled": true, "size": 28, "color": "#A66CFF77", "strength": 1.1 }
+        },
+        "timeline": {
+          "enter": { "effect": "blur", "order": "random", "duration": 0.8, "stagger": 0.06, "easing": "sine_out", "params": { "radius": 0.28 } },
+          "hold": { "duration": 2.2, "effects": [ { "type": "pulse", "scale": 1.03, "period": 2.0 }, { "type": "flicker", "rate": 3, "min_alpha": 0.8 } ] },
+          "exit": { "effect": "blur", "order": "random", "duration": 0.6, "stagger": 0.04, "easing": "sine_in", "params": { "radius": 0.28 } }
+        }
+      }
+    },
+    {
+      "id": "msg_narrator_close", "group": "narrator", "icon": "tpl_narrator_close", "loop": "loop_hold",
+      "name": { "ko": "마무리", "ja": "締め", "en": "Closing" },
+      "text": { "ko": "오늘의 항해는 여기까지", "ja": "今日の航海はここまで", "en": "That's All for Tonight" },
+      "patch": {
+        "layout": { "font_size": 64 },
+        "style": { "fill": { "color": "#FFF4DDFF" }, "outline": { "enabled": false }, "shadow": { "offset": [0, 3], "blur": 6, "color": "#000000AA" } },
+        "decorations": [
+          { "type": "band", "color": "#0E1420CC", "thickness": 0, "margin": 0.45, "length": 3.0, "use_outline": false, "animate": "fade", "delay": 0.0, "duration": 0.6 }
+        ],
+        "timeline": {
+          "enter": { "effect": "fade", "order": "word", "duration": 0.7, "stagger": 0.25, "easing": "sine_out" },
+          "hold": { "duration": 2.6 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.9, "easing": "sine_in_out" }
+        }
+      }
+    },
+    {
+      "id": "msg_scene_night", "group": "scene_time", "icon": "tpl_scene_night", "loop": "once",
+      "name": { "ko": "밤", "ja": "夜", "en": "Night" },
+      "text": { "ko": "밤이 내린다", "ja": "夜が降りる", "en": "Night Falls" },
+      "patch": {
+        "layout": { "font_size": 88, "letter_spacing": 0.12 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#E4ECFF"], [1.0, "#5C6FB8"]], "space": "block" } },
+          "outline": { "size": 3, "color": "#070B1CFF" },
+          "glow": { "enabled": true, "size": 18, "color": "#6F86FF55", "strength": 0.8 }
+        },
+        "timeline": {
+          "enter": { "effect": "slide", "order": "forward", "duration": 0.9, "stagger": 0.1, "easing": "sine_out", "params": { "dir": "down", "distance": 0.3 } },
+          "hold": { "duration": 2.0 },
+          "exit": { "effect": "fade", "order": "forward", "duration": 0.7, "stagger": 0.06, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_scene_dawn", "group": "scene_time", "icon": "tpl_scene_dawn", "loop": "once",
+      "name": { "ko": "첫 종", "ja": "一の鐘", "en": "First Bell" },
+      "text": { "ko": "첫 종이 울린다", "ja": "一の鐘が鳴る", "en": "The First Bell Rings" },
+      "patch": {
+        "layout": { "font_size": 80 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFF8E8"], [1.0, "#FFB36B"]], "space": "block" } },
+          "outline": { "size": 4, "color": "#3A1E0CFF" }
+        },
+        "decorations": [
+          { "type": "side_lines", "color": "#FFD9A8FF", "thickness": 2, "margin": 0.5, "length": 0.9, "use_outline": false, "animate": "grow_center", "delay": 0.4, "duration": 0.6 }
+        ],
+        "timeline": {
+          "enter": { "effect": "tracking", "order": "all", "duration": 1.0, "stagger": 0.0, "easing": "expo_out", "params": { "spread": 1.2 } },
+          "hold": { "duration": 1.8 },
+          "exit": { "effect": "fade", "order": "all", "duration": 0.6, "easing": "sine_in" }
+        }
+      }
+    },
+    {
+      "id": "msg_scene_later", "group": "scene_time", "icon": "tpl_scene_later", "loop": "once",
+      "name": { "ko": "세 종의 공백", "ja": "三つの鐘の空白", "en": "Between Three Bells" },
+      "text": { "ko": "세 종 뒤", "ja": "三つの鐘の後", "en": "Three Bells Later" },
+      "patch": {
+        "layout": { "font_size": 76, "align": "left", "anchor": [0.1, 0.82] },
+        "style": { "fill": { "color": "#FFFFFFFF" }, "outline": { "size": 4, "color": "#111111FF" } },
+        "decorations": [
+          { "type": "underline", "color": "#FFFFFFFF", "thickness": 3, "margin": 0.2, "length": 1.0, "use_outline": true, "animate": "grow_start", "delay": 0.2, "duration": 0.5 }
+        ],
+        "timeline": {
+          "enter": { "effect": "wipe", "order": "forward", "duration": 0.25, "stagger": 0.05, "easing": "quad_out", "params": { "dir": "right" } },
+          "hold": { "duration": 1.6 },
+          "exit": { "effect": "wipe", "order": "forward", "duration": 0.2, "stagger": 0.03, "easing": "quad_in", "params": { "dir": "right" } }
+        }
+      }
+    },
+    {
+      "id": "msg_scene_memory", "group": "scene_time", "icon": "tpl_scene_memory", "loop": "once",
+      "name": { "ko": "옛 등대의 잔상", "ja": "古い灯台の残像", "en": "Lighthouse Echoes" },
+      "text": { "ko": "그날의 등대", "ja": "あの日の灯台", "en": "The Lighthouse, Back Then" },
+      "patch": {
+        "layout": { "font_size": 80 },
+        "style": {
+          "fill": { "color": "#EAD9B8FF" },
+          "outline": { "size": 3, "color": "#2B1F12FF" },
+          "shadow": { "offset": [0, 0], "blur": 14, "color": "#000000AA" },
+          "opacity": 0.92
+        },
+        "timeline": {
+          "enter": { "effect": "blur", "order": "all", "duration": 1.2, "stagger": 0.0, "easing": "sine_in_out", "params": { "radius": 0.35 } },
+          "hold": { "duration": 2.2, "effects": [ { "type": "flicker", "rate": 4, "min_alpha": 0.7 } ] },
+          "exit": { "effect": "blur", "order": "all", "duration": 1.0, "easing": "sine_in_out", "params": { "radius": 0.35 } }
+        }
+      }
+    },
+    {
+      "id": "msg_check_critical", "group": "check", "icon": "tpl_check_critical", "loop": "loop_hold",
+      "name": { "ko": "빛길이 열렸다", "ja": "光の航路が開いた", "en": "Beacon Breakthrough" },
+      "text": { "ko": "빛길이 열렸다", "ja": "光の航路が開いた", "en": "A PATH OF LIGHT" },
+      "patch": {
+        "layout": { "font_size": 132 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFFFFF"], [0.5, "#FFE680"], [1.0, "#FF9E1F"]], "space": "block" } },
+          "outline": { "size": 8, "color": "#40200AFF" },
+          "outline2": { "enabled": true, "size": 5, "color": "#FFF6D0FF" },
+          "glow": { "enabled": true, "size": 32, "color": "#FFD24D99", "strength": 1.4 }
+        },
+        "timeline": {
+          "enter": { "effect": "zoom", "order": "center_out", "duration": 0.4, "stagger": 0.04, "easing": "back_out", "params": { "from_scale": 3.0 } },
+          "hold": { "duration": 1.6, "effects": [ { "type": "pulse", "scale": 1.06, "period": 0.8 }, { "type": "color_cycle", "period": 2.4, "saturation": 0.25 } ] },
+          "exit": { "effect": "zoom", "order": "all", "duration": 0.3, "easing": "cubic_in", "params": { "from_scale": 0.5 } }
+        }
+      }
+    },
+    {
+      "id": "msg_check_success", "group": "check", "icon": "tpl_check_success", "loop": "loop_hold",
+      "name": { "ko": "신호 일치", "ja": "信号の一致", "en": "Signal Aligned" },
+      "text": { "ko": "등화 신호 일치", "ja": "灯火信号が一致", "en": "Signal Aligned" },
+      "patch": {
+        "layout": { "font_size": 100 },
+        "style": {
+          "fill": { "color": "#E6FFF3FF" },
+          "outline": { "size": 6, "color": "#0B3324FF" },
+          "glow": { "enabled": true, "size": 14, "color": "#4DFFB077", "strength": 0.8 }
+        },
+        "decorations": [
+          { "type": "brackets", "color": "#7DF2C0FF", "thickness": 5, "margin": 0.3, "length": 0.3, "use_outline": true, "animate": "grow_center", "delay": 0.2, "duration": 0.3 }
+        ],
+        "timeline": {
+          "enter": { "effect": "pop", "order": "forward", "duration": 0.3, "stagger": 0.05, "easing": "back_out", "params": { "from_scale": 0.3 } },
+          "hold": { "duration": 1.4 }
+        }
+      }
+    },
+    {
+      "id": "msg_check_failure", "group": "check", "icon": "tpl_check_failure", "loop": "loop_hold",
+      "name": { "ko": "신호 상실", "ja": "信号喪失", "en": "Signal Lost" },
+      "text": { "ko": "신호를 놓쳤다", "ja": "信号を取り逃した", "en": "Signal Lost" },
+      "patch": {
+        "layout": { "font_size": 100 },
+        "style": { "fill": { "color": "#D9D2D4FF" }, "outline": { "size": 6, "color": "#2A1014FF" }, "shadow": { "offset": [4, 8], "blur": 4, "color": "#000000AA" } },
+        "timeline": {
+          "enter": { "effect": "drop", "order": "forward", "duration": 0.5, "stagger": 0.06, "easing": "bounce_out", "params": { "distance": 1.0 } },
+          "hold": { "duration": 1.4, "effects": [ { "type": "shake", "amplitude": 1.2, "frequency": 14 } ] }
+        }
+      }
+    },
+    {
+      "id": "msg_check_fumble", "group": "check", "icon": "tpl_check_fumble", "loop": "loop_hold",
+      "name": { "ko": "렌즈가 부서졌다", "ja": "レンズが砕けた", "en": "Lens Break" },
+      "text": { "ko": "렌즈가 부서졌다", "ja": "レンズが砕けた", "en": "LENS SHATTERED" },
+      "patch": {
+        "layout": { "font_size": 132 },
+        "style": {
+          "fill": { "type": "gradient", "gradient": { "angle": 90, "stops": [[0.0, "#FFB3B3"], [1.0, "#7A0010"]], "space": "block" } },
+          "outline": { "size": 8, "color": "#0D0002FF" },
+          "outline2": { "enabled": true, "size": 3, "color": "#FF4D5EFF" }
+        },
+        "timeline": {
+          "enter": { "effect": "scatter", "order": "random", "duration": 0.5, "stagger": 0.03, "easing": "expo_out", "params": { "distance": 3.0, "angle": 120 } },
+          "hold": { "duration": 1.6, "effects": [ { "type": "glitch", "interval": 1.0, "duration": 0.15, "intensity": 1.5, "slices": 6, "color_a": "#FF1F3DFF", "color_b": "#1FFFE0FF" }, { "type": "shake", "amplitude": 2.0, "frequency": 20 } ] },
+          "exit": { "effect": "scatter", "order": "random", "duration": 0.4, "stagger": 0.02, "easing": "expo_in", "params": { "distance": 3.0, "angle": 120 } }
+        }
+      }
+    }
+  ]
+}

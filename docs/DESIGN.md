@@ -209,6 +209,44 @@ tests/                       # SceneTree 테스트, run_all.gd
 - `EditorBot`: 시드로 결정되는 봇. 템플릿 선택·값 변경·재생/탐색·내보내기를 명령으로 수행하고 OpLog를 남긴다. 테스트와 AI 조작용.
 - 템플릿: `app/logic/templates/*.json` 또는 GDScript 표. 모드·분류(전투/탐색/진행자/장면·시간/판정)·아이콘 id·견본 문장(ko/ja/en, `Lore.txt` 세계관)·문서 패치(기본값과의 차이)·loop 기본값.
 
+### 6.1 구현 메모
+
+파일: `editor_model.gd`(상태·실행 취소·재생·내보내기), `doc_commands.gd`(문서 명령 순수 계산), `doc_schema.gd`(필드 규칙·경로),
+`doc_api.gd`(기본값·정규화 창구: 런타임 `TextFxDoc`를 쓰고 JSON 모양으로 맞춤), `serialization.gd`, `op_log.gd`, `replay.gd`, `editor_bot.gd`, `templates.gd` + `templates/*.json`.
+스크립트끼리는 `preload` 상수로 참조한다(class_name 비의존).
+
+명령 전체(잘못된 입력은 `false`, 문서·상태 불변, 이유는 `model.last_error`):
+
+| op | 인자 | 실행 취소 |
+|---|---|---|
+| set | path, value, merge?(기본 true) | O, 같은 path 연속은 합침 |
+| unset | path (열린 사전: 효과 params·유지 효과·장식의 추가 키만) | O |
+| set_text | text?, sub_text?, merge? | O, 연속 입력은 합침 |
+| set_mode | mode | O |
+| list_add | path, value(타입 id 문자열 또는 dict / 그라데이션은 [pos, color]), index? | O |
+| list_remove | path, index | O |
+| list_move | path, from, to | O |
+| apply_template | id, keep_text?(기본 false) — canvas·seed는 유지 | O |
+| load_doc | doc(dict) 또는 string(`TFX1:`) | O |
+| set_locale | locale(ko/ja/en) | 견본 교체가 있으면 그 문서 변경만 O |
+| seek | t(0~3600) / play from? / pause / select path | X |
+| undo / redo | – | – |
+| export | kind: doc_json · doc_string · baked_json(fps? 1~120, 기본 30, `TextFxBakedExport.bake` 호출) | X |
+
+- 경로: `.` 구분, 배열은 번호(`decorations.0.color`, `timeline.hold.effects.1.amplitude`). 없는 키는 거부(오타 방지).
+  목록 명령 경로: `decorations`(최대 12), `timeline.hold.effects`(최대 8), `style.fill.gradient.stops`·`sub_style.fill.gradient.stops`(2~8).
+- 모든 문서 명령은 결과를 정규화한 뒤 `doc_schema` 규칙(형식·범위·선택지)으로 문서 전체를 검사하고, 통과할 때만 반영한다.
+- 문서 안의 수는 JSON 파서와 같은 모양(float)으로 유지해 "문서 → JSON → 문서" 왕복 해시가 같다. 해시는 키 정렬 JSON의 SHA-256.
+- `changed(paths)`: 문서 경로, 문서 전체 `"*"`, 상태 `"$time" "$playing" "$locale" "$selection" "$export" "$history"`. 값이 같은 set은 신호·기록 없음.
+- `last_export = { ok, kind, text, hash(text SHA-256), data?(baked) }`. `advance(dt)`는 UI 재생 시계용 메서드로 명령·기록에 남지 않는다.
+- 언어 전환: 마지막으로 적용한 템플릿이 있으면 `name/text/sub_text/font/sub_font` 중 이전 언어 견본과 같은(사용자가 고치지 않은) 필드만 새 언어 견본으로 바꾼다.
+- 템플릿 JSON: 파일 `{ mode, groups[], locale_patch{loc: patch}, templates[] }`(한 모드를 여러 파일로 나눌 수 있음),
+  템플릿 `{ id, group, icon, loop, name{ko,ja,en}, text{..}, sub_text{..}?, patch, locale_patch{loc: patch}? }`.
+  적용 순서: 기본값 ⊕ 파일 locale_patch[loc] ⊕ patch ⊕ 템플릿 locale_patch[loc] ⊕ {mode, name, text, sub_text, loop}.
+  언어별 글꼴은 locale_patch로 준다: 기본 Pretendard(ko/en), ja는 파일 단위로 Galmuri11, 라틴 제목 템플릿은 en에서 Cinzel.
+- OpLog 내용 JSON: `{ format: "text_fx_oplog", format_version: 1, seed, locale, start_doc, commands[] }`. 거부된 명령도 기록해 리플레이 결과(명령별 성공 여부)까지 같게 한다.
+- `EditorBot.new(seed, start_doc?, locale?)`: `send(cmd)`, `run_plan(cmds)`, `run_random(steps)`(첫 명령은 템플릿 적용), `final_hash()`, `log`. 난수는 자체 xorshift32.
+
 ## 7. 에디터 UI (app/editor)
 
 - 왼쪽: 미리보기(체커보드/단색/사용자 이미지 배경, 캔버스 비율 유지) + 재생 바(재생/일시정지, 처음으로, 시간 스크럽, 반복 방식, 퇴장 켜기).
