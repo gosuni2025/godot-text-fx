@@ -32,15 +32,19 @@ static func bake(doc: Dictionary, fps: float = 30.0, fonts: Dictionary = {}) -> 
 	var overlay_slot := {}
 	if tl.stamp_enabled:
 		var params: Dictionary = ev.doc["timeline"]["enter"]["params"]
-		var big := float(params.get("big_scale", 3.0))
+		var big := maxf(0.1, float(params.get("big_scale", 3.0)))
+		var viewport_scale := maxf(0.0, float(params.get("viewport_scale", 0.0)))
 		var L: Dictionary = ev.doc["layout"]
 		var canvas: Vector2 = layout["canvas"]
 		var center := canvas * Vector2(float(L["anchor"][0]), float(L["anchor"][1])) + Vector2(float(L["offset"][0]), float(L["offset"][1]))
+		if viewport_scale > 0.0:
+			center = canvas * 0.5
 		for g in layout["glyphs"]:
 			if g["role"] == "main":
+				var overlay_size := minf(canvas.x, canvas.y) * viewport_scale if viewport_scale > 0.0 else float(g["font_size"]) * big
 				overlay_slot[int(g["index"])] = glyph_list.size()
 				glyph_list.append({"index": glyph_list.size(), "char": g["char"], "role": "overlay", "source": g["index"],
-					"font_size": int(round(float(g["font_size"]) * big)), "base": [_r(center.x), _r(center.y)], "rot": 0.0})
+					"font_size": maxi(1, roundi(overlay_size)), "base": [_r(center.x), _r(center.y)], "rot": 0.0})
 	var count := maxi(1, int(round(duration * fps)))
 	var frames: Array = []
 	for f in count:
@@ -58,9 +62,13 @@ static func bake(doc: Dictionary, fps: float = 30.0, fonts: Dictionary = {}) -> 
 			if not st.visible:
 				continue
 			var gd: Dictionary = glyph_list[slot]
+			var scale := st.scale
+			if st.overlay:
+				# 정수 font_size 반올림으로 생기는 오차도 프레임 배율에 담아 런타임의 실제 크기를 보존한다.
+				scale *= float(layout["glyphs"][st.index]["font_size"]) * st.overlay_scale / float(gd["font_size"])
 			var bx: float = gd["base"][0]
 			var by: float = gd["base"][1]
-			row[slot] = [_r(st.pos.x - bx), _r(st.pos.y - by), _r(st.scale.x), _r(st.scale.y),
+			row[slot] = [_r(st.pos.x - bx), _r(st.pos.y - by), _r(scale.x), _r(scale.y),
 				_r(st.rotation - float(gd["rot"])), _r(st.alpha)]
 		frames.append(row)
 	var last: Dictionary = tl.pages[tl.page_count - 1]

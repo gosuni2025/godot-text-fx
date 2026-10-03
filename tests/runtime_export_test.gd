@@ -3,6 +3,7 @@ extends RefCounted
 
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
 const Baked := preload("res://addons/text_fx/core/fx_baked_export.gd")
+const Evaluator := preload("res://addons/text_fx/core/fx_evaluator.gd")
 
 
 func run(t) -> void:
@@ -55,3 +56,61 @@ func run(t) -> void:
 	t.eq(bs["glyphs"][4]["role"], "overlay", "overlay role")
 	t.eq(bs["frames"][2][4][5] > 0.0, true, "overlay visible early")
 	t.eq(bs["frames"][2][0][5], 0.0, "normal glyph hidden early")
+	_overlay_matches_runtime(t, 0.25, 3.0, false)
+	_overlay_matches_runtime(t, 0.253, 3.0, true)
+	_overlay_matches_runtime(t, 0.0, 3.0, true)
+	_overlay_matches_runtime(t, 0.0, 3.123, false)
+
+
+## 베이크가 지원하는 위치·크기·축척·회전·알파를 같은 시간의 런타임 상태와 비교한다.
+func _overlay_matches_runtime(t, viewport_scale: float, big_scale: float, animated: bool) -> void:
+	var doc := Doc.defaults()
+	doc["text"] = "경계"
+	doc["sub_text"] = "OPEN"
+	doc["layout"]["font_size"] = 96
+	doc["layout"]["anchor"] = [0.25, 0.7]
+	doc["layout"]["offset"] = [17.0, -11.0]
+	doc["timeline"]["enter"].merge({"effect": "center_stamp", "duration": 0.4,
+		"params": {"viewport_scale": viewport_scale, "big_scale": big_scale, "solo_animated": animated,
+			"hold_each": 0.3, "pause": 0.1}}, true)
+	var runtime := Evaluator.new(doc)
+	var baked := Baked.bake(doc, 30.0)
+	var name := "overlay viewport=%s big=%s animated=%s" % [viewport_scale, big_scale, animated]
+	var slots := {}
+	for glyph in baked["glyphs"]:
+		if glyph["role"] == "overlay":
+			slots[int(glyph["source"])] = int(glyph["index"])
+	var first: Dictionary = baked["glyphs"][slots[0]]
+	var size := 720.0 * viewport_scale if viewport_scale > 0.0 else 96.0 * big_scale
+	t.eq(first["font_size"], roundi(size), name + " metadata size")
+	var center := Vector2(640, 360) if viewport_scale > 0.0 else Vector2(337, 493)
+	t.eq(first["base"], [center.x, center.y], name + " metadata center")
+	var max_position_error := 0.0
+	var max_size_error := 0.0
+	var max_rotation_error := 0.0
+	var max_alpha_error := 0.0
+	var visible := 0
+	for frame_index in baked["frames"].size():
+		var time := float(frame_index) / 30.0
+		for state in runtime.evaluate(time):
+			if not state.visible:
+				continue
+			var slot: int = slots[state.index] if state.overlay else state.index
+			var glyph: Dictionary = baked["glyphs"][slot]
+			var frame: Array = baked["frames"][frame_index][slot]
+			var position := Vector2(float(glyph["base"][0]) + float(frame[0]), float(glyph["base"][1]) + float(frame[1]))
+			var expected_size: Vector2 = state.scale * float(runtime.layout["glyphs"][state.index]["font_size"])
+			if state.overlay:
+				visible += 1
+				expected_size *= state.overlay_scale
+			var actual_size := Vector2(float(frame[2]), float(frame[3])) * float(glyph["font_size"])
+			max_position_error = maxf(max_position_error, position.distance_to(state.pos))
+			max_size_error = maxf(max_size_error, actual_size.distance_to(expected_size))
+			max_rotation_error = maxf(max_rotation_error, absf(float(glyph["rot"]) + float(frame[4]) - state.rotation))
+			max_alpha_error = maxf(max_alpha_error, absf(float(frame[5]) - state.alpha))
+	t.ok(visible > 0, name + " visible overlay sampled")
+	t.ok(max_position_error <= 0.0015, name + " positions match runtime")
+	# 프레임 배율은 소수 셋째 자리 포맷이므로 글자 크기에 비례한 양자화 오차만 허용한다.
+	t.ok(max_size_error <= maxf(96.0, size) * 0.00072 + 0.001, name + " rendered size/scale match runtime")
+	t.ok(max_rotation_error <= 0.001, name + " rotation matches runtime")
+	t.ok(max_alpha_error <= 0.00051, name + " alpha matches runtime")

@@ -278,6 +278,8 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 - `TextFxPlayer`(Control):
   - `load_file(path)`, `set_document(dict)`, `set_text(main, sub := "")`, `play(from := 0.0)`, `stop()`, `seek(t)`, `finish()`, `is_playing()`, `get_duration()`
     (+ `get_document()`, `get_time()`, `is_baked()`, `get_evaluator()`, 수동 진행 `advance(delta)`, 신호 `baked`). 굽는 동안 play()의 시계는 굽기가 끝날 때까지 기다린다.
+  - `load_file`·`set_document`는 정규화 전에 원본 문서를 검증하고 성공 여부를 `bool`로 반환한다. 실패하면 문서·재생 시간·종료 예약을 보존한다.
+    명시된 형식은 `text_fx`, 버전은 1 또는 2여야 한다. v1·부분 문서·빈 객체는 지원하며 누락 필드는 기본값으로 채운다. 베이크 JSON은 받지 않는다.
   - 속성: `document_path`, `autoplay`, `fit`("contain"/"cover"/"none"), `speed`, `paused`.
   - 신호: `started`, `entered`(등장 완료), `page_changed(page)`, `exit_started`, `finished`, `looped`.
   - `_draw()`에서 evaluator 결과대로 풀링된 CanvasItem/RID와 글자 효과 셰이더로 그린다. 셰이더는 실제 블러, 백색 혼합,

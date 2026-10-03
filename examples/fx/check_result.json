@@ -1,4 +1,11 @@
 {
+	"background": {
+		"color": "#101018CC",
+		"extent": 0.6,
+		"opacity": 1.0,
+		"sync_fade": true,
+		"type": "none"
+	},
 	"canvas": {
 		"height": 720.0,
 		"width": 1280.0
@@ -6,11 +13,28 @@
 	"decorations": [
 		{
 			"animate": "grow_center",
+			"arm_length": 0.3,
+			"blink_period": 0.0,
+			"blink_strength": 1.0,
+			"clamp_canvas": false,
 			"color": "#7DF2C0FF",
 			"delay": 0.2,
 			"duration": 0.3,
+			"end_fade": 0.0,
+			"exit_delay": 0.0,
+			"exit_duration": 0.0,
+			"fill_color": "#18243CCC",
+			"fill_opacity": 0.0,
+			"follow_block": false,
+			"full_span": false,
+			"lead_text": false,
 			"length": 0.3,
 			"margin": 0.3,
+			"protect_sub": true,
+			"radius": 0.0,
+			"softness": 0.0,
+			"stripe_speed": 40.0,
+			"stripe_width": 24.0,
 			"thickness": 5.0,
 			"type": "brackets",
 			"use_outline": true
@@ -24,7 +48,7 @@
 		"weight": 700.0
 	},
 	"format": "text_fx",
-	"format_version": 1.0,
+	"format_version": 2.0,
 	"layout": {
 		"align": "center",
 		"anchor": [
@@ -47,6 +71,7 @@
 		"sub": {
 			"font_size": 36.0,
 			"gap": 0.35,
+			"letter_spacing": 0.0,
 			"position": "below"
 		},
 		"valign": "center",
@@ -112,8 +137,15 @@
 			"effect": "pop",
 			"order": "forward",
 			"params": {
+				"cursor": false,
+				"cursor_blink": 0.6,
+				"cursor_color": null,
 				"from_scale": 0.3,
-				"punct_pause": 0.0
+				"line_pause": 0.0,
+				"line_stagger": 0.65,
+				"punct_long_pause": 0.0,
+				"punct_pause": 0.0,
+				"sweep_duration": 0.5
 			},
 			"stagger": 0.05
 		},
@@ -124,16 +156,29 @@
 			"enabled": true,
 			"order": "all",
 			"params": {
-				"punct_pause": 0.0
+				"cursor": false,
+				"cursor_blink": 0.6,
+				"cursor_color": null,
+				"line_pause": 0.0,
+				"line_stagger": 0.65,
+				"punct_long_pause": 0.0,
+				"punct_pause": 0.0,
+				"sweep_duration": 0.5
 			},
 			"stagger": 0.0
 		},
+		"exit_between_pages": true,
 		"hold": {
 			"duration": 1.4,
-			"effects": []
+			"effects": [],
+			"scope": "hold"
 		},
+		"lead_in": 0.0,
+		"lead_out": 0.0,
 		"loop": "loop_hold",
 		"page_gap": 0.25,
-		"scroll": null
+		"scroll": null,
+		"split_pages": true,
+		"sub_enter": null
 	}
 }

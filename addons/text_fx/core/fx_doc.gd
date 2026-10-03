@@ -280,8 +280,11 @@ static func validate(doc: Variant) -> PackedStringArray:
 	var d: Dictionary = doc
 	if d.has("format") and d["format"] != FORMAT:
 		errs.append("format이 text_fx가 아님: %s" % str(d["format"]))
-	if d.has("format_version") and int(d["format_version"]) > FORMAT_VERSION:
-		errs.append("지원하지 않는 format_version: %s" % str(d["format_version"]))
+	if d.has("format_version"):
+		var version: Variant = d["format_version"]
+		if not (version is int or version is float) or not is_finite(float(version)) \
+				or float(version) != floorf(float(version)) or float(version) < 1.0 or float(version) > FORMAT_VERSION:
+			errs.append("지원하지 않는 format_version: %s" % str(version))
 	for path in ENUMS:
 		var v: Variant = get_value(d, path, null)
 		if v != null and not (ENUMS[path] as PackedStringArray).has(str(v)):

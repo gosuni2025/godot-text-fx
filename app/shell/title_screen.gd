@@ -5,6 +5,10 @@ extends Control
 func _ready() -> void:
 	title.start_requested.connect(AppShell.open_editor)
 	title.options_requested.connect(_open_options)
+	var quit_button: Button = title.get_node("%Quit")
+	if quit_button.pressed.is_connected(get_tree().quit):
+		quit_button.pressed.disconnect(get_tree().quit)
+	quit_button.pressed.connect(AppShell.request_quit)
 	AppShell.play_bgm()
 
 func _open_options() -> void:

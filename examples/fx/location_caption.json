@@ -1,4 +1,11 @@
 {
+	"background": {
+		"color": "#101018CC",
+		"extent": 0.6,
+		"opacity": 1.0,
+		"sync_fade": true,
+		"type": "none"
+	},
 	"canvas": {
 		"height": 720.0,
 		"width": 1280.0
@@ -12,7 +19,7 @@
 		"weight": 700.0
 	},
 	"format": "text_fx",
-	"format_version": 1.0,
+	"format_version": 2.0,
 	"layout": {
 		"align": "center",
 		"anchor": [
@@ -35,6 +42,7 @@
 		"sub": {
 			"font_size": 34.0,
 			"gap": 0.4,
+			"letter_spacing": 0.0,
 			"position": "below"
 		},
 		"valign": "center",
@@ -100,9 +108,16 @@
 			"effect": "converge",
 			"order": "forward",
 			"params": {
+				"cursor": false,
+				"cursor_blink": 0.6,
+				"cursor_color": null,
 				"distance": 0.8,
+				"line_pause": 0.0,
+				"line_stagger": 0.65,
 				"mode": "role",
-				"punct_pause": 0.0
+				"punct_long_pause": 0.0,
+				"punct_pause": 0.0,
+				"sweep_duration": 0.5
 			},
 			"stagger": 0.04
 		},
@@ -113,16 +128,29 @@
 			"enabled": true,
 			"order": "all",
 			"params": {
-				"punct_pause": 0.0
+				"cursor": false,
+				"cursor_blink": 0.6,
+				"cursor_color": null,
+				"line_pause": 0.0,
+				"line_stagger": 0.65,
+				"punct_long_pause": 0.0,
+				"punct_pause": 0.0,
+				"sweep_duration": 0.5
 			},
 			"stagger": 0.0
 		},
+		"exit_between_pages": true,
 		"hold": {
 			"duration": 2.2,
-			"effects": []
+			"effects": [],
+			"scope": "hold"
 		},
+		"lead_in": 0.0,
+		"lead_out": 0.0,
 		"loop": "once",
 		"page_gap": 0.25,
-		"scroll": null
+		"scroll": null,
+		"split_pages": true,
+		"sub_enter": null
 	}
 }

@@ -100,17 +100,22 @@ func load_file(path: String) -> bool:
 	if f == null:
 		push_warning("TextFxPlayer: 파일을 열 수 없음 %s" % path)
 		return false
-	var d := Doc.parse_json(f.get_as_text())
-	if d.is_empty():
+	var json := JSON.new()
+	if json.parse(f.get_as_text()) != OK or not (json.data is Dictionary):
 		push_warning("TextFxPlayer: JSON 오류 %s" % path)
 		return false
-	set_document(d)
-	return true
+	return set_document(json.data)
 
 
-func set_document(doc: Dictionary) -> void:
+## 생략된 필드는 기본값으로 채운다(v1/부분 문서 지원). 잘못된 문서는 현재 재생을 보존하고 false를 돌려준다.
+func set_document(doc: Dictionary) -> bool:
+	var errors := Doc.validate(doc)
+	if not errors.is_empty():
+		push_warning("TextFxPlayer: 문서 오류: " + "; ".join(errors))
+		return false
 	_doc = Doc.normalize(doc)
 	_rebuild(true)
+	return true
 
 
 func get_document() -> Dictionary:

@@ -17,7 +17,8 @@ Godot Text FX 에디터에서 만든 문자 연출 JSON(`format: "text_fx"`)을 
 
 func show_banner(title: String, sub := "") -> void:
 	fx.autoplay = false
-	fx.load_file("res://fx/battle_start.json")   # 또는 fx.set_document(dict)
+	if not fx.load_file("res://fx/battle_start.json"):   # 또는 fx.set_document(dict)
+		return
 	fx.set_text(title, sub)                       # 문서의 문장만 바꾼다
 	fx.play()
 	await fx.finished
@@ -27,6 +28,9 @@ func show_banner(title: String, sub := "") -> void:
 - 메서드: `load_file(path)`, `set_document(dict)`, `get_document()`, `set_text(main, sub := "")`, `play(from := 0.0)`,
   `stop()`, `seek(t)`, `finish()`, `is_playing()`, `get_duration()`, `get_time()`, `is_baked()`.
 - 신호: `started`, `entered`(등장 완료, 페이지마다), `page_changed(page)`, `exit_started`, `finished`, `looped`, `baked`.
+- `load_file()`과 `set_document()`는 성공 여부를 `bool`로 반환한다. 잘못된 형식·지원하지 않는 버전·유효하지 않은 문서는 거부하며,
+  실패하면 기존 문서와 재생 상태를 유지한다. v1은 자동 이전하고, 생략된 필드는 기본값으로 채운다.
+  `text_fx_baked`는 다른 엔진용 프레임 데이터이므로 이 플레이어에 넣지 않는다.
 - 텍스트·스타일·화면 크기가 바뀌면 글자 스프라이트를 몇 프레임에 걸쳐 다시 굽는다. 굽는 동안 `play()`의 시계는 기다린다.
 - 시간은 `_process(delta) * speed`로 흐르므로 게임 일시정지는 노드의 `process_mode`를 따른다.
 

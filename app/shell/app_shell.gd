@@ -2,6 +2,7 @@ extends Node
 ## 앱 셸(autoload `AppShell`): game_base 설정 저장·적용, BGM, 공용 옵션 오버레이, 수동 프로파일러.
 ## 편집기 로직(app/logic)과 UI(app/editor)는 이 노드에 의존하지 않고, 화면 전환만 요청한다.
 signal options_closed
+signal audio_shutdown_finished(success: bool)
 
 const ProjectConfig = preload("res://addons/game_base/project_config.gd")
 const SettingsStore = preload("res://addons/game_base/settings_store.gd")
@@ -23,6 +24,10 @@ var profiler: Node
 var _bgm_enabled := true
 var _bgm_requested := false
 var _options_in_game := false
+var _quitting := false
+var _audio_shutdown_started := false
+var _audio_shutdown_complete := false
+var _audio_shutdown_success := true
 
 @onready var bgm: AudioStreamPlayer = $Bgm
 @onready var options: Control = $OptionsLayer/Options
@@ -30,6 +35,7 @@ var _options_in_game := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().auto_accept_quit = false
 	var config := ProjectConfig.current()
 	settings.config_path = SETTINGS_PATH
 	settings.changed.connect(apply_setting)
@@ -43,6 +49,7 @@ func _ready() -> void:
 	options.visibility_changed.connect(func(): build_label.visible = options.visible and config.show_build)
 	options.closed.connect(func(): options_closed.emit())
 	options.title_requested.connect(_on_title_requested)
+	options.quit_requested.connect(request_quit)
 	options.report_requested.connect(send_profile_report)
 	_setup_profiler(config)
 
@@ -77,6 +84,7 @@ func _set_bus_volume(bus_name: StringName, linear: float) -> void:
 
 ## 타이틀·편집기에서 호출한다. 여러 번 호출해도 이어서 재생한다.
 func play_bgm() -> void:
+	if _audio_shutdown_started: return
 	_bgm_requested = true
 	_update_bgm()
 
@@ -86,18 +94,53 @@ func stop_bgm() -> void:
 
 func _update_bgm() -> void:
 	if bgm == null: return
-	if _bgm_requested and _bgm_enabled:
+	if not _audio_shutdown_started and _bgm_requested and _bgm_enabled:
 		if not bgm.playing: bgm.play()
 	elif bgm.playing:
 		bgm.stop()
 
+# --- 정상 종료 --------------------------------------------------------
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		request_quit()
+
+## 타이틀·옵션·창 닫기의 공통 경로. 연속 요청도 정리를 한 번만 시작한다.
+func request_quit() -> void:
+	if _quitting: return
+	_quitting = true
+	var clean := await shutdown_audio()
+	if not clean:
+		push_warning("AppShell: BGM 재생 참조가 2초 안에 해제되지 않아 종료합니다")
+	get_tree().quit(0 if clean else 1)
+
+## 믹서가 stop()을 반영하고 메인 프레임에서 리소스를 해제할 때까지 기다린다.
+## 테스트 실행기도 같은 정리를 사용한다. 종료용이므로 이후 BGM은 재생하지 않는다.
+func shutdown_audio() -> bool:
+	if _audio_shutdown_complete: return _audio_shutdown_success
+	if _audio_shutdown_started: return await audio_shutdown_finished
+	_audio_shutdown_started = true
+	# Resource를 변수에 보관하면 이 함수 자체가 해제를 막으므로 ID만 저장한다.
+	var stream_id: int = bgm.stream.get_instance_id() if bgm != null and bgm.stream != null else 0
+	stop_bgm()
+	if bgm != null: bgm.stream = null
+	var deadline := Time.get_ticks_msec() + 2000
+	while stream_id != 0 and is_instance_id_valid(stream_id) and Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+	_audio_shutdown_success = stream_id == 0 or not is_instance_id_valid(stream_id)
+	_audio_shutdown_complete = true
+	audio_shutdown_finished.emit(_audio_shutdown_success)
+	return _audio_shutdown_success
+
 # --- 화면 전환과 옵션 -------------------------------------------------
 
 func go_to_title() -> void:
+	if _quitting: return
 	options.hide()
 	get_tree().change_scene_to_file(TITLE_SCENE)
 
 func open_editor() -> void:
+	if _quitting: return
 	if not ResourceLoader.exists(EDITOR_SCENE):
 		push_error("AppShell: editor scene is missing: " + EDITOR_SCENE)
 		return
@@ -105,6 +148,7 @@ func open_editor() -> void:
 
 ## in_game이면 System 탭의 "타이틀로 돌아가기"가 활성화된다(편집기에서 사용).
 func open_options(in_game := false) -> void:
+	if _quitting: return
 	_options_in_game = in_game
 	options.open_menu(settings, in_game, profiler != null)
 

@@ -63,14 +63,16 @@ func _run() -> void:
 			print("FAIL %s (%d/%d failed, %d ms)" % [path.get_file(), t.failures.size(), t.checks, ms])
 			for f in t.failures:
 				print("    - " + f)
+	if not await _release_test_audio():
+		failed += 1
+		print("FAIL shutdown_audio (BGM 재생 참조가 2초 안에 해제되지 않음)")
 	print("---- %d passed, %d failed, %d checks ----" % [passed, failed, total_checks])
-	# 오디오 정지는 믹서 스레드에서 반영된다. 테스트 종료 직전 재생 참조를 남기지 않는다.
-	var shell := root.get_node_or_null("AppShell")
-	if shell != null:
-		shell.stop_bgm()
-		shell.bgm.stream = null
-		await create_timer(0.05).timeout
 	quit(1 if failed > 0 else 0)
+
+
+func _release_test_audio() -> bool:
+	var shell := root.get_node_or_null("AppShell")
+	return true if shell == null else await shell.shutdown_audio()
 
 
 func _discover() -> PackedStringArray:

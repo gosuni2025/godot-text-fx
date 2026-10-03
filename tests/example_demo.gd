@@ -48,6 +48,7 @@ func _check_generator(t) -> void:
 func _check_doc(t, p: Player, log: Array, file: String) -> void:
 	var raw := Doc.parse_json(_read(file))
 	t.eq(raw.get("format"), "text_fx", "%s format" % file)
+	t.eq(int(raw.get("format_version", 0)), Doc.FORMAT_VERSION, "%s uses current document version" % file)
 	t.eq(Doc.validate(Doc.normalize(raw)).size(), 0, "%s validates" % file)
 	t.ok(p.load_file(Specs.OUT_DIR.path_join(file)), "%s load_file" % file)
 	var loop := str(p.get_document()["timeline"]["loop"])
