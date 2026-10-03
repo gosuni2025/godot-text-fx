@@ -1,0 +1,128 @@
+{
+	"canvas": {
+		"height": 720.0,
+		"width": 1280.0
+	},
+	"decorations": [],
+	"font": {
+		"family": "Pretendard",
+		"italic": false,
+		"path": "res://assets/fonts/pretendard/Pretendard-Regular.otf",
+		"source": "bundled",
+		"weight": 400.0
+	},
+	"format": "text_fx",
+	"format_version": 1.0,
+	"layout": {
+		"align": "center",
+		"anchor": [
+			0.5,
+			0.5
+		],
+		"auto_shrink": true,
+		"direction": "horizontal",
+		"font_size": 46.0,
+		"kinsoku": true,
+		"letter_spacing": 0.0,
+		"line_height": 1.6,
+		"max_height": 0.8,
+		"max_width": 0.9,
+		"min_font_size": 24.0,
+		"offset": [
+			0.0,
+			0.0
+		],
+		"sub": {
+			"font_size": 40.0,
+			"gap": 0.35,
+			"position": "below"
+		},
+		"valign": "center",
+		"wrap": "auto"
+	},
+	"mode": "trailer",
+	"name": "한 줄씩",
+	"seed": 12345.0,
+	"style": {
+		"fill": {
+			"color": "#F2F5FAFF",
+			"gradient": {
+				"angle": 90.0,
+				"space": "block",
+				"stops": [
+					[
+						0.0,
+						"#FFFFFFFF"
+					],
+					[
+						1.0,
+						"#9FD8FFFF"
+					]
+				]
+			},
+			"type": "solid"
+		},
+		"glow": {
+			"color": "#66CCFFFF",
+			"enabled": false,
+			"size": 16.0,
+			"strength": 1.0
+		},
+		"opacity": 1.0,
+		"outline": {
+			"color": "#0A1018FF",
+			"enabled": true,
+			"size": 3.0
+		},
+		"outline2": {
+			"color": "#FFFFFFFF",
+			"enabled": false,
+			"size": 4.0
+		},
+		"shadow": {
+			"blur": 4.0,
+			"color": "#00000099",
+			"enabled": true,
+			"offset": [
+				4.0,
+				6.0
+			]
+		}
+	},
+	"sub_font": null,
+	"sub_style": null,
+	"sub_text": "",
+	"text": "안개는 밤마다 조금씩 짙어진다.\n등유는 바닥을 보이고\n등화술사는 하나둘 자취를 감췄다.\n\n그래서 우리는\n등지기가 되었다.",
+	"timeline": {
+		"enter": {
+			"duration": 0.7,
+			"easing": "cubic_out",
+			"effect": "slide",
+			"order": "line",
+			"params": {
+				"dir": "up",
+				"distance": 0.4,
+				"punct_pause": 0.0
+			},
+			"stagger": 0.8
+		},
+		"exit": {
+			"duration": 0.4,
+			"easing": "sine_in",
+			"effect": "fade",
+			"enabled": true,
+			"order": "line",
+			"params": {
+				"punct_pause": 0.0
+			},
+			"stagger": 0.15
+		},
+		"hold": {
+			"duration": 2.0,
+			"effects": []
+		},
+		"loop": "once",
+		"page_gap": 0.5,
+		"scroll": null
+	}
+}

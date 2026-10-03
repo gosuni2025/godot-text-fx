@@ -1,0 +1,149 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://examples/game_demo.gd" id="1_demo"]
+[ext_resource type="Script" path="res://addons/text_fx/render/text_fx_player.gd" id="2_player"]
+[ext_resource type="FontFile" path="res://assets/fonts/pretendard/Pretendard-Regular.otf" id="3_font"]
+
+[sub_resource type="Theme" id="Theme_demo"]
+default_font = ExtResource("3_font")
+default_font_size = 22
+
+[sub_resource type="LabelSettings" id="LabelSettings_log"]
+font_size = 18
+font_color = Color(0.78, 0.84, 0.92, 1)
+outline_size = 4
+outline_color = Color(0.03, 0.04, 0.06, 1)
+
+[node name="GameDemo" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_demo")
+script = ExtResource("1_demo")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.06, 0.07, 0.1, 1)
+
+[node name="Ground" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -150.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.12, 0.14, 0.19, 1)
+
+[node name="Hero" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 56.0
+offset_bottom = 84.0
+mouse_filter = 2
+color = Color(0.86, 0.66, 0.3, 1)
+
+[node name="Visor" type="ColorRect" parent="Hero"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 16.0
+offset_right = 50.0
+offset_bottom = 26.0
+mouse_filter = 2
+color = Color(0.1, 0.12, 0.16, 1)
+
+[node name="Damage" type="Control" parent="."]
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 135.0
+mouse_filter = 2
+script = ExtResource("2_player")
+autoplay = false
+
+[node name="Banner" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_player")
+autoplay = false
+
+[node name="Hud" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Help" type="Label" parent="Hud"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 900.0
+offset_bottom = 48.0
+text = "1~5 연출 재생 · F 닫기(finish)   |   패드: 십자키 좌우 선택 · A 재생 · B 닫기"
+label_settings = SubResource("LabelSettings_log")
+
+[node name="Slots" type="HBoxContainer" parent="Hud"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 48.0
+offset_right = 1000.0
+offset_bottom = 84.0
+theme_override_constants/separation = 28
+
+[node name="Slot1" type="Label" parent="Hud/Slots"]
+layout_mode = 2
+text = "1 전투 컷인"
+
+[node name="Slot2" type="Label" parent="Hud/Slots"]
+layout_mode = 2
+text = "2 판정 결과(유지)"
+
+[node name="Slot3" type="Label" parent="Hud/Slots"]
+layout_mode = 2
+text = "3 트레일러"
+
+[node name="Slot4" type="Label" parent="Hud/Slots"]
+layout_mode = 2
+text = "4 장소 자막"
+
+[node name="Slot5" type="Label" parent="Hud/Slots"]
+layout_mode = 2
+text = "5 피해 숫자"
+
+[node name="Status" type="Label" parent="Hud"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 88.0
+offset_right = 1200.0
+offset_bottom = 116.0
+label_settings = SubResource("LabelSettings_log")
+
+[node name="Log" type="Label" parent="Hud"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = -140.0
+offset_right = 900.0
+offset_bottom = -10.0
+grow_vertical = 0
+vertical_alignment = 2
+label_settings = SubResource("LabelSettings_log")

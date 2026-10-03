@@ -1,0 +1,139 @@
+{
+	"canvas": {
+		"height": 720.0,
+		"width": 1280.0
+	},
+	"decorations": [
+		{
+			"animate": "grow_center",
+			"color": "#7DF2C0FF",
+			"delay": 0.2,
+			"duration": 0.3,
+			"length": 0.3,
+			"margin": 0.3,
+			"thickness": 5.0,
+			"type": "brackets",
+			"use_outline": true
+		}
+	],
+	"font": {
+		"family": "Pretendard",
+		"italic": false,
+		"path": "res://assets/fonts/pretendard/Pretendard-Regular.otf",
+		"source": "bundled",
+		"weight": 700.0
+	},
+	"format": "text_fx",
+	"format_version": 1.0,
+	"layout": {
+		"align": "center",
+		"anchor": [
+			0.5,
+			0.5
+		],
+		"auto_shrink": true,
+		"direction": "horizontal",
+		"font_size": 100.0,
+		"kinsoku": true,
+		"letter_spacing": 0.0,
+		"line_height": 1.25,
+		"max_height": 0.8,
+		"max_width": 0.9,
+		"min_font_size": 24.0,
+		"offset": [
+			0.0,
+			0.0
+		],
+		"sub": {
+			"font_size": 36.0,
+			"gap": 0.35,
+			"position": "below"
+		},
+		"valign": "center",
+		"wrap": "auto"
+	},
+	"mode": "message",
+	"name": "성공",
+	"seed": 12345.0,
+	"style": {
+		"fill": {
+			"color": "#E6FFF3FF",
+			"gradient": {
+				"angle": 90.0,
+				"space": "block",
+				"stops": [
+					[
+						0.0,
+						"#FFFFFFFF"
+					],
+					[
+						1.0,
+						"#9FD8FFFF"
+					]
+				]
+			},
+			"type": "solid"
+		},
+		"glow": {
+			"color": "#4DFFB077",
+			"enabled": true,
+			"size": 14.0,
+			"strength": 0.8
+		},
+		"opacity": 1.0,
+		"outline": {
+			"color": "#0B3324FF",
+			"enabled": true,
+			"size": 6.0
+		},
+		"outline2": {
+			"color": "#FFFFFFFF",
+			"enabled": false,
+			"size": 4.0
+		},
+		"shadow": {
+			"blur": 4.0,
+			"color": "#00000099",
+			"enabled": true,
+			"offset": [
+				4.0,
+				6.0
+			]
+		}
+	},
+	"sub_font": null,
+	"sub_style": null,
+	"sub_text": "주사위 17 / 목표 12",
+	"text": "판정 성공",
+	"timeline": {
+		"enter": {
+			"duration": 0.3,
+			"easing": "back_out",
+			"effect": "pop",
+			"order": "forward",
+			"params": {
+				"from_scale": 0.3,
+				"punct_pause": 0.0
+			},
+			"stagger": 0.05
+		},
+		"exit": {
+			"duration": 0.35,
+			"easing": "cubic_in",
+			"effect": "fade",
+			"enabled": true,
+			"order": "all",
+			"params": {
+				"punct_pause": 0.0
+			},
+			"stagger": 0.0
+		},
+		"hold": {
+			"duration": 1.4,
+			"effects": []
+		},
+		"loop": "loop_hold",
+		"page_gap": 0.25,
+		"scroll": null
+	}
+}
