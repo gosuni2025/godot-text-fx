@@ -10,6 +10,7 @@ func run(t) -> void:
 	ed.set_process(false)
 	_template_switch(t, ed)
 	_once(t, ed)
+	_select_after_completion(t, ed)
 	_repeats(t, ed)
 	await U.close(t.tree, ed)
 
@@ -41,8 +42,20 @@ func _template_switch(t, ed) -> void:
 	ed.send({"op": "pause"})
 	ed.panel("mode").apply_template("msg_battle_engage")
 	ed._process(0.1)
-	t.eq(ed.model.time, 0.0, "paused template remains at the beginning")
-	t.ok(not ed.model.playing, "paused template stays paused")
+	t.near(ed.model.time, 0.1, 0.00001, "paused template restarts from the beginning")
+	t.ok(ed.model.playing, "template selection resumes playback")
+
+
+func _select_after_completion(t, ed) -> void:
+	ed.send({"op": "play", "from": 0.0})
+	for id in ["msg_battle_victory", "msg_battle_victory"]:
+		ed._process(100.0)
+		t.ok(ed.preview.is_ended() and not ed.model.playing, "previous preview completed")
+		ed.panel("mode").card(id).pressed.emit()
+		t.ok(ed.model.playing and ed.model.time == 0.0, "card starts playback after completion, including reselect")
+		t.eq(ed.preview.get_node("%PlayPause").tooltip_text, "Pause (Space)", "transport reflects resumed playback immediately")
+		ed._process(0.1)
+		t.near(ed.preview.player.get_time(), 0.1, 0.00001, "selected preview advances after completion")
 
 
 func _once(t, ed) -> void:

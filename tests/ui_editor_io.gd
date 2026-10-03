@@ -82,6 +82,7 @@ func _bot(t, ed) -> void:
 
 func _transport(t, ed) -> void:
 	ed.send({"op": "apply_template", "id": "msg_battle_engage"})
+	ed.send({"op": "pause"})
 	await t.tree.process_frame
 	var pv: Node = ed.preview
 	pv.get_node("%PlayPause").pressed.emit()

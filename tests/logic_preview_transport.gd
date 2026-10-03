@@ -32,8 +32,10 @@ func run(t) -> void:
 	bot.send({"op": "set_text", "text": "내 문장"})
 	bot.send({"op": "apply_template", "id": "msg_narrator_secret", "keep_text": true})
 	t.eq(bot.model.time, 0.0, "paused template switch returns to the beginning")
-	t.ok(not bot.model.playing, "paused template switch stays paused")
+	t.ok(bot.model.playing, "template selection starts playback from a paused state")
 	t.eq(bot.model.doc.text, "내 문장", "restart respects keep_text")
+	replay = Replay.run_string(bot.log.serialize())
+	t.ok(replay.model.playing and replay.model.time == 0.0, "serialized selection restarts paused playback")
 
 	bot.send({"op": "play", "from": 1.25})
 	t.ok(not bot.send({"op": "apply_template", "id": "missing_template"}), "invalid template is rejected")

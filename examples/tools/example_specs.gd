@@ -29,7 +29,7 @@ const SPECS := [
 		"file": "check_result.json",
 		"commands": [
 			{"op": "apply_template", "id": "msg_check_success"},
-			{"op": "set_text", "text": "판정 성공", "sub_text": "주사위 17 / 목표 12"},
+			{"op": "set_text", "text": "등화 신호 일치", "sub_text": "주사위 17 / 목표 12"},
 			{"op": "set", "path": "layout.sub.font_size", "value": 36},
 		],
 		"export": {"op": "export", "kind": "doc_json"},

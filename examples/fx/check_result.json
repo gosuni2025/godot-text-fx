@@ -78,7 +78,7 @@
 		"wrap": "auto"
 	},
 	"mode": "message",
-	"name": "성공",
+	"name": "신호 일치",
 	"seed": 12345.0,
 	"style": {
 		"fill": {
@@ -129,7 +129,7 @@
 	"sub_font": null,
 	"sub_style": null,
 	"sub_text": "주사위 17 / 목표 12",
-	"text": "판정 성공",
+	"text": "등화 신호 일치",
 	"timeline": {
 		"enter": {
 			"duration": 0.3,

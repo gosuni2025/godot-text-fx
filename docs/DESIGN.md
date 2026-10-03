@@ -373,7 +373,7 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 - 문서 안의 수는 JSON 파서와 같은 모양(float)으로 유지해 "문서 → JSON → 문서" 왕복 해시가 같다. 해시는 키 정렬 JSON의 SHA-256.
 - `changed(paths)`: 문서 경로, 문서 전체 `"*"`, 상태 `"$time" "$playing" "$locale" "$selection" "$export" "$history"`. 값이 같은 set은 신호·기록 없음.
 - `last_export = { ok, kind, text, hash(text SHA-256), data?(baked) }`. `advance(dt, end_time=INF)`는 UI 재생 시계용 메서드로 명령·기록에 남지 않으며 유한한 종료 시각을 넘지 않는다.
-- `apply_template` 성공 시 재생/일시정지 상태를 유지하고 시각을 0으로 되돌린다. 같은 템플릿 재적용도 미리보기의 종료 예약을 지우고 처음부터 시작하며, 문서가 같으면 실행 취소 기록은 추가하지 않는다.
+- `apply_template` 성공 시 시각을 0으로 되돌리고 자동 재생한다. 재생 완료·일시정지 뒤 선택하거나 같은 템플릿을 다시 적용해도 미리보기의 종료 예약을 지우고 처음부터 재생하며, 문서가 같으면 실행 취소 기록은 추가하지 않는다.
 - 언어 전환: 마지막으로 적용한 템플릿이 있으면 `name/text/sub_text/font/sub_font` 중 이전 언어 견본과 같은(사용자가 고치지 않은) 필드만 새 언어 견본으로 바꾼다.
 - 템플릿 JSON: 파일 `{ mode, groups[], locale_patch{loc: patch}, templates[] }`(한 모드를 여러 파일로 나눌 수 있음),
   템플릿 `{ id, group, icon, loop, name{ko,ja,en}, text{..}, sub_text{..}?, patch, locale_patch{loc: patch}? }`.

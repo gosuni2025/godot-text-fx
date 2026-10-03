@@ -116,7 +116,7 @@ func _play_selected() -> void:
 		1:
 			# loop_hold: 결과를 띄워 둔 채 반복하다가 finish()로 닫는다.
 			var roll := 12 + (_count * 5) % 9
-			_play_banner("check_result.json", "판정 결과", "판정 성공", "주사위 %d / 목표 12" % roll)
+			_play_banner("check_result.json", "판정 결과", "등화 신호 일치", "주사위 %d / 목표 12" % roll)
 		2:
 			_play_banner("trailer_intro.json", "트레일러")
 		3:

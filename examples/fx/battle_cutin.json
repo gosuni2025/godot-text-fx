@@ -78,7 +78,7 @@
 		"wrap": "auto"
 	},
 	"mode": "message",
-	"name": "교전 개시",
+	"name": "등대를 사수하라",
 	"seed": 12345.0,
 	"style": {
 		"fill": {
@@ -129,7 +129,7 @@
 	"sub_font": null,
 	"sub_style": null,
 	"sub_text": "",
-	"text": "교전 개시",
+	"text": "등대를 사수하라",
 	"timeline": {
 		"enter": {
 			"duration": 0.32,

@@ -127,7 +127,9 @@ func _apply_doc(cmd: Dictionary) -> bool:
 	var paths: PackedStringArray = r.paths
 	if restart:
 		time = 0.0
+		playing = true
 		paths.append("$time")
+		paths.append("$playing")
 	var committed := _commit(r.doc, tpl_after, r.key, paths)
 	if restart and not committed:
 		# 같은 템플릿을 다시 눌러도 시계·미리보기의 종료 예약을 초기화한다.
