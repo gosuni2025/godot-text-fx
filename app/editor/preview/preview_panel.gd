@@ -81,10 +81,16 @@ func refresh_transport() -> void:
 	scrubber.max_value = length
 	var t: float = m.time
 	var loop := str(m.get_value("timeline.loop"))
-	var shown := fmod(t, length) if loop == "loop_all" and _finish_at < 0.0 else minf(t, length)
+	var ev = player.get_evaluator()
+	# 스크롤 문서는 loop_hold도 실제로는 전체 반복으로 평가한다.
+	var repeats_all: bool = ev != null and ev.timeline.loop_mode == "loop_all" and _finish_at < 0.0
+	var shown := fmod(t, length) if repeats_all else minf(t, length)
 	scrubber.set_value_no_signal(shown)
 	_updating = false
-	(%Time as Label).text = "%.2f / %.2f s" % [t, length]
+	if not is_finite(end_time()) and not repeats_all:
+		(%Time as Label).text = "%.2f / ∞ s" % t
+	else:
+		(%Time as Label).text = "%.2f / %.2f s" % [shown, length]
 	var pp := %PlayPause as Button
 	pp.icon = _icons.pause if m.playing else _icons.play
 	pp.tooltip_text = "Pause (Space)" if m.playing else "Play (Space)"

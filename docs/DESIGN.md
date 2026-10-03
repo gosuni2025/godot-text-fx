@@ -344,7 +344,8 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 - 모든 문서 명령은 결과를 정규화한 뒤 `doc_schema` 규칙(형식·범위·선택지)으로 문서 전체를 검사하고, 통과할 때만 반영한다.
 - 문서 안의 수는 JSON 파서와 같은 모양(float)으로 유지해 "문서 → JSON → 문서" 왕복 해시가 같다. 해시는 키 정렬 JSON의 SHA-256.
 - `changed(paths)`: 문서 경로, 문서 전체 `"*"`, 상태 `"$time" "$playing" "$locale" "$selection" "$export" "$history"`. 값이 같은 set은 신호·기록 없음.
-- `last_export = { ok, kind, text, hash(text SHA-256), data?(baked) }`. `advance(dt)`는 UI 재생 시계용 메서드로 명령·기록에 남지 않는다.
+- `last_export = { ok, kind, text, hash(text SHA-256), data?(baked) }`. `advance(dt, end_time=INF)`는 UI 재생 시계용 메서드로 명령·기록에 남지 않으며 유한한 종료 시각을 넘지 않는다.
+- `apply_template` 성공 시 재생/일시정지 상태를 유지하고 시각을 0으로 되돌린다. 같은 템플릿 재적용도 미리보기의 종료 예약을 지우고 처음부터 시작하며, 문서가 같으면 실행 취소 기록은 추가하지 않는다.
 - 언어 전환: 마지막으로 적용한 템플릿이 있으면 `name/text/sub_text/font/sub_font` 중 이전 언어 견본과 같은(사용자가 고치지 않은) 필드만 새 언어 견본으로 바꾼다.
 - 템플릿 JSON: 파일 `{ mode, groups[], locale_patch{loc: patch}, templates[] }`(한 모드를 여러 파일로 나눌 수 있음),
   템플릿 `{ id, group, icon, loop, name{ko,ja,en}, text{..}, sub_text{..}?, patch, locale_patch{loc: patch}? }`.
@@ -356,6 +357,7 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 ## 7. 에디터 UI (app/editor)
 
 - 왼쪽: 미리보기(체커보드/단색/사용자 이미지 배경, 캔버스 비율 유지) + 재생 바(재생/일시정지, 처음으로, 시간 스크럽, 반복 방식, 퇴장 켜기).
+  - 1회 재생과 끝내기는 종료 시각에서 정확히 정지한다. 전체 반복은 현재 주기의 시각/길이, 유지 반복은 경과 시각/∞를 표시하고 끝내기를 누르면 유한한 종료 시각으로 바뀐다. 스크롤의 유지 반복은 전체 반복과 같은 표시를 쓴다.
 - 오른쪽: 탭(모드·템플릿 / 문장 / 연출 / 스타일 / 글꼴 / 장식 / 배치 / 내보내기).
   - 필드는 스키마에서 생성하되 필드 종류마다 별도 `.tscn`(슬라이더·색·토글·선택 버튼 그룹·문장)을 인스턴싱한다.
   - 콤보 리스트 대신 버튼 그룹을 쓰고, 선택지가 많은 항목(효과·이징·글꼴)은 미리보기 카드가 있는 팝업으로 연다.

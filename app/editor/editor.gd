@@ -135,7 +135,7 @@ func _process(delta: float) -> void:
 		_doc_dirty = false
 		preview.set_document(model.doc)
 	if model.playing:
-		model.advance(delta)
+		model.advance(delta, preview.end_time())
 		if preview.is_ended():
 			send({"op": "pause"})
 

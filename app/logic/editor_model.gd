@@ -57,10 +57,10 @@ func get_value(path: String):
 	return r.value if r.ok else null
 
 
-## UI 재생 시계. 명령이 아니므로 조작 기록에 남지 않는다.
-func advance(dt: float) -> void:
+## UI 재생 시계. 유한한 종료 시각은 넘지 않는다. 명령·조작 기록에는 남지 않는다.
+func advance(dt: float, end_time: float = INF) -> void:
 	if playing and dt > 0.0:
-		time = minf(time + dt, MAX_TIME)
+		time = minf(time + dt, minf(end_time, MAX_TIME))
 		changed.emit(PackedStringArray(["$time"]))
 
 
@@ -123,15 +123,23 @@ func _apply_doc(cmd: Dictionary) -> bool:
 	if not r.ok:
 		return _reject(r.error)
 	var tpl_after: String = r.get("template_id", template_id)
-	_commit(r.doc, tpl_after, r.key, r.paths)
+	var restart: bool = cmd.op == "apply_template"
+	var paths: PackedStringArray = r.paths
+	if restart:
+		time = 0.0
+		paths.append("$time")
+	var committed := _commit(r.doc, tpl_after, r.key, paths)
+	if restart and not committed:
+		# 같은 템플릿을 다시 눌러도 시계·미리보기의 종료 예약을 초기화한다.
+		changed.emit(paths)
 	return true
 
 
 ## 문서 교체 + 실행 취소 기록. key가 직전 기록과 같으면 하나로 합친다.
-func _commit(next: Dictionary, tpl_after: String, key: String, paths: PackedStringArray) -> void:
+func _commit(next: Dictionary, tpl_after: String, key: String, paths: PackedStringArray) -> bool:
 	var same := JsonUtil.canonical_json(next) == JsonUtil.canonical_json(doc) and tpl_after == template_id
 	if same:
-		return
+		return false
 	if key != "" and key == _coalesce_key and not _undo.is_empty():
 		var top: Dictionary = _undo[-1]
 		top.after = next
@@ -147,6 +155,7 @@ func _commit(next: Dictionary, tpl_after: String, key: String, paths: PackedStri
 	var out := Array(paths)
 	out.append("$history")
 	_emit(out)
+	return true
 
 
 func _undo_redo(is_undo: bool) -> bool:
