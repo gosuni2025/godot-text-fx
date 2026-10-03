@@ -1,0 +1,15 @@
+A sprite sheet of 9 separate icons arranged in an evenly spaced 3 by 3 grid. Each icon sits alone in the center of its own invisible square cell with wide empty transparent gutters between cells so no icon touches another. No grid lines, no cell borders, no labels, no captions. All 9 icons share exactly the same stroke weight, the same visual size and the same drawing style so they read as one family. Horizontal bars and lines stand in for lines of text; never draw real letters or glyphs.
+
+Row 1, left: a rubber stamp seen from the side pressing down onto one thick solid block bar, with two short impact lines on each side.
+Row 1, middle: one horizontal bar that stops partway, followed by a tall vertical text caret cursor, like a typewriter partially typed line.
+Row 1, right: one horizontal bar in the middle with a downward arrow above it and an upward arrow below it, the arrows converging onto the bar.
+Row 2, left: an L-shaped corner bracket in the lower left with one short horizontal bar resting inside the corner, like a caption in the corner of a screen.
+Row 2, middle: an open logbook seen from above with a quill feather pen resting on the right page.
+Row 2, right: one horizontal bar with a small upward arrow beneath it and three short soft glow ticks radiating above it, the bar rising.
+Row 3, left: one short horizontal bar in the center with two small arrows pointing outward to the left and right ends, the bar expanding sideways from the center.
+Row 3, middle: a row of four widely spaced dots with two arrows pointing inward from the left and right edges, pulling the dots together.
+Row 3, right: three vertical columns of short stacked dashes reading right to left, with a small left-pointing arrow beneath the columns.
+
+Common style: Minimal flat line icon, single pure white (#FFFFFF) glyph on a fully transparent background, uniform rounded stroke about 8% of the icon width, no fill except small solid accents, no text, no letters, no numbers, no gradients, no shadows, no frame or background shape, centered with generous padding, simple geometric silhouette readable at 32 pixels, consistent with a set of editor toolbar icons.
+
+Output isolated white glyphs on actual fully transparent alpha. Keep everything around and between the strokes transparent. No backdrop, no background colour, no rectangle, no tile, no cast shadow, no vignette, no watermark. Crisp alpha edges, no halo.

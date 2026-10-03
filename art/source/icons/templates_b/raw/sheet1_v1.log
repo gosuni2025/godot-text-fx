@@ -1,0 +1,4 @@
+pixeltamer_codex.sh: note — codex has no background parameter, so --background transparent appends transparency instructions to your prompt instead. Anything in the prompt describing a backdrop, surface or cast shadow will override it.
+pixeltamer_codex.sh: note — could not measure alpha on /Volumes/subssd/work/godot-text-fx/art/source/icons/templates_b/raw/sheet1_v1.png; verify it yourself before compositing.
+/Volumes/subssd/work/godot-text-fx/art/source/icons/templates_b/raw/sheet1_v1.png
+pixeltamer_codex.sh: ok (pattern: clean)

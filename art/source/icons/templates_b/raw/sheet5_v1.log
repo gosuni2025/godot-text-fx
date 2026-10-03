@@ -1,0 +1,4 @@
+pixeltamer_codex.sh: note — codex has no background parameter, so --background transparent appends transparency instructions to your prompt instead. Anything in the prompt describing a backdrop, surface or cast shadow will override it.
+pixeltamer_codex.sh: note — could not measure alpha on /private/tmp/claude-501/-Volumes-subssd-work-psx-creature-metroidvania/a5f3c94b-3ddd-4831-a828-b9f195b18a19/scratchpad/tpl_b/gen/sheet5_v1.png; verify it yourself before compositing.
+/private/tmp/claude-501/-Volumes-subssd-work-psx-creature-metroidvania/a5f3c94b-3ddd-4831-a828-b9f195b18a19/scratchpad/tpl_b/gen/sheet5_v1.png
+pixeltamer_codex.sh: ok (pattern: clean)

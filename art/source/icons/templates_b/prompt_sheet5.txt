@@ -1,0 +1,11 @@
+The attached image is a style reference only: match its stroke weight, rounded line caps, arrowhead shape and icon size exactly, but draw the new subjects below.
+
+A sprite sheet of 9 separate icons arranged in an evenly spaced 3 by 3 grid. Each icon sits alone in the center of its own invisible square cell with wide empty transparent gutters between cells so no icon touches another. No grid lines, no cell borders, no labels, no captions. All 9 icons share exactly the same stroke weight, the same visual size and the same drawing style so they read as one family. Horizontal bars and lines stand in for lines of text; never draw real letters or glyphs.
+
+Every icon must fill a roughly square area, about as tall as it is wide, not a thin horizontal strip.
+Rows 1 and 3, all six cells: "a block of text lines splitting apart from the center to the left and right". Four stacked horizontal bars forming a square block, every bar cut at the vertical center line with a wide clear gap, the left halves shifted left and the right halves shifted right. Above the block, one short left-pointing arrow on the left and one short right-pointing arrow on the right, pointing away from each other. Vary the gap width and bar lengths across the six cells.
+Row 2, all three cells: "text lines flowing in a wave". Three stacked horizontal lines, each one drawn as a gentle smooth wave with the same phase, like a flag rippling, evenly spaced and not overlapping. Vary the wave amplitude across the three cells.
+
+Common style: Minimal flat line icon, single pure white (#FFFFFF) glyph on a fully transparent background, uniform rounded stroke about 8% of the icon width, no fill except small solid accents, no text, no letters, no numbers, no gradients, no shadows, no frame or background shape, centered with generous padding, simple geometric silhouette readable at 32 pixels, consistent with a set of editor toolbar icons.
+
+Output isolated white glyphs on actual fully transparent alpha. Keep everything around and between the strokes transparent. No backdrop, no background colour, no rectangle, no tile, no cast shadow, no vignette, no watermark. Crisp alpha edges, no halo.
