@@ -20,6 +20,7 @@ func run(t) -> void:
 	await _text(t, ed)
 	await _style(t, ed)
 	await _layout(t, ed)
+	await _locale(t, ed)
 	await U.close(tree, ed)
 
 
@@ -131,3 +132,22 @@ func _layout(t, ed) -> void:
 	var seed_before = ed.model.get_value("seed")
 	lp.next_seed()
 	t.ne(ed.model.get_value("seed"), seed_before, "new seed changes the seed deterministically")
+
+
+## 셸 옵션의 언어 변경(TranslationServer)을 편집기가 set_locale 명령으로 따라간다.
+func _locale(t, ed) -> void:
+	var prev := TranslationServer.get_locale()
+	ed.send({"op": "apply_template", "id": "msg_battle_engage"})
+	ed.select_tab("mode")
+	var other := "ja" if ed.model.locale != "ja" else "en"
+	TranslationServer.set_locale(other)
+	await U.frames(t.tree, 2)
+	t.eq(ed.model.locale, other, "editor follows the UI language")
+	t.eq(ed.op_log.commands[-1].op, "set_locale", "language change is a logged command")
+	var tpl := Templates.get_template("msg_battle_engage")
+	t.eq(ed.model.get_value("text"), Templates.localized(tpl, "text", other), "untouched sample text switches language")
+	await t.tree.process_frame
+	var card: Button = ed.panel("mode").card("msg_battle_engage")
+	t.eq(card.get_node("%Name").text, Templates.localized(tpl, "name", other), "template cards show localized names")
+	TranslationServer.set_locale(prev)
+	await U.frames(t.tree, 2)

@@ -16,8 +16,12 @@ var _shown: PackedStringArray = PackedStringArray()
 var _cards: Dictionary = {}
 
 
+var _return_focus: Control = null
+
+
 func _ready() -> void:
 	(%Close as Button).pressed.connect(hide)
+	popup_hide.connect(_restore_focus)
 	(%Search as LineEdit).text_changed.connect(_filter)
 	(%List as ItemList).item_selected.connect(_on_system_selected)
 	(%FromFile as Button).pressed.connect(_on_file)
@@ -35,6 +39,7 @@ func open_for(p_ctx, p_target: String, rect: Rect2i) -> void:
 	_filter("")
 	_select_system(cur)
 	_update_preview(cur)
+	_return_focus = get_tree().root.gui_get_focus_owner()
 	popup(rect)
 	var first: Button = _cards.get(str(cur.get("family", "")), null)
 	if first == null and _cards.size() > 0:
@@ -136,3 +141,10 @@ func _on_file() -> void:
 func _focus_later(c: Control) -> void:
 	if is_instance_valid(c) and c.is_visible_in_tree():
 		c.grab_focus()
+
+
+## 팝업을 닫으면 연 버튼으로 포커스를 돌려준다(키보드·패드 조작 유지).
+func _restore_focus() -> void:
+	if is_instance_valid(_return_focus) and _return_focus.is_visible_in_tree():
+		_return_focus.grab_focus()
+	_return_focus = null

@@ -11,8 +11,12 @@ var _close_on_pick := false
 var card_size := Vector2(150, 112)
 
 
+var _return_focus: Control = null
+
+
 func _ready() -> void:
 	(%Close as Button).pressed.connect(hide)
+	popup_hide.connect(_restore_focus)
 	(%Grid as HFlowContainer).resized.connect(_fit_cards)
 
 
@@ -43,6 +47,7 @@ func open_items(title: String, items: Array, current: String, callback: Callable
 		card.pressed.connect(_on_card.bind(card.id))
 		_cards[card.id] = card
 	_mark(current)
+	_return_focus = get_tree().root.gui_get_focus_owner()
 	popup(rect)
 	var focus: Button = _cards.get(current, grid.get_child(0) if grid.get_child_count() > 0 else null)
 	if focus:
@@ -86,3 +91,10 @@ func _on_card(id: String) -> void:
 func _focus_later(c: Control) -> void:
 	if is_instance_valid(c) and c.is_visible_in_tree():
 		c.grab_focus()
+
+
+## 팝업을 닫으면 연 버튼으로 포커스를 돌려준다(키보드·패드 조작 유지).
+func _restore_focus() -> void:
+	if is_instance_valid(_return_focus) and _return_focus.is_visible_in_tree():
+		_return_focus.grab_focus()
+	_return_focus = null

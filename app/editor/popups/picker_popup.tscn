@@ -34,6 +34,7 @@ icon = ExtResource("2_close")
 [node name="Scroll" type="ScrollContainer" parent="Rows"]
 layout_mode = 2
 size_flags_vertical = 3
+follow_focus = true
 horizontal_scroll_mode = 0
 
 [node name="Grid" type="HFlowContainer" parent="Rows/Scroll"]

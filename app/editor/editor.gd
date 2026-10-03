@@ -163,6 +163,28 @@ func select_tab(id: String) -> void:
 		(get_node("%Tab_" + t) as Button).set_pressed_no_signal(t == id)
 		(_panels[t] as Control).visible = t == id
 	_panels[id].sync()
+	_link_tab_focus.call_deferred()
+
+
+## 아래 줄 탭에서 ↓/D패드 아래로 가면 현재 패널의 첫 컨트롤로 간다.
+func _link_tab_focus() -> void:
+	var first := _first_focusable(_panels[current_tab])
+	var cols: int = (%Tabs as GridContainer).columns
+	for i in TABS.size():
+		var b := get_node("%Tab_" + TABS[i]) as Button
+		var last_row := i >= TABS.size() - cols
+		b.focus_neighbor_bottom = b.get_path_to(first) if first and last_row else NodePath()
+
+
+static func _first_focusable(node: Node) -> Control:
+	for c in node.get_children():
+		if c is Control and (c as Control).is_visible_in_tree():
+			if (c as Control).focus_mode == Control.FOCUS_ALL:
+				return c
+			var inner := _first_focusable(c)
+			if inner:
+				return inner
+	return null
 
 
 ## 탭 버튼이 한 줄에 들어가면 8열, 아니면 4열 두 줄.
@@ -172,6 +194,7 @@ func _fit_tabs() -> void:
 	for id in TABS:
 		need += (get_node("%Tab_" + id) as Control).get_combined_minimum_size().x + 2.0
 	grid.columns = TABS.size() if need <= (%Right as Control).size.x else TABS.size() / 2
+	_link_tab_focus()
 
 
 func step_tab(step: int) -> void:

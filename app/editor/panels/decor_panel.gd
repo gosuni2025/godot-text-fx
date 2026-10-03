@@ -36,7 +36,7 @@ func _build() -> void:
 func open_add_picker() -> void:
 	var items: Array = []
 	for id in DocSchema.DECORATIONS:
-		items.append({"id": id, "label": Labels.decoration(id), "icon": ctx.ui_icon("tab_decor")})
+		items.append({"id": id, "label": Labels.decoration(id), "preview": ["deco", id, ctx.preview_sample()]})
 	ctx.open_picker("Add decoration", items, "", add_decoration, true)
 
 

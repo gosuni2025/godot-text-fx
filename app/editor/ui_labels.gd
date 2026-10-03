@@ -58,7 +58,7 @@ const FIELDS := {
 	"kinsoku": "Line-break rules (kinsoku)", "auto_shrink": "Auto shrink", "min_font_size": "Min font size",
 	"sub.position": "Supporting text placement", "sub.gap": "Sub text gap", "width": "Width", "height": "Height",
 	"weight": "Weight", "italic": "Italic", "fill.type": "Fill", "fill.color": "Color",
-	"gradient.angle": "Gradient angle", "gradient.space": "Gradient range", "enabled": "On",
+	"gradient.angle": "Gradient angle", "gradient.space": "Gradient range", "enabled": "Enabled",
 	"size": "Size", "color": "Color", "shadow.offset": "Shadow offset", "blur": "Blur", "strength": "Strength",
 	"opacity": "Opacity", "order": "Order", "duration": "Duration (s)", "stagger": "Stagger (s)",
 	"hold.duration": "Hold time (s)", "page_gap": "Page gap (s)", "scroll.speed": "Scroll speed (px/s)",

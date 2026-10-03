@@ -144,6 +144,28 @@ func _shortcuts(t, ed) -> void:
 	await U.key(tree, KEY_SPACE)
 	t.eq(ed.model.playing, playing_before, "Space types into the text field instead of playing")
 	ed.get_node("%Tab_text").grab_focus()
+	# 패드 LB/RB 탭 이동, 방향키 포커스 이동
+	for pressed in [true, false]:
+		var jb := InputEventJoypadButton.new()
+		jb.button_index = JOY_BUTTON_RIGHT_SHOULDER
+		jb.pressed = pressed
+		tree.root.push_input(jb)
+	await tree.process_frame
+	t.eq(ed.current_tab, "motion", "RB moves to the next tab")
+	var after: Control = null
+	for i in 3:  # 탭이 두 줄이면 아래 줄 탭을 거쳐 패널로 들어간다
+		await U.key(tree, KEY_DOWN)
+		after = ed.get_viewport().gui_get_focus_owner()
+		if after and ed.panel("motion").is_ancestor_of(after):
+			break
+	t.ok(after != null and ed.panel("motion").is_ancestor_of(after), "Down arrow moves focus into the panel")
+	var card: Button = ed.panel("motion").get_node("%Enter").get_node("%EffectCard")
+	card.grab_focus()
+	card.pressed.emit()
+	await tree.process_frame
+	ed.picker.hide()
+	await tree.process_frame
+	t.eq(ed.get_viewport().gui_get_focus_owner(), card, "closing the picker returns focus to its opener")
 
 
 func _autosave(t, ed) -> void:

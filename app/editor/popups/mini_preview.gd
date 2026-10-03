@@ -8,13 +8,14 @@ const Evaluator := preload("res://addons/text_fx/core/fx_evaluator.gd")
 const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
 const Hold := preload("res://addons/text_fx/core/fx_effects_hold.gd")
 const Easing := preload("res://addons/text_fx/core/fx_easing.gd")
+const Drawer := preload("res://addons/text_fx/render/fx_glyph_drawer.gd")
 
 const CANVAS := Vector2i(420, 160)
 const BG := Color(0.07, 0.075, 0.095, 1)
 const INK := Color(0.93, 0.95, 1.0, 1)
 const ACCENT := Color(0.43, 0.75, 1.0, 1)
 
-var kind := ""        # enter | exit | hold | easing
+var kind := ""        # enter | exit | hold | deco | easing
 var value := ""
 var active := false:
 	set(v):
@@ -41,17 +42,18 @@ func configure(p_kind: String, p_value: String, sample: String) -> void:
 	kind = p_kind
 	value = p_value
 	_ev = null
-	if kind in ["enter", "exit", "hold"]:
+	if kind in ["enter", "exit", "hold", "deco"]:
 		var doc := _doc_for(sample)
 		_fonts = Layout.resolve_fonts(doc)
 		_ev = Evaluator.new(doc, {}, _fonts)
-		_cycle = maxf(0.6, _ev.get_duration() + 0.5) if kind != "hold" else 3.0
+		_cycle = maxf(0.6, _ev.get_duration() + 0.5) if kind not in ["hold", "deco"] else 3.0
 	else:
 		_cycle = 1.6
 	match kind:
 		"enter": _static_t = 0.3
 		"exit": _static_t = 0.5 + 0.3
 		"hold": _static_t = 0.37
+		"deco": _static_t = 2.0
 		_: _static_t = 1.0
 	_t = _static_t
 	queue_redraw()
@@ -78,11 +80,15 @@ func _doc_for(sample: String) -> Dictionary:
 			tl["hold"] = {"duration": 0.5, "effects": []}
 			tl["exit"] = {"enabled": true, "effect": value, "order": "forward", "duration": 0.5, "stagger": 0.09,
 				"easing": "cubic_in", "params": Enter.default_params(value)}
-		"hold":
+		"hold", "deco":
 			tl["enter"] = {"effect": "fade", "order": "all", "duration": 0.0, "stagger": 0.0, "easing": "linear",
 				"params": {}}
-			tl["hold"] = {"duration": 600.0, "effects": [Hold.default_params(value)]}
+			tl["hold"] = {"duration": 600.0, "effects": [Hold.default_params(value)] if kind == "hold" else []}
 			tl["exit"]["enabled"] = false
+			if kind == "deco":
+				d["layout"]["font_size"] = 56
+				d["decorations"] = [Doc.default_decoration(value)]
+				d["decorations"][0]["thickness"] = 6.0
 	return Doc.normalize(d)
 
 
@@ -105,7 +111,10 @@ func _draw_glyphs() -> void:
 	var origin := (size - canvas * s) * 0.5
 	var glyphs: Array = _ev.layout["glyphs"]
 	var t := _t + (0.001 if kind == "hold" else 0.0)
-	for st in _ev.evaluate(t):
+	var frame := _ev.evaluate_frame(t)
+	for deco in frame["decorations"]:
+		Drawer.draw_decoration(self, deco, origin, s)
+	for st in frame["glyphs"]:
 		if not st.visible or st.character.strip_edges() == "" or st.index >= glyphs.size():
 			continue
 		var font: Font = _fonts.get(st.role, _fonts.get("main"))

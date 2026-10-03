@@ -6,6 +6,7 @@
 [node name="FontPanel" type="ScrollContainer"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
+follow_focus = true
 horizontal_scroll_mode = 0
 script = ExtResource("1_script")
 
