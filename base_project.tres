@@ -1,8 +1,10 @@
-[gd_resource type="Resource" load_steps=11 format=3]
+[gd_resource type="Resource" load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://addons/game_base/project_config.gd" id="1"]
 [ext_resource type="Script" path="res://addons/game_base/option_definition.gd" id="2"]
 [ext_resource type="Material" path="res://app/shell/title_material.tres" id="3"]
+[ext_resource type="Texture2D" path="res://assets/branding/title_background.png" id="4_title"]
+[ext_resource type="Texture2D" path="res://assets/branding/loading_splash.png" id="5_loading"]
 
 [sub_resource type="Resource" id="FPS"]
 script = ExtResource("2")
@@ -63,6 +65,8 @@ title = "Godot Text FX"
 subtitle = "Text animation editor"
 tagline = "글자에 등장과 퇴장을 준다."
 loading_subtitle = "Text animation editor"
+title_background = ExtResource("4_title")
+loading_background = ExtResource("5_loading")
 accent = Color(0.88, 0.63, 0.31, 1)
 menu_size_multiplier = 0.8
 title_material = ExtResource("3")

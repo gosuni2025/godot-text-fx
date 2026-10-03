@@ -1,0 +1,10 @@
+Use case: stylized-concept.
+Asset type: finished loading splash background for a polished Godot Text FX creative text-animation editor, 16:9 landscape, preferably 2048 x 1152.
+Scene/backdrop: the small subtitle letterpress workshop of a quiet foggy lighthouse island, suggested only through deep atmospheric charcoal navy surroundings and very faint cool coastal haze. A printer's composing stone extends along the lower middle, disappearing into shadow.
+Subject: a sculptural group of tactile aged-brass movable type blocks, with a single bright warm-ivory capital T floating just above the composing stone. The T and blocks subtly transform into a few elegant thin amber light ribbons and typography motion trails flowing behind them; a tiny restrained amount of illuminated dust.
+Style/medium: premium cinematic illustration and carefully rendered still life, physical and tasteful, mature creative-software brand art. Crisp hero silhouette, authentic subtly worn metal, controlled depth of field, soft film-like atmosphere.
+Composition/framing: wide 16:9. Hero group entirely in the LEFT 15–55% of the frame, centered vertically near 52%. The RIGHT 35% must be very dark, low-contrast, quiet usable negative space for a loading panel; keep all bright ribbons, blocks and focal lights out of this right area. The upper left is moderately quiet, lower edge softly falls into darkness. Controlled scale with generous breathing room.
+Lighting/mood: single warm grazing spotlight on the brass and ivory T, faint cool rim light, cinematic and contemplative, luminous but no overexposed bloom.
+Color palette: midnight navy and charcoal #111820, aged brass and warm amber #e0a151, restrained warm ivory.
+Text (verbatim): only a single letter "T" is allowed as the hero movable type face. No other letters or words.
+Constraints: opaque image; no product name, no captions, no fake UI, no progress bar, no borders, no watermark, no people or characters, no busy scenery, no giant luminous gradients, no clutter. Deliver one finished background image.

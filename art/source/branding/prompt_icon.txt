@@ -1,0 +1,10 @@
+Use case: logo-brand
+Asset type: finished raster application icon for Godot Text FX, a text animation editor with a small letterpress workshop theme.
+Primary request: Create ONE polished square 1024x1024 application icon. A bold CAPITAL T cast as a tactile movable-type letter, centered as one simple large silhouette, with two broad amber sweeping offset streaks suggesting text motion and entrance animation.
+Scene/backdrop: Opaque full-bleed flat midnight navy #111820 background, filling the entire square.
+Subject: An ivory-faced T with restrained aged-brass bevels. Recognizable instantly at 32px. Subtle frontal dimension; no perspective scene.
+Style/medium: Premium editorial brand mark, restrained physical letterpress finish. Clean outline, large quiet color fields, no heavy surface detail.
+Composition/framing: Centered mark occupies about 70% of the canvas. Generous clean navy margin. Straight-on letter face with only subtle rounded bevel. Broad motion streaks integrate around the T without obscuring the letter.
+Color palette: midnight navy #111820, aged brass amber #e0a151, warm ivory.
+Text (verbatim): "T"
+Constraints: Only this one capital T. No other letters or words, no badge lettering, no decorative dots, no Godot mascot, no device frame, no icon border, no perspective ground, no outside drop shadow, no rounded-square container. The entire square is the icon artwork, not a mockup. Opaque background, no transparency.
