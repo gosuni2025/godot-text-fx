@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/font_section.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_font.png" id="2_font"]
+
+[node name="FontSection" type="PanelContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_script")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SectionTitle"
+text = "Font"
+
+[node name="Source" type="Label" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Bundled font"
+
+[node name="Pick" type="Button" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+tooltip_text = "Choose a font"
+auto_translate_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Pretendard"
+icon = ExtResource("2_font")
+text_overrun_behavior = 3
+
+[node name="Path" type="Label" parent="Rows"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+auto_translate_mode = 2
+text = "user://fonts/"
+text_overrun_behavior = 3
+
+[node name="Fields" type="VBoxContainer" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8

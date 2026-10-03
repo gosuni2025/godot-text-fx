@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/segment_section.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://app/editor/popups/picker_card.tscn" id="2_card"]
+
+[node name="SegmentSection" type="PanelContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_script")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SectionTitle"
+text = "Enter"
+
+[node name="Enabled" type="Button" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "On"
+
+[node name="Body" type="VBoxContainer" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Cards" type="HBoxContainer" parent="Rows/Body"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EffectCard" parent="Rows/Body/Cards" instance=ExtResource("2_card")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EasingCard" parent="Rows/Body/Cards" instance=ExtResource("2_card")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Fields" type="VBoxContainer" parent="Rows/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Params" type="VBoxContainer" parent="Rows/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8

@@ -1,0 +1,62 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/layout_panel.gd" id="1_script"]
+
+[node name="LayoutPanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="CanvasTitle" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Canvas size"
+
+[node name="Presets" type="HFlowContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="Preset_1280x720" type="Button" parent="Body/Presets"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "1280 × 720"
+
+[node name="Preset_1920x1080" type="Button" parent="Body/Presets"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "1920 × 1080"
+
+[node name="Preset_1080x1080" type="Button" parent="Body/Presets"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "1080 × 1080"
+
+[node name="Preset_custom" type="Button" parent="Body/Presets"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Custom"
+
+[node name="CanvasFields" type="VBoxContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Sections" type="VBoxContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10

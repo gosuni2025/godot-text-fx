@@ -1,0 +1,112 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/popups/font_picker_popup.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/close.png" id="2_close"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/search.png" id="3_search"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/import.png" id="4_import"]
+
+[node name="FontPickerPopup" type="PopupPanel"]
+wrap_controls = false
+size = Vector2i(680, 640)
+script = ExtResource("1_script")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 666.0
+offset_bottom = 626.0
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Rows/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SectionTitle"
+text = "Choose a font"
+
+[node name="Close" type="Button" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Close"
+icon = ExtResource("2_close")
+
+[node name="Current" type="Label" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+text = "Pretendard"
+text_overrun_behavior = 3
+
+[node name="Preview" type="Label" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+auto_translate_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Aa"
+vertical_alignment = 1
+clip_text = true
+
+[node name="BundledTitle" type="Label" parent="Rows"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Bundled fonts"
+
+[node name="Bundled" type="HFlowContainer" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="SystemTitle" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Rows/SystemTitle"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"DimLabel"
+text = "System fonts"
+
+[node name="Count" type="Label" parent="Rows/SystemTitle"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "0"
+
+[node name="SearchRow" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Rows/SearchRow"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("3_search")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Search" type="LineEdit" parent="Rows/SearchRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search system fonts"
+clear_button_enabled = true
+
+[node name="List" type="ItemList" parent="Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_vertical = 3
+auto_translate_mode = 2
+
+[node name="FromFile" type="Button" parent="Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load from file..."
+icon = ExtResource("4_import")
+
+[node name="Hint" type="Label" parent="Rows"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Font files are copied into user://fonts and referenced by path."
+text_overrun_behavior = 3

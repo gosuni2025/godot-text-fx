@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://co1e5pwlc6dg3"
+
+[deps]
+
+files=["res://app/i18n/editor.ko.translation", "res://app/i18n/editor.ja.translation", "res://app/i18n/editor.en.translation"]
+
+source_file="res://app/i18n/editor.csv"
+dest_files=["res://app/i18n/editor.ko.translation", "res://app/i18n/editor.ja.translation", "res://app/i18n/editor.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

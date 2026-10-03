@@ -1,0 +1,281 @@
+keys,ko,ja,en
+Undo (Ctrl/Cmd+Z),실행 취소 (Ctrl/Cmd+Z),元に戻す (Ctrl/Cmd+Z),Undo (Ctrl/Cmd+Z)
+Redo (Ctrl/Cmd+Shift+Z),다시 실행 (Ctrl/Cmd+Shift+Z),やり直す (Ctrl/Cmd+Shift+Z),Redo (Ctrl/Cmd+Shift+Z)
+Options (Esc),옵션 (Esc),オプション (Esc),Options (Esc)
+Mode / templates,모드·템플릿,モード・テンプレート,Mode / templates
+Text,문장,文章,Text
+Motion,연출,演出,Motion
+Style,스타일,スタイル,Style
+Font,글꼴,フォント,Font
+Decor,장식,装飾,Decor
+Layout,배치,配置,Layout
+Export,내보내기,書き出し,Export
+Color,색,色,Color
+On,켜기,オン,On
+Decorations,장식,装飾,Decorations
+"Lines, bands and frames drawn around the main text. Later items draw on top.",본문 주위에 그리는 선·띠·틀입니다. 아래 항목이 위에 그려집니다.,本文のまわりに描く線・帯・枠です。下の項目ほど上に描かれます。,"Lines, bands and frames drawn around the main text. Later items draw on top."
+No decorations.,장식이 없습니다.,装飾はありません。,No decorations.
+Add decoration,장식 추가,装飾を追加,Add decoration
+Document JSON,문서 JSON,ドキュメントJSON,Document JSON
+Save document (JSON),문서 저장 (JSON),ドキュメントを保存 (JSON),Save document (JSON)
+Open document (JSON),문서 열기 (JSON),ドキュメントを開く (JSON),Open document (JSON)
+Baked frames (other engines),베이크 프레임 (다른 엔진용),ベイクしたフレーム (他のエンジン用),Baked frames (other engines)
+Frame rate,프레임 수,フレームレート,Frame rate
+Export baked JSON,베이크 JSON 내보내기,ベイクJSONを書き出す,Export baked JSON
+Clipboard strings,클립보드 문자열,クリップボード文字列,Clipboard strings
+Copy document string,문서 문자열 복사,ドキュメント文字列をコピー,Copy document string
+Paste document string,문서 문자열 붙여넣기,ドキュメント文字列を貼り付け,Paste document string
+Copy operation log,조작 기록 복사,操作ログをコピー,Copy operation log
+Paste and replay operation log,조작 기록 붙여넣고 다시 실행,操作ログを貼り付けて再実行,Paste and replay operation log
+Last result,마지막 결과,最後の結果,Last result
+Games play the document JSON with the TextFxPlayer node from addons/text_fx. Copy that folder (and any bundled fonts) into your game; see addons/text_fx/README.md.,게임에서는 addons/text_fx 의 TextFxPlayer 노드로 문서 JSON을 재생합니다. 이 폴더(와 번들 글꼴)를 게임에 복사하세요. 자세한 내용은 addons/text_fx/README.md 를 보세요.,ゲームでは addons/text_fx の TextFxPlayer ノードでドキュメントJSONを再生します。このフォルダ(と同梱フォント)をゲームにコピーしてください。詳しくは addons/text_fx/README.md を参照。,Games play the document JSON with the TextFxPlayer node from addons/text_fx. Copy that folder (and any bundled fonts) into your game; see addons/text_fx/README.md.
+Separate font for sub text,보조 문구 글꼴 따로,サブテキストのフォントを分ける,Separate font for sub text
+"System fonts are looked up by name on the machine that plays the document. Bundle the font with your game, or load a font file, for the same look everywhere.",시스템 글꼴은 재생하는 기기에서 이름으로 찾습니다. 어디서나 같게 보이려면 글꼴을 게임에 넣거나 글꼴 파일을 불러오세요.,システムフォントは再生する端末で名前から探します。どこでも同じ見た目にするには、フォントをゲームに同梱するかフォントファイルを読み込んでください。,"System fonts are looked up by name on the machine that plays the document. Bundle the font with your game, or load a font file, for the same look everywhere."
+Bundled font,번들 글꼴,同梱フォント,Bundled font
+Choose a font,글꼴 고르기,フォントを選ぶ,Choose a font
+Stop position,지점 위치,位置,Stop position
+Stop color,지점 색,色,Stop color
+Remove stop,지점 삭제,色の点を削除,Remove stop
+Canvas size,캔버스 크기,キャンバスサイズ,Canvas size
+Custom,직접 입력,カスタム,Custom
+Move up,위로,上へ,Move up
+Move down,아래로,下へ,Move down
+Remove,삭제,削除,Remove
+Mode,모드,モード,Mode
+Message,메시지,メッセージ,Message
+Trailer,트레일러,トレーラー,Trailer
+Place / time,장소·시간,場所・時間,Place / time
+Templates,템플릿,テンプレート,Templates
+Keep my text when applying a template,템플릿을 적용해도 내 문장 유지,テンプレートを適用しても文章を残す,Keep my text when applying a template
+Hold,유지,維持,Hold
+Scroll the whole block upward (no pages),블록 전체를 위로 스크롤 (페이지 없음),ブロック全体を上へスクロール (ページなし),Scroll the whole block upward (no pages)
+Hold effects (stacked in order),유지 중 효과 (순서대로 겹침),維持中の効果 (順に重ねる),Hold effects (stacked in order)
+No hold effects.,유지 중 효과가 없습니다.,維持中の効果はありません。,No hold effects.
+Add hold effect,유지 효과 추가,維持効果を追加,Add hold effect
+Enter,등장,登場,Enter
+Exit,퇴장,退場,Exit
+Separate style for sub text,보조 문구 스타일 따로,サブテキストのスタイルを分ける,Separate style for sub text
+Editing,편집 대상,編集対象,Editing
+Main text,본문,本文,Main text
+Sub text,보조 문구,サブテキスト,Sub text
+Type the text to animate,움직일 문장을 입력하세요,動かす文章を入力,Type the text to animate
+"In trailer mode, a blank line starts a new page.",트레일러 모드에서는 빈 줄이 새 페이지를 시작합니다.,トレーラーモードでは空行で新しいページになります。,"In trailer mode, a blank line starts a new page."
+"Optional: time, place or subtitle under the main text",선택: 본문 아래의 시간·장소·부제,任意: 本文の下に出す時間・場所・副題,"Optional: time, place or subtitle under the main text"
+"Position, size and style of the sub text are in the Layout, Style and Font tabs.",보조 문구의 위치·크기·스타일은 배치·스타일·글꼴 탭에 있습니다.,サブテキストの位置・サイズ・スタイルは配置・スタイル・フォントタブにあります。,"Position, size and style of the sub text are in the Layout, Style and Font tabs."
+Close,닫기,閉じる,Close
+Bundled fonts,번들 글꼴,同梱フォント,Bundled fonts
+System fonts,시스템 글꼴,システムフォント,System fonts
+%d system fonts,시스템 글꼴 %d개,システムフォント %d 件,%d system fonts
+Search system fonts,시스템 글꼴 검색,システムフォントを検索,Search system fonts
+Load from file...,파일에서 불러오기...,ファイルから読み込む...,Load from file...
+Font files are copied into user://fonts and referenced by path.,글꼴 파일은 user://fonts 에 복사되고 경로로 참조됩니다.,フォントファイルは user://fonts にコピーされ、パスで参照されます。,Font files are copied into user://fonts and referenced by path.
+Hover a card to preview. Click to apply; Esc closes.,"카드에 올리면 미리보기, 누르면 적용, Esc로 닫습니다.",カードに乗せるとプレビュー、クリックで適用、Escで閉じます。,Hover a card to preview. Click to apply; Esc closes.
+Background,배경,背景,Background
+Checkerboard background,체커보드 배경,チェッカー背景,Checkerboard background
+Solid color background,단색 배경,単色背景,Solid color background
+Image background (choose a file),이미지 배경 (파일 선택),画像背景 (ファイルを選択),Image background (choose a file)
+Background color,배경색,背景色,Background color
+To start (Home),처음으로 (Home),最初へ (Home),To start (Home)
+Play (Space),재생 (Space),再生 (Space),Play (Space)
+Pause (Space),일시정지 (Space),一時停止 (Space),Pause (Space)
+Time,시간,時間,Time
+Stop after one pass,한 차례 재생 후 정지,一巡したら停止,Stop after one pass
+Loop everything,전체 반복,全体をループ,Loop everything
+Loop the hold until finish,끝내기 전까지 유지 반복,終了まで維持をループ,Loop the hold until finish
+Exit: on,퇴장: 켜짐,退場: オン,Exit: on
+Exit: off,퇴장: 꺼짐,退場: オフ,Exit: off
+Finish the hold and play the exit,유지를 끝내고 퇴장 재생,維持を終えて退場を再生,Finish the hold and play the exit
+Finish,끝내기,終了,Finish
+Rejected: %s,거부됨: %s,却下: %s,Rejected: %s
+Text FX,글자 연출,文字演出,Text FX
+Could not copy the font file.,글꼴 파일을 복사하지 못했습니다.,フォントファイルをコピーできませんでした。,Could not copy the font file.
+Could not read the image.,이미지를 읽지 못했습니다.,画像を読み込めませんでした。,Could not read the image.
+Nothing exported yet.,아직 내보낸 것이 없습니다.,まだ何も書き出していません。,Nothing exported yet.
+Could not write %s,%s 에 쓰지 못했습니다,%s に書き込めませんでした,Could not write %s
+Saved document: %s,문서를 저장했습니다: %s,ドキュメントを保存しました: %s,Saved document: %s
+Could not read %s,%s 을(를) 읽지 못했습니다,%s を読み込めませんでした,Could not read %s
+Not a JSON document: %s,JSON 문서가 아닙니다: %s,JSONドキュメントではありません: %s,Not a JSON document: %s
+Opened document: %s,문서를 열었습니다: %s,ドキュメントを開きました: %s,Opened document: %s
+"Exported baked JSON (%d fps, %d frames): %s","베이크 JSON을 내보냈습니다 (%d fps, %d 프레임): %s","ベイクJSONを書き出しました (%d fps, %d フレーム): %s","Exported baked JSON (%d fps, %d frames): %s"
+Copied the document string (%d characters).,문서 문자열을 복사했습니다 (%d자).,ドキュメント文字列をコピーしました (%d 文字)。,Copied the document string (%d characters).
+Could not paste: %s,붙여넣지 못했습니다: %s,貼り付けできませんでした: %s,Could not paste: %s
+Pasted the document string.,문서 문자열을 붙여넣었습니다.,ドキュメント文字列を貼り付けました。,Pasted the document string.
+Copied the operation log (%d commands).,조작 기록을 복사했습니다 (명령 %d개).,操作ログをコピーしました (コマンド %d 件)。,Copied the operation log (%d commands).
+Could not replay: %s,다시 실행하지 못했습니다: %s,再実行できませんでした: %s,Could not replay: %s
+Replayed %d commands (%d rejected). Document hash %s,명령 %d개를 다시 실행했습니다 (거부 %d개). 문서 해시 %s,コマンド %d 件を再実行しました (却下 %d 件)。ドキュメントハッシュ %s,Replayed %d commands (%d rejected). Document hash %s
+Main text font,본문 글꼴,本文のフォント,Main text font
+Sub text font,보조 문구 글꼴,サブテキストのフォント,Sub text font
+System font,시스템 글꼴,システムフォント,System font
+Font file,글꼴 파일,フォントファイル,Font file
+Direction and position,방향·위치,方向・位置,Direction and position
+Size and spacing,크기·간격,サイズ・間隔,Size and spacing
+Line breaks,줄바꿈,改行,Line breaks
+Random seed,무작위 시드,乱数シード,Random seed
+New seed,새 시드,新しいシード,New seed
+All,전체,すべて,All
+Effect: click to choose,효과: 눌러서 고르기,効果: クリックで選択,Effect: click to choose
+Easing: click to choose,이징: 눌러서 고르기,イージング: クリックで選択,Easing: click to choose
+Enter effect,등장 효과,登場効果,Enter effect
+Exit effect,퇴장 효과,退場効果,Exit effect
+Easing,이징,イージング,Easing
+Fill,채우기,塗り,Fill
+Add color stop,색 지점 추가,色の点を追加,Add color stop
+Outline,테두리,縁取り,Outline
+Second outline layer,두 번째 윤곽선,二重目の輪郭線,Second outline layer
+Shadow,그림자,影,Shadow
+Glow,빛,光彩,Glow
+Opacity,불투명도,不透明度,Opacity
+Fade,페이드,フェード,Fade
+Slide,미끄러짐,スライド,Slide
+Zoom,확대,ズーム,Zoom
+Pop,튀어나옴,ポップ,Pop
+Drop,떨어짐,ドロップ,Drop
+Rise,떠오름,浮上,Rise
+Blur,흐림,ぼかし,Blur
+Spin,회전,回転,Spin
+Converge,모임,集合,Converge
+Tracking,자간 좁힘,字間詰め,Tracking
+Center split,중앙 갈라짐,中央分割,Center split
+Scatter,흩어짐,散らばり,Scatter
+Wipe,닦아내기,ワイプ,Wipe
+Typewriter,타자기,タイプライター,Typewriter
+Glitch,글리치,グリッチ,Glitch
+Center stamp,중앙 찍기,中央スタンプ,Center stamp
+Blink,점멸,点滅,Blink
+Flicker,깜빡임,ちらつき,Flicker
+Shake,흔들림,揺れ,Shake
+Wave,물결,波,Wave
+Float,둥실,浮遊,Float
+Pulse,맥동,脈動,Pulse
+Color cycle,색 순환,色の循環,Color cycle
+Underline,밑줄,下線,Underline
+Overline,윗줄,上線,Overline
+Band,띠,帯,Band
+Flanking strokes,글자 양끝의 짧은 선,文字の左右に添える線,Flanking strokes
+Frame,틀,枠,Frame
+Brackets,꺾쇠,かぎ括弧,Brackets
+Linear,등속,等速,Linear
+Sine,사인,サイン,Sine
+Quad,2차,2次,Quad
+Cubic,3차,3次,Cubic
+Quart,4차,4次,Quart
+Quint,5차,5次,Quint
+Expo,지수,指数,Expo
+Circ,원형,円,Circ
+Back curve,되돌림,バック,Back curve
+Elastic,탄성,弾性,Elastic
+Bounce,튕김,バウンド,Bounce
+Ease in,가속,加速,Ease in
+Ease out,감속,減速,Ease out
+Ease in-out,가감속,加減速,Ease in-out
+Battle,전투,戦闘,Battle
+Explore,탐색,探索,Explore
+Narrator,진행자,進行役,Narrator
+Scene / time,장면·시간,場面・時間,Scene / time
+Check,판정,判定,Check
+Vertical,세로쓰기,縦書き,Vertical
+Reveal successive lines,행 순서대로 나타내기,行を順に表示,Reveal successive lines
+Flow,흐름,流れ,Flow
+Reveal the full text,문장 전체 함께 나타내기,全文をまとめて表示,Reveal the full text
+Scroll,스크롤,スクロール,Scroll
+Horizontal,가로쓰기,横書き,Horizontal
+Left,왼쪽,左,Left
+Center,가운데,中央,Center
+Right,오른쪽,右,Right
+Top,위,上,Top
+Middle,가운데,中央,Middle
+Bottom,아래,下,Bottom
+No wrap,줄바꿈 없음,折り返さない,No wrap
+By character,글자 단위,文字単位,By character
+By word,단어 단위,単語単位,By word
+Auto,자동,自動,Auto
+Above,위,上,Above
+Below,아래,下,Below
+Solid,단색,単色,Solid
+Gradient,그라데이션,グラデーション,Gradient
+Whole block,블록 전체,ブロック全体,Whole block
+Each glyph,글자마다,一文字ずつ,Each glyph
+Forward,순서대로,順番,Forward
+Reverse,거꾸로,逆順,Reverse
+By line,줄 단위,行単位,By line
+Center out,가운데부터,中央から,Center out
+Edges in,양끝부터,両端から,Edges in
+Random,무작위,ランダム,Random
+Up,위,上,Up
+Down,아래,下,Down
+Alternate,번갈아,交互,Alternate
+Main up / sub down,본문 위·보조 아래,本文は上・サブは下,Main up / sub down
+None,없음,なし,None
+Expand toward both ends,중심에서 양끝으로 확장,中心から両端へ広げる,Expand toward both ends
+Grow from start,처음부터 늘어남,端から伸びる,Grow from start
+Once,한 번,一回,Once
+Loop all,전체 반복,全体ループ,Loop all
+Loop hold,유지 반복,維持ループ,Loop hold
+Font size,글자 크기,文字サイズ,Font size
+Sub font size,보조 문구 크기,サブテキストのサイズ,Sub font size
+Letter spacing,자간,字間,Letter spacing
+Line height,줄 간격,行間,Line height
+Max width,최대 너비,最大幅,Max width
+Max height,최대 높이,最大高さ,Max height
+Direction,방향,方向,Direction
+Align,가로 정렬,横揃え,Align
+Vertical align,세로 정렬,縦揃え,Vertical align
+Anchor,기준점,基準点,Anchor
+Offset,오프셋,オフセット,Offset
+Wrap,줄바꿈,折り返し,Wrap
+Line-break rules (kinsoku),금칙 처리,禁則処理,Line-break rules (kinsoku)
+Auto shrink,자동 축소,自動縮小,Auto shrink
+Min font size,최소 글자 크기,最小文字サイズ,Min font size
+Supporting text placement,본문 기준 보조 문구 자리,本文に対する補助文の位置,Supporting text placement
+Sub text gap,보조 문구 간격,サブテキストの間隔,Sub text gap
+Width,너비,幅,Width
+Height,높이,高さ,Height
+Weight,굵기,太さ,Weight
+Italic,기울임,斜体,Italic
+Gradient angle,그라데이션 각도,グラデーションの角度,Gradient angle
+Gradient range,그라데이션 범위,グラデーションの範囲,Gradient range
+Size,크기,サイズ,Size
+Shadow offset,그림자 위치,影の位置,Shadow offset
+Strength,세기,強さ,Strength
+Order,순서,順序,Order
+Duration (s),길이 (초),長さ (秒),Duration (s)
+Stagger (s),글자 간격 (초),文字ごとの遅れ (秒),Stagger (s)
+Hold time (s),유지 시간 (초),維持時間 (秒),Hold time (s)
+Page gap (s),페이지 간격 (초),ページ間隔 (秒),Page gap (s)
+Scroll speed (px/s),스크롤 속도 (px/초),スクロール速度 (px/秒),Scroll speed (px/s)
+Type,종류,種類,Type
+Thickness,두께,太さ,Thickness
+Margin,여백,余白,Margin
+Length,길이,長さ,Length
+Use outline,테두리 사용,縁取りを使う,Use outline
+Animation,애니메이션,アニメーション,Animation
+Delay (s),지연 (초),遅延 (秒),Delay (s)
+Document name,문서 이름,ドキュメント名,Document name
+Seed,시드,シード,Seed
+Distance (em),거리 (em),距離 (em),Distance (em)
+Start scale,시작 배율,開始倍率,Start scale
+Blur radius (em),흐림 반경 (em),ぼかし半径 (em),Blur radius (em)
+Angle,각도,角度,Angle
+Spread,퍼짐,広がり,Spread
+Jitter,흔들림 폭,ぶれ幅,Jitter
+Intensity,강도,強度,Intensity
+Big scale,크게 표시 배율,拡大倍率,Big scale
+Time per glyph (s),글자당 시간 (초),一文字あたりの時間 (秒),Time per glyph (s)
+Pause (s),쉼 (초),間 (秒),Pause (s)
+Slam scale,내려찍기 배율,叩きつけ倍率,Slam scale
+Punctuation pause (s),문장부호 뒤 쉼 (초),句読点後の間 (秒),Punctuation pause (s)
+Period (s),주기 (초),周期 (秒),Period (s)
+Min opacity,최소 불투명도,最小不透明度,Min opacity
+Hard blink,딱 끊기는 점멸,はっきり点滅,Hard blink
+Rate,빈도,頻度,Rate
+Amplitude,진폭,振幅,Amplitude
+Frequency,진동수,振動数,Frequency
+Wavelength (glyphs),파장 (글자 수),波長 (文字数),Wavelength (glyphs)
+Speed,속도,速度,Speed
+Scale,배율,倍率,Scale
+Interval (s),간격 (초),間隔 (秒),Interval (s)
+Slices,조각 수,分割数,Slices
+Color A,색 A,色 A,Color A
+Color B,색 B,色 B,Color B
+Saturation,채도,彩度,Saturation
+Off,꺼짐,オフ,Off

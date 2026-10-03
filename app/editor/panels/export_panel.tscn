@@ -1,0 +1,162 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/export_panel.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/save.png" id="2_save"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/open.png" id="3_open"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/export.png" id="4_export"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/copy.png" id="5_copy"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/paste.png" id="6_paste"]
+
+[node name="ExportPanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="DocSection" type="PanelContainer" parent="Body"]
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Body/DocSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Body/DocSection/Rows"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Document JSON"
+
+[node name="SaveDoc" type="Button" parent="Body/DocSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Ctrl/Cmd+S"
+text = "Save document (JSON)"
+icon = ExtResource("2_save")
+alignment = 0
+
+[node name="OpenDoc" type="Button" parent="Body/DocSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open document (JSON)"
+icon = ExtResource("3_open")
+alignment = 0
+
+[node name="BakedSection" type="PanelContainer" parent="Body"]
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Body/BakedSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Body/BakedSection/Rows"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Baked frames (other engines)"
+
+[node name="FpsRow" type="HBoxContainer" parent="Body/BakedSection/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Body/BakedSection/Rows/FpsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Frame rate"
+
+[node name="Fps_24" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "24"
+
+[node name="Fps_30" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "30"
+
+[node name="Fps_60" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "60"
+
+[node name="ExportBaked" type="Button" parent="Body/BakedSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Ctrl/Cmd+E"
+text = "Export baked JSON"
+icon = ExtResource("4_export")
+alignment = 0
+
+[node name="ClipSection" type="PanelContainer" parent="Body"]
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Body/ClipSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Body/ClipSection/Rows"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Clipboard strings"
+
+[node name="CopyDoc" type="Button" parent="Body/ClipSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Ctrl/Cmd+Shift+C"
+text = "Copy document string"
+icon = ExtResource("5_copy")
+alignment = 0
+
+[node name="PasteDoc" type="Button" parent="Body/ClipSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Paste document string"
+icon = ExtResource("6_paste")
+alignment = 0
+
+[node name="CopyLog" type="Button" parent="Body/ClipSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Copy operation log"
+icon = ExtResource("5_copy")
+alignment = 0
+
+[node name="ReplayLog" type="Button" parent="Body/ClipSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Paste and replay operation log"
+icon = ExtResource("6_paste")
+alignment = 0
+
+[node name="ResultSection" type="PanelContainer" parent="Body"]
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Body/ResultSection"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Body/ResultSection/Rows"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Last result"
+
+[node name="Result" type="Label" parent="Body/ResultSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+text = "-"
+autowrap_mode = 3
+
+[node name="Note" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Games play the document JSON with the TextFxPlayer node from addons/text_fx. Copy that folder (and any bundled fonts) into your game; see addons/text_fx/README.md."
+autowrap_mode = 3

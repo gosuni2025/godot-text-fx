@@ -33,7 +33,7 @@ enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg", "res://addons/game
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://app/i18n/ui.ko.translation", "res://app/i18n/ui.ja.translation", "res://app/i18n/ui.en.translation")
+locale/translations=PackedStringArray("res://app/i18n/ui.ko.translation", "res://app/i18n/ui.ja.translation", "res://app/i18n/ui.en.translation", "res://app/i18n/editor.ko.translation", "res://app/i18n/editor.ja.translation", "res://app/i18n/editor.en.translation")
 
 [rendering]
 

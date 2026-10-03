@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/text_panel.gd" id="1_script"]
+
+[node name="TextPanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="MainTitle" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Main text"
+
+[node name="Main" type="TextEdit" parent="Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+placeholder_text = "Type the text to animate"
+wrap_mode = 1
+
+[node name="PageHint" type="Label" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "In trailer mode, a blank line starts a new page."
+autowrap_mode = 3
+
+[node name="SubTitle" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Sub text"
+
+[node name="Sub" type="TextEdit" parent="Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+placeholder_text = "Optional: time, place or subtitle under the main text"
+wrap_mode = 1
+
+[node name="SubHint" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Position, size and style of the sub text are in the Layout, Style and Font tabs."
+autowrap_mode = 3
+
+[node name="Extra" type="VBoxContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8

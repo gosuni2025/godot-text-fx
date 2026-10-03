@@ -1,7 +1,30 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://app/editor/editor_placeholder.gd" id="1_script"]
-[ext_resource type="Theme" path="res://addons/game_base/ui/theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://app/editor/editor.gd" id="1_script"]
+[ext_resource type="Theme" path="res://app/editor/editor_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://app/editor/preview/preview_panel.tscn" id="3_preview"]
+[ext_resource type="PackedScene" path="res://app/editor/popups/picker_popup.tscn" id="4_picker"]
+[ext_resource type="PackedScene" path="res://app/editor/popups/font_picker_popup.tscn" id="5_fontpicker"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/undo.png" id="ic_undo"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/redo.png" id="ic_redo"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/settings.png" id="ic_settings"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/back.png" id="ic_back"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_mode.png" id="tab_mode"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/mode_panel.tscn" id="panel_mode"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_text.png" id="tab_text"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/text_panel.tscn" id="panel_text"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_motion.png" id="tab_motion"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/motion_panel.tscn" id="panel_motion"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_style.png" id="tab_style"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/style_panel.tscn" id="panel_style"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_font.png" id="tab_font"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/font_panel.tscn" id="panel_font"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_decor.png" id="tab_decor"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/decor_panel.tscn" id="panel_decor"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_layout.png" id="tab_layout"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/layout_panel.tscn" id="panel_layout"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/tab_export.png" id="tab_export"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/export_panel.tscn" id="panel_export"]
 
 [node name="Editor" type="Control"]
 layout_mode = 3
@@ -21,41 +44,226 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.1, 0.1, 0.12, 1)
+color = Color(0.075, 0.08, 0.1, 1)
 
-[node name="Center" type="CenterContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
-[node name="Rows" type="VBoxContainer" parent="Center"]
-custom_minimum_size = Vector2(360, 0)
+[node name="Rows" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 8
 
-[node name="Heading" type="Label" parent="Center/Rows"]
+[node name="TopBar" type="HBoxContainer" parent="Margin/Rows"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 48
-text = "Editor"
-horizontal_alignment = 1
+theme_override_constants/separation = 8
 
-[node name="Hint" type="Label" parent="Center/Rows"]
+[node name="AppTitle" type="Label" parent="Margin/Rows/TopBar"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.7, 0.7, 0.72, 1)
-text = "The editor screen is not built yet."
-horizontal_alignment = 1
+theme_type_variation = &"SectionTitle"
+text = "Text animation editor"
 
-[node name="Options" type="Button" parent="Center/Rows"]
+[node name="DocName" type="Label" parent="Margin/Rows/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-text = "Options"
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
+theme_type_variation = &"DimLabel"
+auto_translate_mode = 2
+text_overrun_behavior = 3
 
-[node name="Title" type="Button" parent="Center/Rows"]
+[node name="Status" type="Label" parent="Margin/Rows/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-text = "Return to title"
+size_flags_horizontal = 3
+mouse_filter = 0
+auto_translate_mode = 2
+horizontal_alignment = 2
+text_overrun_behavior = 3
+
+[node name="Undo" type="Button" parent="Margin/Rows/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Undo (Ctrl/Cmd+Z)"
+icon = ExtResource("ic_undo")
+
+[node name="Redo" type="Button" parent="Margin/Rows/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Redo (Ctrl/Cmd+Shift+Z)"
+icon = ExtResource("ic_redo")
+
+[node name="Settings" type="Button" parent="Margin/Rows/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Options (Esc)"
+icon = ExtResource("ic_settings")
+
+[node name="Back" type="Button" parent="Margin/Rows/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Return to title"
+icon = ExtResource("ic_back")
+
+[node name="Split" type="HSplitContainer" parent="Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="Preview" parent="Margin/Rows/Split" instance=ExtResource("3_preview")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Right" type="VBoxContainer" parent="Margin/Rows/Split"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Tabs" type="GridContainer" parent="Margin/Rows/Split/Right"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 4
+
+[node name="Tab_mode" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Mode / templates"
+icon = ExtResource("tab_mode")
+
+[node name="Tab_text" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Text"
+icon = ExtResource("tab_text")
+
+[node name="Tab_motion" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Motion"
+icon = ExtResource("tab_motion")
+
+[node name="Tab_style" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Style"
+icon = ExtResource("tab_style")
+
+[node name="Tab_font" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Font"
+icon = ExtResource("tab_font")
+
+[node name="Tab_decor" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Decor"
+icon = ExtResource("tab_decor")
+
+[node name="Tab_layout" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Layout"
+icon = ExtResource("tab_layout")
+
+[node name="Tab_export" type="Button" parent="Margin/Rows/Split/Right/Tabs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+toggle_mode = true
+text = "Export"
+icon = ExtResource("tab_export")
+
+[node name="Pages" type="PanelContainer" parent="Margin/Rows/Split/Right"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel_mode" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_mode")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Panel_text" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_text")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_motion" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_motion")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_style" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_style")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_font" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_font")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_decor" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_decor")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_layout" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_layout")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Panel_export" parent="Margin/Rows/Split/Right/Pages" instance=ExtResource("panel_export")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="PickerPopup" parent="." instance=ExtResource("4_picker")]
+unique_name_in_owner = true
+visible = false
+
+[node name="FontPicker" parent="." instance=ExtResource("5_fontpicker")]
+unique_name_in_owner = true
+visible = false
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+size = Vector2i(900, 600)
+access = 2
+use_native_dialog = true
+
+[node name="AutosaveTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+one_shot = true

@@ -1,0 +1,37 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/font_panel.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://app/editor/panels/font_section.tscn" id="2_section"]
+
+[node name="FontPanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Main" parent="Body" instance=ExtResource("2_section")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SubToggle" type="Button" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "Separate font for sub text"
+
+[node name="Sub" parent="Body" instance=ExtResource("2_section")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Hint" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "System fonts are looked up by name on the machine that plays the document. Bundle the font with your game, or load a font file, for the same look everywhere."
+autowrap_mode = 3

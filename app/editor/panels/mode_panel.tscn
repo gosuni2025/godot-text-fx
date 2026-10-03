@@ -1,0 +1,79 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/mode_panel.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/mode_message.png" id="2_msg"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/mode_trailer.png" id="3_trl"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/mode_caption.png" id="4_cap"]
+
+[node name="ModePanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ModeTitle" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Mode"
+
+[node name="Modes" type="HBoxContainer" parent="Body"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Mode_message" type="Button" parent="Body/Modes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Message"
+icon = ExtResource("2_msg")
+
+[node name="Mode_trailer" type="Button" parent="Body/Modes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Trailer"
+icon = ExtResource("3_trl")
+
+[node name="Mode_caption" type="Button" parent="Body/Modes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Place / time"
+icon = ExtResource("4_cap")
+
+[node name="GroupTitle" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Templates"
+
+[node name="Groups" type="HFlowContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="KeepText" type="Button" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "Keep my text when applying a template"
+
+[node name="Grid" type="GridContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4

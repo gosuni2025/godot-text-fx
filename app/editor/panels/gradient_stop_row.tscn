@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/gradient_stop_row.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/remove.png" id="2_remove"]
+
+[node name="GradientStopRow" type="HBoxContainer"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+script = ExtResource("1_script")
+
+[node name="PosLabel" type="Label" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+auto_translate_mode = 2
+text = "0%"
+horizontal_alignment = 2
+
+[node name="Pos" type="HSlider" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "Stop position"
+max_value = 1.0
+step = 0.01
+
+[node name="Color" type="ColorPickerButton" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 32)
+layout_mode = 2
+tooltip_text = "Stop color"
+
+[node name="Remove" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Remove stop"
+icon = ExtResource("2_remove")

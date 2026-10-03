@@ -1,0 +1,50 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/popups/picker_popup.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/close.png" id="2_close"]
+
+[node name="PickerPopup" type="PopupPanel"]
+wrap_controls = false
+size = Vector2i(640, 520)
+script = ExtResource("1_script")
+
+[node name="Rows" type="VBoxContainer" parent="."]
+offset_left = 14.0
+offset_top = 12.0
+offset_right = 626.0
+offset_bottom = 506.0
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SectionTitle"
+text = "Choose"
+
+[node name="Close" type="Button" parent="Rows/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Close"
+icon = ExtResource("2_close")
+
+[node name="Scroll" type="ScrollContainer" parent="Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Grid" type="HFlowContainer" parent="Rows/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="Hint" type="Label" parent="Rows"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Hover a card to preview. Click to apply; Esc closes."
+text_overrun_behavior = 3

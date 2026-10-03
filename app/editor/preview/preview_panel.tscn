@@ -1,0 +1,210 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/preview/preview_panel.gd" id="1_script"]
+[ext_resource type="Shader" path="res://app/editor/preview/checker.gdshader" id="2_checker"]
+[ext_resource type="Script" path="res://addons/text_fx/render/text_fx_player.gd" id="3_player"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/bg_checker.png" id="4_bgc"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/bg_color.png" id="5_bgs"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/bg_image.png" id="6_bgi"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/to_start.png" id="7_start"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/play.png" id="8_play"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/loop_once.png" id="9_once"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/loop_all.png" id="10_all"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/loop_hold.png" id="11_hold"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/exit_on.png" id="12_exit"]
+[ext_resource type="Texture2D" path="res://assets/icons/ui/stop.png" id="13_stop"]
+
+[sub_resource type="ShaderMaterial" id="mat_checker"]
+shader = ExtResource("2_checker")
+
+[node name="PreviewPanel" type="VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.35
+theme_override_constants/separation = 8
+script = ExtResource("1_script")
+
+[node name="Toolbar" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BgLabel" type="Label" parent="Toolbar"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Background"
+
+[node name="BgChecker" type="Button" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Checkerboard background"
+toggle_mode = true
+icon = ExtResource("4_bgc")
+
+[node name="BgColor" type="Button" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Solid color background"
+toggle_mode = true
+icon = ExtResource("5_bgs")
+
+[node name="BgImage" type="Button" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Image background (choose a file)"
+toggle_mode = true
+icon = ExtResource("6_bgi")
+
+[node name="BgPicker" type="ColorPickerButton" parent="Toolbar"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+tooltip_text = "Background color"
+color = Color(0.0, 0.47, 0.25, 1)
+edit_alpha = false
+
+[node name="Spacer" type="Control" parent="Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CanvasSize" type="Label" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+auto_translate_mode = 2
+text = "1280 × 720"
+
+[node name="Stage" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Aspect" type="AspectRatioContainer" parent="Stage"]
+unique_name_in_owner = true
+layout_mode = 2
+ratio = 1.7778
+
+[node name="Canvas" type="Control" parent="Stage/Aspect"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Checker" type="ColorRect" parent="Stage/Aspect/Canvas"]
+unique_name_in_owner = true
+material = SubResource("mat_checker")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Solid" type="ColorRect" parent="Stage/Aspect/Canvas"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0, 0.47, 0.25, 1)
+
+[node name="Image" type="TextureRect" parent="Stage/Aspect/Canvas"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Player" type="Control" parent="Stage/Aspect/Canvas"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_player")
+autoplay = false
+
+[node name="Transport" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ToStart" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "To start (Home)"
+icon = ExtResource("7_start")
+
+[node name="PlayPause" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Play (Space)"
+icon = ExtResource("8_play")
+
+[node name="Scrubber" type="HSlider" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+tooltip_text = "Time"
+max_value = 1.0
+step = 0.001
+
+[node name="Time" type="Label" parent="Transport"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+auto_translate_mode = 2
+text = "0.00 / 0.00 s"
+horizontal_alignment = 1
+
+[node name="Sep" type="VSeparator" parent="Transport"]
+layout_mode = 2
+
+[node name="Loop_once" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Stop after one pass"
+toggle_mode = true
+icon = ExtResource("9_once")
+
+[node name="Loop_loop_all" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Loop everything"
+toggle_mode = true
+icon = ExtResource("10_all")
+
+[node name="Loop_loop_hold" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Loop the hold until finish"
+toggle_mode = true
+icon = ExtResource("11_hold")
+
+[node name="Exit" type="Button" parent="Transport"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Exit: on"
+toggle_mode = true
+icon = ExtResource("12_exit")
+
+[node name="Finish" type="Button" parent="Transport"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Finish the hold and play the exit"
+text = "Finish"
+icon = ExtResource("13_stop")

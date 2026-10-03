@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/panels/style_panel.gd" id="1_script"]
+
+[node name="StylePanel" type="ScrollContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="SubToggle" type="Button" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+alignment = 0
+text = "Separate style for sub text"
+
+[node name="Targets" type="HBoxContainer" parent="Body"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Body/Targets"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "Editing"
+
+[node name="Target_style" type="Button" parent="Body/Targets"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Main text"
+
+[node name="Target_sub_style" type="Button" parent="Body/Targets"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Sub text"
+
+[node name="Sections" type="VBoxContainer" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
