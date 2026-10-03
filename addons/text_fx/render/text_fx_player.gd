@@ -23,7 +23,7 @@ const Baker := preload("res://addons/text_fx/render/fx_glyph_baker.gd")
 const Plan := preload("res://addons/text_fx/render/fx_bake_plan.gd")
 const Drawer := preload("res://addons/text_fx/render/fx_glyph_drawer.gd")
 
-## 다시 굽는 배율 변화 임계값과 크기 변경 후 대기 시간.
+## 다시 굽는 배율 변화 임계값(축소 쪽)과 크기 변경 후 대기 시간. 확대는 흐려지므로 한 단계(0.05)만 커져도 다시 굽는다.
 const REBAKE_RATIO := 0.12
 const REBAKE_DELAY := 0.15
 
@@ -64,6 +64,8 @@ var _rebake_timer := -1.0
 
 func _init() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# 게임 프로젝트의 기본 텍스처 필터가 nearest여도 구운 글자를 확대·축소할 때 계단이 생기지 않게 한다.
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	var mat := CanvasItemMaterial.new()
 	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_PREMULT_ALPHA
 	material = mat
@@ -220,11 +222,19 @@ func _desired_bake_scale() -> float:
 	return clampf(snappedf(float(_fit_transform()[1]), 0.05), 0.25, 4.0)
 
 
+## 구운 배율 baked로 want 배율에 그려도 되는지. 확대(흐려짐)는 바로, 축소는 REBAKE_RATIO를 넘을 때 다시 굽는다.
+static func needs_rebake(baked: float, want: float) -> bool:
+	if baked <= 0.0:
+		return true
+	if want > baked + 0.001:
+		return true
+	return 1.0 - want / baked > REBAKE_RATIO
+
+
 func _schedule_rebake() -> void:
 	if _ev == null:
 		return
-	var want := _desired_bake_scale()
-	if _bake_scale <= 0.0 or absf(want / _bake_scale - 1.0) > REBAKE_RATIO:
+	if needs_rebake(_bake_scale, _desired_bake_scale()):
 		_rebake_timer = REBAKE_DELAY
 
 
@@ -259,6 +269,8 @@ func _bake() -> void:
 	_bake_scale = scale_now
 	_bake_sig = plan["signature"]
 	baked.emit()
+	# 굽는 동안 크기가 바뀌었으면(시작 배율이 낡았으면) 다시 굽기를 예약한다.
+	_schedule_rebake()
 	if _pending_start:
 		_pending_start = false
 		_update_events()
