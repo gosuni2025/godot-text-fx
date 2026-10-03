@@ -1,17 +1,22 @@
 extends Control
 ## 렌더 확인용 미리보기. 체커보드 위에서 견본 문서를 TextFxPlayer로 재생한다.
 ## 캡처 모드(창 모드로 실행, 헤드리스 불가):
-##   godot --path . res://tests/visual/player_preview.tscn -- --capture=/tmp/out [--sample=fade_outline,gradient|all]
+##   godot --audio-driver Dummy --path . res://tests/visual/player_preview.tscn -- --capture=/tmp/out [--sample=fade_outline,gradient|all]
 ## 견본마다 지정한 시각으로 seek해 PNG(<sample>_<t>.png)를 저장하고 자동 종료한다.
 ## 인자 없이 실행하면 견본을 차례로 반복 재생한다(←/→ 물리 키로 견본 전환).
 
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
 const Player := preload("res://addons/text_fx/render/text_fx_player.gd")
+const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
+const Hold := preload("res://addons/text_fx/core/fx_effects_hold.gd")
 const GALMURI := "res://assets/fonts/galmuri/Galmuri11.ttf"
 
 @onready var player: Player = $Player
 
-var _names: PackedStringArray = ["fade_outline", "gradient", "glow_shadow", "vertical_ja", "glitch", "center_stamp", "decorations"]
+var _names: PackedStringArray = ["fade_outline", "gradient", "glow_shadow", "vertical_ja", "glitch", "center_stamp", "decorations",
+	"blur", "rise", "slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch",
+	"glow_pulse", "background_vignette", "background_bottom", "background_top", "tape", "box",
+	"frame_shape", "frame_vertical", "band_soft", "box_shutter", "box_heartbeat", "solo_viewport"]
 var _index := 0
 
 
@@ -78,6 +83,14 @@ func _capture(dir: String, only: String) -> void:
 
 func capture_times(n: String) -> Array:
 	match n:
+		"frame_shape", "frame_vertical", "band_soft", "box_shutter", "box_heartbeat":
+			return [0.2, 0.6, 1.15]
+		"solo_viewport":
+			return [0.06, 0.22, 0.4, 1.35]
+		"blur", "rise", "slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch":
+			return [0.15, 0.35, 0.75, 1.4, 2.35]
+		"glow_pulse":
+			return [0.1, 0.8]
 		"fade_outline":
 			return [0.12, 0.25, 1.2, 2.15]
 		"glitch":
@@ -96,7 +109,75 @@ static func sample(n: String) -> Dictionary:
 	d["text"] = "교전 개시"
 	d["seed"] = 7
 	var st: Dictionary = d["style"]
+	if n in ["blur", "rise", "slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch"]:
+		d["text"] = "경계의 너머"
+		d["sub_text"] = "BEYOND THE GATE"
+		st["fill"]["color"] = "#46D9B3FF"
+		st["outline"] = {"enabled": true, "size": 3.0, "color": "#0A2933FF"}
+		st["glow"] = {"enabled": true, "size": 14.0, "color": "#36BACFFF", "strength": 1.0}
+		var params := Enter.default_params(n)
+		if n == "block_wipe":
+			params["dir"] = "center"
+		d["timeline"]["enter"].merge({"effect": n, "order": "all", "duration": 0.8,
+			"easing": Enter.SUGGESTED_EASING.get(n, "linear"), "params": params}, true)
+		d["timeline"]["hold"]["duration"] = 1.0
+		d["timeline"]["exit"].merge({"enabled": true, "effect": n, "order": "all", "duration": 0.8,
+			"easing": "linear", "params": params}, true)
 	match n:
+		"frame_shape", "frame_vertical":
+			d["text"] = "경계 해제"
+			d["sub_text"] = "안전 구역"
+			d["layout"]["sub"]["gap"] = 0.6
+			var deco := Doc.default_decoration("frame")
+			deco.merge({"animate": "shape", "duration": 0.8, "delay": 0.0, "margin": 0.8,
+				"length": 2.0, "color": "#F2D47EFF", "fill_color": "#26385DFF", "fill_opacity": 0.65,
+				"use_outline": false, "protect_sub": true, "clamp_canvas": true}, true)
+			d["decorations"] = [deco]
+			d["timeline"]["enter"].merge({"effect": "fade", "order": "all", "duration": 0.1}, true)
+			if n == "frame_vertical":
+				d["layout"]["direction"] = "vertical"
+				d["layout"]["anchor"] = [0.5, 0.36]
+			else:
+				d["layout"]["anchor"] = [0.2, 0.5]
+		"band_soft":
+			d["text"] = "부드러운 경계"
+			d["sub_text"] = "SOFT BAND"
+			var band := Doc.default_decoration("band")
+			band.merge({"animate": "fade", "duration": 0.6, "delay": 0.0, "margin": 0.5,
+				"color": "#18367DED", "softness": 0.9, "end_fade": 0.7, "use_outline": false}, true)
+			d["decorations"] = [band]
+		"box_shutter", "box_heartbeat":
+			d["text"] = "경계의 맥박"
+			d["sub_text"] = "PULSE OF THE GATE"
+			var box := Doc.default_decoration("box")
+			box.merge({"follow_block": true, "animate": "none", "color": "#EBC667FF", "fill_color": "#1D354FE6",
+				"fill_opacity": 0.8, "margin": 0.5, "radius": 20.0, "use_outline": false}, true)
+			d["decorations"] = [box]
+			d["timeline"]["enter"].merge({"effect": "shutter" if n == "box_shutter" else "fade", "order": "all",
+				"duration": 0.8 if n == "box_shutter" else 0.0, "easing": "linear", "params": {"axis": "vertical"}}, true)
+			if n == "box_heartbeat":
+				d["timeline"]["hold"] = {"duration": 3.0, "effects": [{"type": "heartbeat", "period": 1.2, "scale": 1.25}]}
+		"solo_viewport":
+			d["text"] = "경계해제"
+			d["sub_text"] = "OPEN THE GATE"
+			d["layout"]["anchor"] = [0.25, 0.6]
+			d["timeline"]["enter"].merge({"effect": "center_stamp", "duration": 0.4, "easing": "cubic_in",
+				"params": {"viewport_scale": 0.45, "hold_each": 0.3, "solo_animated": false, "pause": 0.1, "big_scale": 2.0}}, true)
+		"glow_pulse":
+			d["text"] = "심연의 불빛"
+			st["glow"] = {"enabled": true, "size": 22.0, "color": "#40DCDFFF", "strength": 1.8}
+			d["timeline"]["enter"]["duration"] = 0.0
+			d["timeline"]["enter"]["order"] = "all"
+			d["timeline"]["hold"] = {"duration": 3.0, "effects": [Hold.default_params("glow_pulse")]}
+		"background_vignette", "background_bottom", "background_top":
+			d["text"] = "새벽의 정거장"
+			d["background"] = {"type": n.trim_prefix("background_"), "color": "#172641F0", "opacity": 1.0, "extent": 0.75, "sync_fade": true}
+		"tape", "box":
+			d["text"] = "출입 통제"
+			d["decorations"] = [Doc.default_decoration(n)]
+			d["decorations"][0]["color"] = "#EEC652FF"
+			d["decorations"][0]["fill_color"] = "#173344AA"
+			d["decorations"][0]["fill_opacity"] = 0.7
 		"fade_outline":
 			d["text"] = "결전의 시각"
 			d["sub_text"] = "FINAL HOUR"

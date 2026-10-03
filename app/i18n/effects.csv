@@ -1,0 +1,81 @@
+keys,ko,ja,en
+Flip,펼치기,フリップ,Flip
+Flicker,깜빡임,ちらつき,Flicker
+Block slam,블록 내려찍기,ブロック叩き付け,Block slam
+Block zoom,블록 확대 축소,ブロックズーム,Block zoom
+Block emerge,블록 솟아남,ブロック出現,Block emerge
+Shutter,셔터,シャッター,Shutter
+Flash,플래시,フラッシュ,Flash
+Erase,한 글자씩 지우기,一文字ずつ消す,Erase
+Block wipe,블록 닦아내기,ブロックワイプ,Block wipe
+Block glitch,블록 글리치,ブロックグリッチ,Block glitch
+Bounce,바운스,バウンス,Bounce
+Match the main entrance,본문 등장 따라가기,本文の登場に合わせる,Match the main entrance
+Heartbeat,심장 박동,鼓動,Heartbeat
+Glow pulse,발광 맥동,光の脈動,Glow pulse
+Block shake,블록 흔들림,ブロック揺れ,Block shake
+Striped tapes,줄무늬 테이프,ストライプテープ,Striped tapes
+Rounded box,둥근 상자,角丸ボックス,Rounded box
+Accent bar,강조 막대,アクセントバー,Accent bar
+Parallel lines,평행선,平行線,Parallel lines
+Leading blank (s),앞 공백 (초),先頭余白（秒）,Leading blank (s)
+Trailing blank (s),뒤 공백 (초),末尾余白（秒）,Trailing blank (s)
+Use empty lines as page breaks,빈 행을 페이지 경계로 사용,空の行をページの境界にする,Use empty lines as page breaks
+Exit between pages,중간 페이지 퇴장 사용,ページ間の退場を使用,Exit between pages
+Hold effect timing,유지 효과 적용 구간,維持効果の適用期間,Hold effect timing
+Scroll edge fade,스크롤 가장자리 페이드,スクロール端フェード,Scroll edge fade
+Line pause (s),줄 전환 대기 (초),改行待機（秒）,Line pause (s)
+Sentence pause (s),문장 끝 대기 (초),文末待機（秒）,Sentence pause (s)
+Line interval (s),줄 간격 (초),行間隔（秒）,Line interval (s)
+Sweep time per line (s),한 줄 훑기 시간 (초),一行の掃引時間（秒）,Sweep time per line (s)
+Overlap hold (s),겹침 유지 (초),重なり維持（秒）,Overlap hold (s)
+Space pause (s),공백 대기 (초),空白待機（秒）,Space pause (s)
+Typing cursor,타이핑 커서,入力カーソル,Typing cursor
+Cursor blink period (s),커서 깜빡임 주기 (초),カーソル点滅周期（秒）,Cursor blink period (s)
+Cursor color,커서 색,カーソル色,Cursor color
+Impact duration (s),충격 지속 시간 (초),衝撃持続時間（秒）,Impact duration (s)
+Impact brightness,충격 밝기,衝撃の明るさ,Impact brightness
+Impact shake,충격 흔들림,衝撃の揺れ,Impact shake
+Impact portion,충격 구간 비율,衝撃区間の割合,Impact portion
+Flash brightness,플래시 밝기,フラッシュの明るさ,Flash brightness
+Glow boost,발광 증폭,発光増幅,Glow boost
+Minimum glow strength,최소 발광 세기,最小発光強度,Minimum glow strength
+Axis,축,軸,Axis
+Soft wipe edge,와이프 경계 부드러움,ワイプ境界のぼかし,Soft wipe edge
+Decoration fill color,장식 채우기 색,装飾の塗り色,Decoration fill color
+Decoration fill opacity,장식 채우기 불투명도,装飾の塗り不透明度,Decoration fill opacity
+Corner radius,모서리 반경,角の半径,Corner radius
+Band edge softness,띠 경계 부드러움,帯境界のぼかし,Band edge softness
+Band end fade,띠 양 끝 페이드,帯両端のフェード,Band end fade
+Span entire canvas,캔버스 전체 길이,キャンバス全体の長さ,Span entire canvas
+Stripe width,줄무늬 폭,縞の幅,Stripe width
+Stripe speed,줄무늬 속도,縞の速度,Stripe speed
+Tape alternating blink (s),테이프 교대 점멸 (초),テープ交互点滅（秒）,Tape alternating blink (s)
+Corner arm length,모서리 팔 길이,角線の長さ,Corner arm length
+Decoration before text,장식 다음 글자 등장,装飾の後に文字登場,Decoration before text
+Decoration exit delay (s),장식 퇴장 지연 (초),装飾退場の遅延（秒）,Decoration exit delay (s)
+Decoration exit time (s),장식 퇴장 시간 (초),装飾の退場時間（秒）,Decoration exit time (s)
+Background gradient extent,배경 그라디언트 범위,背景グラデーション範囲,Background gradient extent
+Fade with text,글자와 함께 페이드,文字と一緒にフェード,Fade with text
+Each line,줄별,行ごと,Each line
+Center by character,글자 순서 중앙부터,文字順の中央から,Center by character
+Edges by character,글자 순서 바깥부터,文字順の外側から,Edges by character
+Spatial sweep,줄을 따라 훑기,行に沿って掃引,Spatial sweep
+Shape animation,형태별 애니메이션,形状別アニメーション,Shape animation
+Hold phase only,유지 구간만,維持区間のみ,Hold phase only
+While text is visible,등장부터 퇴장까지,登場から退場まで,While text is visible
+Vignette,비네트,ビネット,Vignette
+Bottom gradient,아래쪽 그라디언트,下側グラデーション,Bottom gradient
+Top gradient,위쪽 그라디언트,上側グラデーション,Top gradient
+Effect default easing,효과 권장 이징,効果の推奨イージング,Effect default easing
+Output background,결과물 배경,出力背景,Output background
+Supporting text reveal,보조 문구 나타내기,補助文を表示する動き,Supporting text reveal
+Independent sub text entrance,보조 문구 등장 별도 설정,補助テキストの登場を個別設定,Independent sub text entrance
+Central glyph canvas ratio,중앙 글자 화면 비율,中央文字の画面比率,Central glyph canvas ratio
+Tape blink strength,테이프 점멸 강도,テープ点滅強度,Tape blink strength
+Protect sub text spacing,보조 문구 간격 보호,補助テキストの間隔を保護,Protect sub text spacing
+Keep frame inside canvas,프레임을 캔버스 안에 제한,フレームをキャンバス内に制限,Keep frame inside canvas
+Follow block motion,블록 움직임 따라가기,ブロックの動きに追従,Follow block motion
+Inherit color,글자색 상속,文字色を継承,Inherit color
+Animate each central glyph,중앙 글자 개별 애니메이션,中央の各文字をアニメーション,Animate each central glyph
+Scroll along the writing direction (no pages),쓰기 방향에 맞춰 스크롤 (페이지 없음),書字方向に合わせてスクロール（ページなし）,Scroll along the writing direction (no pages)

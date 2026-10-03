@@ -5,8 +5,9 @@ extends RefCounted
 
 const Hash := preload("res://addons/text_fx/core/fx_hash.gd")
 const GlyphState := preload("res://addons/text_fx/core/fx_glyph_state.gd")
+const Block := preload("res://addons/text_fx/core/fx_effects_block.gd")
 
-const TYPES: PackedStringArray = ["blink", "flicker", "shake", "wave", "float", "pulse", "glitch", "color_cycle"]
+const TYPES: PackedStringArray = ["blink", "flicker", "shake", "wave", "float", "pulse", "glitch", "color_cycle", "heartbeat", "glow_pulse", "block_shake", "block_glitch"]
 
 ## amplitude 단위는 px(캔버스), period는 초, frequency/rate는 초당 횟수.
 const DEFAULTS := {
@@ -18,6 +19,10 @@ const DEFAULTS := {
 	"pulse": {"scale": 1.06, "period": 1.2},
 	"glitch": {"interval": 1.6, "duration": 0.18, "intensity": 1.0, "slices": 4, "color_a": "#FF2A6DFF", "color_b": "#2AE0FFFF"},
 	"color_cycle": {"period": 3.0, "saturation": 0.6, "spread": 0.04},
+	"heartbeat": {"scale": 1.07, "period": 1.2},
+	"glow_pulse": {"min_strength": 0.3, "period": 1.8},
+	"block_shake": {"amplitude": 3.0, "frequency": 18.0},
+	"block_glitch": {"interval": 1.6, "duration": 0.18, "intensity": 1.0, "slices": 4, "color_a": "#FF2A6DFF", "color_b": "#2AE0FFFF"},
 }
 
 const SALT_FLICKER := 1100
@@ -77,6 +82,27 @@ static func apply(e: Dictionary, st: GlyphState, ht: float, g: Dictionary, ctx: 
 			st.scale *= m
 		"glitch":
 			_glitch(e, st, ht, g, ctx, seed, idx)
+		"heartbeat":
+			var period := maxf(0.01, float(e.get("period", 1.2)))
+			var ph := fposmod(ht / period, 1.0)
+			var beat := _beat(ph, 0.12, 0.12) + 0.65 * _beat(ph, 0.36, 0.13)
+			var factor := 1.0 + (float(e.get("scale", 1.07)) - 1.0) * beat
+			Block.scale_around(st, ctx.get("block_center", Vector2.ZERO), Vector2.ONE * factor)
+		"glow_pulse":
+			var period := maxf(0.01, float(e.get("period", 1.8)))
+			var low := clampf(float(e.get("min_strength", 0.3)), 0.0, 1.0)
+			st.glow_multiplier *= lerpf(low, 1.0, 0.5 + 0.5 * cos(ht / period * TAU))
+		"block_shake":
+			var step := int(floor(ht * maxf(0.1, float(e.get("frequency", 18.0)))))
+			var amplitude := float(e.get("amplitude", 3.0))
+			st.pos += Vector2(Hash.signed(seed, step, 4701), Hash.signed(seed, step, 4702)) * amplitude
+		"block_glitch":
+			var interval := maxf(0.01, float(e.get("interval", 1.6)))
+			var duration := clampf(float(e.get("duration", 0.18)), 0.0, interval)
+			var win := int(floor(ht / interval))
+			var start := float(win) * interval + Hash.f(seed, win, 4801) * (interval - duration)
+			if ht >= start and ht < start + duration:
+				Block.glitch(st, e, ht, maxf(0.0, float(e.get("intensity", 1.0))), ctx)
 		"color_cycle":
 			var period := maxf(0.01, float(e.get("period", 3.0)))
 			var hue := fposmod(ht / period + float(g.get("col", 0)) * float(e.get("spread", 0.04)), 1.0)
@@ -105,3 +131,9 @@ static func _glitch(e: Dictionary, st: GlyphState, ht: float, g: Dictionary, ctx
 	st.split_color_a = Color.from_string(str(e.get("color_a", "#FF2A6DFF")), st.split_color_a)
 	st.split_color_b = Color.from_string(str(e.get("color_b", "#2AE0FFFF")), st.split_color_b)
 	st.pos.x += Hash.signed(seed, win * 31 + step, SALT_GLITCH + 4 + idx % 3) * inten * 2.0
+
+
+## 주기 안의 한 박동. 부드럽게 0→1→0이 되는 한정된 펄스라 두 박동 사이가 분리된다.
+static func _beat(phase: float, center: float, width: float) -> float:
+	var d := absf(phase - center) / maxf(0.001, width)
+	return 0.0 if d >= 1.0 else pow(0.5 + 0.5 * cos(d * PI), 2.0)

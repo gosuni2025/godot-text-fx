@@ -14,7 +14,7 @@ func setup(p_ctx, p_panel, p_seg: String) -> void:
 	ctx = p_ctx
 	panel = p_panel
 	seg = p_seg
-	(%Title as Label).text = "Enter" if seg == "enter" else "Exit"
+	(%Title as Label).text = "Supporting text reveal" if seg == "sub_enter" else ("Enter" if seg == "enter" else "Exit")
 	(%Enabled as Control).visible = seg == "exit"
 	(%EffectCard as Button).pressed.connect(open_effect_picker)
 	(%EasingCard as Button).pressed.connect(open_easing_picker)
@@ -32,6 +32,8 @@ func base() -> String:
 func build() -> void:
 	var box := %Fields as VBoxContainer
 	panel.clear_box(box)
+	if seg == "sub_enter":
+		panel.add_field(box, base() + ".delay")
 	panel.add_field(box, base() + ".order")
 	panel.add_field(box, base() + ".duration", {"max": 3.0})
 	panel.add_field(box, base() + ".stagger", {"max": 1.0})
@@ -48,22 +50,23 @@ func refresh() -> void:
 	var easing := str(ctx.model.get_value(base() + ".easing"))
 	var ec := %EffectCard as Button
 	ec.set_label(Labels.enter_effect(effect))
-	ec.set_preview(seg, effect, ctx.preview_sample())
+	var preview_effect := str(ctx.model.get_value("timeline.enter.effect")) if effect == "same" else effect
+	ec.set_preview("enter" if seg == "sub_enter" else seg, preview_effect, ctx.preview_sample())
 	ec.tooltip_text = "Effect: click to choose"
 	var gc := %EasingCard as Button
 	gc.set_label(Labels.easing_text(easing), false)
 	gc.set_preview("easing", easing, "")
 	gc.tooltip_text = "Easing: click to choose"
-	var enabled: bool = seg == "enter" or ctx.model.get_value("timeline.exit.enabled") == true
+	var enabled: bool = seg != "exit" or ctx.model.get_value("timeline.exit.enabled") == true
 	(%Enabled as Button).set_pressed_no_signal(enabled)
 	(%Body as Control).modulate.a = 1.0 if enabled else 0.55
 
 
 func open_effect_picker() -> void:
 	var items: Array = []
-	for id in Enter.IDS:
-		items.append({"id": id, "label": Labels.enter_effect(id), "preview": [seg, id, ctx.preview_sample()]})
-	var title := "Enter effect" if seg == "enter" else "Exit effect"
+	for id in (["same"] + Array(Enter.IDS) if seg == "sub_enter" else Array(Enter.IDS)):
+		items.append({"id": id, "label": Labels.enter_effect(id), "preview": ["enter" if seg == "sub_enter" else seg, str(ctx.model.get_value("timeline.enter.effect")) if id == "same" else id, ctx.preview_sample()]})
+	var title := "Supporting text reveal" if seg == "sub_enter" else ("Enter effect" if seg == "enter" else "Exit effect")
 	ctx.open_picker(title, items, str(ctx.model.get_value(base() + ".effect")), _set_value.bind(".effect"))
 
 
@@ -75,4 +78,7 @@ func open_easing_picker() -> void:
 
 
 func _set_value(id: String, suffix: String) -> void:
-	ctx.send({"op": "set", "path": base() + suffix, "value": id})
+	if suffix == ".effect":
+		ctx.send({"op": "select_effect", "segment": seg, "effect": id})
+	else:
+		ctx.send({"op": "set", "path": base() + suffix, "value": id})

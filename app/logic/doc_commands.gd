@@ -9,7 +9,7 @@ const Templates := preload("res://app/logic/templates.gd")
 const Serialization := preload("res://app/logic/serialization.gd")
 
 const OPS := ["set", "unset", "set_text", "set_mode", "list_add", "list_remove", "list_move",
-	"apply_template", "load_doc"]
+	"apply_template", "load_doc", "select_effect"]
 
 
 static func is_doc_op(op: String) -> bool:
@@ -19,6 +19,7 @@ static func is_doc_op(op: String) -> bool:
 static func run(doc: Dictionary, cmd: Dictionary, locale: String) -> Dictionary:
 	var op := str(cmd.get("op", ""))
 	match op:
+		"select_effect": return _select_effect(doc, cmd)
 		"set": return _cmd_set(doc, cmd)
 		"unset": return _unset(doc, cmd)
 		"set_text": return _set_text(doc, cmd)
@@ -227,3 +228,28 @@ static func _load_doc(cmd: Dictionary) -> Dictionary:
 	if not src_errors.is_empty():
 		return fail("invalid: " + ", ".join(src_errors))
 	return finish(src, ["*"], "", "")
+
+
+## 효과 선택은 params와 권장 이징을 한 번에 바꾼다. 명령 기록·undo도 한 단계다.
+static func _select_effect(doc: Dictionary, cmd: Dictionary) -> Dictionary:
+	var segment := str(cmd.get("segment", "enter"))
+	var effect := str(cmd.get("effect", ""))
+	if segment not in ["enter", "exit", "sub_enter"] or (not effect in DocSchema.ENTER_EFFECTS and not (segment == "sub_enter" and effect == "same")):
+		return fail("bad effect selection")
+	var next := doc.duplicate(true)
+	if not next["timeline"].get(segment) is Dictionary:
+		next["timeline"][segment] = DocSchema.TextFxDoc.default_sub_enter()
+	var seg: Dictionary = next["timeline"][segment]
+	seg["effect"] = effect
+	seg["params"] = DocSchema.TextFxDoc.Enter.default_params(effect)
+	seg["easing"] = "auto"
+	if effect in DocSchema.TextFxDoc.Enter.BLOCK_EFFECTS:
+		seg["order"] = "all"
+	if effect in ["typewriter", "erase"]:
+		seg["duration"] = 0.0
+		seg["params"]["pop"] = 0.0
+		seg["order"] = "reverse" if segment == "exit" else "forward"
+		seg["stagger"] = maxf(0.06, float(seg["stagger"]))
+	elif float(seg["duration"]) <= 0.0:
+		seg["duration"] = 0.45
+	return finish(next, ["timeline." + segment])

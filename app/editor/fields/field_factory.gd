@@ -8,6 +8,7 @@ const SCENES := {
 	"int": preload("res://app/editor/fields/slider_field.tscn"),
 	"bool": preload("res://app/editor/fields/toggle_field.tscn"),
 	"enum": preload("res://app/editor/fields/choice_field.tscn"),
+	"null_or_color": preload("res://app/editor/fields/color_field.tscn"),
 	"color": preload("res://app/editor/fields/color_field.tscn"),
 	"vec2": preload("res://app/editor/fields/vector_field.tscn"),
 	"str": preload("res://app/editor/fields/text_field.tscn"),

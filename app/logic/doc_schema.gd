@@ -20,7 +20,7 @@ const LISTS := {"decorations": 12, "timeline.hold.effects": 8,
 	"style.fill.gradient.stops": 8, "sub_style.fill.gradient.stops": 8}
 
 ## 새 키를 set으로 추가할 수 있는 열린 사전(효과 params, 유지 효과, 장식).
-const OPEN_DICTS := ["timeline.enter.params", "timeline.exit.params", "timeline.hold.effects.*", "decorations.*"]
+const OPEN_DICTS := ["timeline.enter.params", "timeline.exit.params", "timeline.sub_enter.params", "timeline.hold.effects.*", "decorations.*"]
 
 const MAX_TEXT := 4000
 
@@ -50,7 +50,7 @@ static func _build_rules() -> Dictionary:
 	var C := {"t": "color"}
 	var D := {"t": "dict"}
 	var r := {
-		"format": _e(["text_fx"]), "format_version": _i(1, 1), "name": {"t": "str", "max": 200},
+		"format": _e(["text_fx"]), "format_version": _i(1, TextFxDoc.FORMAT_VERSION), "name": {"t": "str", "max": 200},
 		"mode": _e(MODES), "seed": _i(0, 2147483647),
 		"canvas": D, "canvas.width": _i(64, 4096), "canvas.height": _i(64, 4096),
 		"text": {"t": "str", "max": MAX_TEXT}, "sub_text": {"t": "str", "max": MAX_TEXT},
@@ -89,7 +89,7 @@ static func _build_rules() -> Dictionary:
 		r[pre + ".fill.gradient"] = D
 		r[pre + ".fill.gradient.angle"] = _n(-360, 360)
 		r[pre + ".fill.gradient.stops"] = {"t": "stops", "max": 8}
-		r[pre + ".fill.gradient.space"] = _e(["block", "glyph"])
+		r[pre + ".fill.gradient.space"] = _e(TextFxDoc.GRADIENT_SPACES)
 		for o in ["outline", "outline2"]:
 			r[pre + "." + o] = D
 			r[pre + "." + o + ".enabled"] = B
@@ -106,7 +106,7 @@ static func _build_rules() -> Dictionary:
 		r[pre + ".glow.color"] = C
 		r[pre + ".glow.strength"] = _n(0, 4)
 		r[pre + ".opacity"] = _n(0, 1)
-	for seg in ["enter", "exit"]:
+	for seg in ["enter", "exit", "sub_enter"]:
 		var p: String = "timeline." + seg
 		r[p] = D
 		r[p + ".effect"] = _e(ENTER_EFFECTS)
@@ -116,7 +116,7 @@ static func _build_rules() -> Dictionary:
 		r[p + ".easing"] = _e(EASINGS)
 		r[p + ".params"] = D
 		var q: String = p + ".params."
-		r[q + "dir"] = _e(["up", "down", "left", "right"])
+		r[q + "dir"] = _e(["up", "down", "left", "right", "center"])
 		r[q + "mode"] = _e(["alternate", "role"])
 		r[q + "distance"] = _n(0, 20)
 		r[q + "from_scale"] = _n(0, 10)
@@ -153,6 +153,7 @@ static func _build_rules() -> Dictionary:
 	r[h + "color_b"] = C
 	r[h + "saturation"] = _n(0, 1)
 	r[h + "spread"] = _n(0, 1)
+	preload("res://app/logic/doc_schema_fx.gd").extend_rules(r)
 	return r
 
 
@@ -238,6 +239,8 @@ static func check_value(rule: Dictionary, v) -> bool:
 			return typeof(v) == TYPE_STRING and v in rule.v
 		"color":
 			return is_color(v)
+		"null_or_color":
+			return v == null or is_color(v)
 		"vec2":
 			return v is Array and v.size() == 2 and JsonUtil.is_number(v[0]) and JsonUtil.is_number(v[1]) \
 				and v[0] >= rule.min and v[0] <= rule.max and v[1] >= rule.min and v[1] <= rule.max

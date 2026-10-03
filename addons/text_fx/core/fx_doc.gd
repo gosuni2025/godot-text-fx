@@ -10,7 +10,7 @@ const Hold := preload("res://addons/text_fx/core/fx_effects_hold.gd")
 const Easing := preload("res://addons/text_fx/core/fx_easing.gd")
 
 const FORMAT := "text_fx"
-const FORMAT_VERSION := 1
+const FORMAT_VERSION := 2
 const DEFAULT_FONT_PATH := "res://assets/fonts/pretendard/Pretendard-Regular.otf"
 
 const MODES: PackedStringArray = ["message", "trailer", "caption"]
@@ -19,12 +19,12 @@ const ALIGNS: PackedStringArray = ["left", "center", "right"]
 const VALIGNS: PackedStringArray = ["top", "center", "bottom"]
 const WRAPS: PackedStringArray = ["none", "char", "word", "auto"]
 const SUB_POSITIONS: PackedStringArray = ["above", "below"]
-const ORDERS: PackedStringArray = ["all", "forward", "reverse", "line", "word", "center_out", "edges_in", "random"]
+const ORDERS: PackedStringArray = ["all", "forward", "reverse", "line", "word", "center_out", "edges_in", "random", "center_index", "edges_index", "sweep"]
 const LOOPS: PackedStringArray = ["once", "loop_all", "loop_hold"]
-const DECORATION_TYPES: PackedStringArray = ["underline", "overline", "band", "side_lines", "frame", "brackets"]
-const DECORATION_ANIMS: PackedStringArray = ["none", "fade", "grow_center", "grow_start"]
+const DECORATION_TYPES: PackedStringArray = ["underline", "overline", "band", "side_lines", "frame", "brackets", "tape", "box", "bar", "lines"]
+const DECORATION_ANIMS: PackedStringArray = ["none", "fade", "grow_center", "grow_start", "shape"]
 const FILL_TYPES: PackedStringArray = ["solid", "gradient"]
-const GRADIENT_SPACES: PackedStringArray = ["block", "glyph"]
+const GRADIENT_SPACES: PackedStringArray = ["block", "glyph", "line"]
 const FONT_SOURCES: PackedStringArray = ["bundled", "system", "path"]
 
 ## path → 허용 값. normalize가 교정하고 validate가 검사한다.
@@ -34,6 +34,8 @@ const ENUMS := {
 	"timeline.exit.order": ORDERS, "timeline.loop": LOOPS, "font.source": FONT_SOURCES,
 	"style.fill.type": FILL_TYPES, "style.fill.gradient.space": GRADIENT_SPACES,
 	"timeline.enter.effect": Enter.IDS, "timeline.exit.effect": Enter.IDS,
+	"timeline.hold.scope": ["hold", "visible"],
+	"background.type": ["none", "solid", "vignette", "bottom", "top"],
 	"timeline.enter.easing": Easing.NAMES, "timeline.exit.easing": Easing.NAMES,
 }
 
@@ -57,14 +59,40 @@ static func default_style() -> Dictionary:
 
 
 static func default_decoration(type: String = "underline") -> Dictionary:
-	return {
+	var out := {
 		"type": type, "color": "#FFFFFFFF", "thickness": 4.0, "margin": 0.2, "length": 1.1,
 		"use_outline": true, "animate": "grow_center", "delay": 0.1, "duration": 0.4,
+		"fill_color": "#18243CCC", "fill_opacity": 0.0, "radius": 0.0,
+		"softness": 0.0, "end_fade": 0.0, "full_span": false,
+		"stripe_width": 24.0, "stripe_speed": 40.0, "blink_period": 0.0, "blink_strength": 1.0, "protect_sub": false, "clamp_canvas": false, "follow_block": false,
+		"arm_length": 0.3, "lead_text": false, "exit_delay": 0.0, "exit_duration": 0.0,
 	}
+
+	if type in ["tape", "box", "bar", "lines"]:
+		out["animate"] = "shape"
+	if type in ["tape", "band"]:
+		out["full_span"] = true
+	if type in ["frame", "underline"]:
+		out["protect_sub"] = true
+	if type == "frame":
+		out["clamp_canvas"] = true
+	if type == "box":
+		out["fill_opacity"] = 0.75
+		out["radius"] = 12.0
+	return out
 
 
 static func default_scroll() -> Dictionary:
-	return {"speed": 60.0}
+	return {"speed": 60.0, "edge_fade": 0.0}
+
+
+static func default_background() -> Dictionary:
+	return {"type": "none", "color": "#101018CC", "opacity": 1.0, "extent": 0.6, "sync_fade": true}
+
+
+static func default_sub_enter() -> Dictionary:
+	return {"effect": "same", "order": "all", "duration": 0.4, "stagger": 0.0,
+		"easing": "auto", "params": {}, "delay": 0.0}
 
 
 static func defaults() -> Dictionary:
@@ -83,20 +111,22 @@ static func defaults() -> Dictionary:
 			"max_width": 0.9, "max_height": 0.8,
 			"wrap": "auto", "kinsoku": true,
 			"auto_shrink": true, "min_font_size": 24,
-			"sub": {"font_size": 40, "position": "below", "gap": 0.35},
+			"sub": {"font_size": 40, "position": "below", "gap": 0.35, "letter_spacing": 0.0},
 		},
 		"font": default_font(),
 		"sub_font": null,
 		"style": default_style(),
 		"sub_style": null,
 		"decorations": [],
+		"background": default_background(),
 		"timeline": {
 			"enter": {"effect": "fade", "order": "forward", "duration": 0.45, "stagger": 0.06,
 				"easing": "cubic_out", "params": Enter.default_params("fade")},
-			"hold": {"duration": 1.6, "effects": []},
+			"hold": {"duration": 1.6, "effects": [], "scope": "hold"},
 			"exit": {"enabled": true, "effect": "fade", "order": "all", "duration": 0.35, "stagger": 0.0,
 				"easing": "cubic_in", "params": Enter.default_params("fade")},
-			"page_gap": 0.25,
+			"page_gap": 0.25, "lead_in": 0.0, "lead_out": 0.0,
+			"split_pages": true, "exit_between_pages": true, "sub_enter": null,
 			"loop": "once",
 			"scroll": null,
 		},
@@ -106,6 +136,9 @@ static func defaults() -> Dictionary:
 static func normalize(doc: Variant) -> Dictionary:
 	var src: Dictionary = doc if doc is Dictionary else {}
 	var out: Dictionary = _merge(defaults(), src)
+	# v1 보조 자간은 본문 자간을 공유했다.
+	if int(src.get("format_version", 1)) < 2 and get_value(src, "layout.sub.letter_spacing") == null:
+		out["layout"]["sub"]["letter_spacing"] = float(get_value(src, "layout.letter_spacing", 0.0))
 	out["format"] = FORMAT
 	out["format_version"] = FORMAT_VERSION
 	for path in ENUMS:
@@ -123,17 +156,33 @@ static func normalize(doc: Variant) -> Dictionary:
 	for d in (src.get("decorations", []) if src.get("decorations") is Array else []):
 		if d is Dictionary:
 			var nd: Dictionary = _merge(default_decoration(), d)
+			if int(src.get("format_version", 1)) < 2 and not d.has("protect_sub"):
+				nd["protect_sub"] = false
 			if not DECORATION_TYPES.has(nd["type"]):
 				nd["type"] = "underline"
 			if not DECORATION_ANIMS.has(nd["animate"]):
 				nd["animate"] = "grow_center"
 			nd["color"] = color_to_hex(parse_color(nd["color"]))
+			nd["fill_color"] = color_to_hex(parse_color(nd["fill_color"]))
 			decos.append(nd)
 	out["decorations"] = decos
 	var tl: Dictionary = out["timeline"]
 	for seg in ["enter", "exit"]:
 		var s: Dictionary = tl[seg]
 		s["params"] = _merge(Enter.default_params(s["effect"]), s.get("params", {}))
+	if tl.get("sub_enter") is Dictionary:
+		var sub: Dictionary = _merge(default_sub_enter(), tl["sub_enter"])
+		if sub["effect"] != "same" and not Enter.IDS.has(str(sub["effect"])):
+			sub["effect"] = "same"
+		if not ORDERS.has(str(sub["order"])):
+			sub["order"] = "all"
+		if not Easing.NAMES.has(str(sub["easing"])):
+			sub["easing"] = "auto"
+		sub["params"] = _merge(Enter.default_params(str(sub["effect"])), sub["params"])
+		tl["sub_enter"] = sub
+	else:
+		tl["sub_enter"] = null
+	out["background"]["color"] = color_to_hex(parse_color(out["background"]["color"]))
 	var effects: Array = []
 	var src_hold: Variant = get_value(src, "timeline.hold.effects", [])
 	for e in (src_hold if src_hold is Array else []):
@@ -242,7 +291,8 @@ static func validate(doc: Variant) -> PackedStringArray:
 		if v != null and (not (v is int or v is float) or float(v) <= 0.0):
 			errs.append("%s는 양수여야 함" % path)
 	for path in ["timeline.enter.duration", "timeline.enter.stagger", "timeline.exit.duration", "timeline.exit.stagger",
-			"timeline.hold.duration", "timeline.page_gap", "layout.line_height", "layout.max_width", "layout.max_height"]:
+			"timeline.hold.duration", "timeline.page_gap", "timeline.lead_in", "timeline.lead_out",
+			"timeline.sub_enter.duration", "timeline.sub_enter.stagger", "layout.line_height", "layout.max_width", "layout.max_height"]:
 		var v: Variant = get_value(d, path, null)
 		if v != null and (not (v is int or v is float) or float(v) < 0.0):
 			errs.append("%s는 0 이상이어야 함" % path)
@@ -280,6 +330,26 @@ static func validate(doc: Variant) -> PackedStringArray:
 	var scroll: Variant = get_value(d, "timeline.scroll", null)
 	if scroll != null and (not (scroll is Dictionary) or float(scroll.get("speed", 1.0)) <= 0.0):
 		errs.append("timeline.scroll은 null 또는 speed > 0 객체여야 함")
+	var sub_enter: Variant = get_value(d, "timeline.sub_enter")
+	if sub_enter != null:
+		if not sub_enter is Dictionary:
+			errs.append("timeline.sub_enter는 null 또는 객체여야 함")
+		else:
+			var sub_effect := str(sub_enter.get("effect", "same"))
+			if sub_effect != "same" and not Enter.IDS.has(sub_effect):
+				errs.append("timeline.sub_enter.effect 허용되지 않음")
+			if not ORDERS.has(str(sub_enter.get("order", "all"))) or not Easing.NAMES.has(str(sub_enter.get("easing", "auto"))):
+				errs.append("timeline.sub_enter order/easing 허용되지 않음")
+	for path in ["background.color", "timeline.enter.params.color_a", "timeline.enter.params.color_b",
+			"timeline.exit.params.color_a", "timeline.exit.params.color_b", "timeline.enter.params.cursor_color",
+			"timeline.sub_enter.params.cursor_color"]:
+		var color: Variant = get_value(d, path)
+		if color != null and not is_color(color):
+			errs.append(path + " 색 형식 오류")
+	for path in ["background.opacity", "background.extent", "timeline.scroll.edge_fade"]:
+		var number: Variant = get_value(d, path)
+		if number != null and (not (number is int or number is float) or float(number) < 0.0 or float(number) > 1.0):
+			errs.append(path + "는 0~1 숫자여야 함")
 	return errs
 
 

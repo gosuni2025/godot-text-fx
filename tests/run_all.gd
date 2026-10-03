@@ -64,6 +64,12 @@ func _run() -> void:
 			for f in t.failures:
 				print("    - " + f)
 	print("---- %d passed, %d failed, %d checks ----" % [passed, failed, total_checks])
+	# 오디오 정지는 믹서 스레드에서 반영된다. 테스트 종료 직전 재생 참조를 남기지 않는다.
+	var shell := root.get_node_or_null("AppShell")
+	if shell != null:
+		shell.stop_bgm()
+		shell.bgm.stream = null
+		await create_timer(0.05).timeout
 	quit(1 if failed > 0 else 0)
 
 

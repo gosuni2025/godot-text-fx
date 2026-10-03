@@ -48,9 +48,9 @@ func run(t) -> void:
 				if s.index >= ev.layout["glyphs"].size():
 					continue
 				var base_pos: Vector2 = ev.layout["glyphs"][s.index]["pos"]
-				if s.visible and (s.alpha < 0.99 or s.clip < 0.99 or s.scale.x != 1.0 or s.pos.distance_to(base_pos) > 0.5 or s.split > 0.0):
+				if s.visible and (s.alpha < 0.99 or s.clip < 0.99 or s.scale.x != 1.0 or s.pos.distance_to(base_pos) > 0.5 or s.split > 0.0 or s.scale.y != 1.0 or s.brightness > 0.0 or s.glow_multiplier != 1.0 or s.clip_enabled):
 					seen_partial = true
-		t.ok(seen_partial or id == "typewriter", "effect %s produced intermediate states" % id)
+		t.ok(seen_partial or id in ["typewriter", "erase"], "effect %s produced intermediate states" % id)
 		var dur := ev.get_duration()
 		var mid := ev.evaluate(ev.timeline.pages[0]["enter_end"] + 0.01)
 		var all_vis := true
@@ -60,7 +60,7 @@ func run(t) -> void:
 		t.ok(all_vis, "%s: all glyphs visible in hold" % id)
 		t.eq(ev.evaluate(dur + 0.1).filter(func(s: GlyphState) -> bool: return s.visible).size(), 0, "%s: nothing visible after end" % id)
 		var first := ev.evaluate(0.0)
-		t.ok(first.filter(func(s: GlyphState) -> bool: return s.visible and not s.overlay and s.alpha > 0.99).size() == 0 or id == "wipe" or id == "typewriter",
+		t.ok(first.filter(func(s: GlyphState) -> bool: return s.visible and not s.overlay and s.alpha > 0.99).size() == 0 or id in ["wipe", "typewriter", "erase"],
 			"%s: hidden at t=0" % id)
 
 	# 모든 유지 효과(중첩 포함)
@@ -132,7 +132,7 @@ func run(t) -> void:
 	var ed := Evaluator.new(dd)
 	var fr := ed.evaluate_frame(0.3)
 	t.eq(fr["decorations"].size(), deco_types.size(), "all decorations evaluated")
-	var expect_rects := {"underline": 1, "overline": 1, "band": 1, "side_lines": 2, "frame": 4, "brackets": 8}
+	var expect_rects := {"underline": 1, "overline": 1, "band": 1, "side_lines": 2, "frame": 4, "brackets": 8, "tape": 2, "box": 1, "bar": 1, "lines": 2}
 	var fr2 := ed.evaluate_frame(1.5)
 	for de in fr2["decorations"]:
 		t.eq(de["rects"].size(), expect_rects[de["type"]], "rect count " + str(de["type"]))

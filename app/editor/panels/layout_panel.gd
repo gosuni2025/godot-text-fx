@@ -44,6 +44,10 @@ func _build() -> void:
 	add_field(sub.fields_box(), "layout.sub.position")
 	add_field(sub.fields_box(), "layout.sub.font_size", {"max": 200.0})
 	add_field(sub.fields_box(), "layout.sub.gap")
+	add_field(sub.fields_box(), "layout.sub.letter_spacing")
+	var bg := add_section(box, "Output background")
+	for key in ["type", "color", "opacity", "extent", "sync_fade"]:
+		add_field(bg.fields_box(), "background." + key)
 	var adv := add_section(box, "Random seed")
 	add_field(adv.fields_box(), "seed", {"max": 99999.0})
 	var reroll: Button = preload("res://app/editor/fields/action_button.tscn").instantiate()

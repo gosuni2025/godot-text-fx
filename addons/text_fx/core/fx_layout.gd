@@ -26,7 +26,7 @@ static func resolve_fonts(doc: Dictionary) -> Dictionary:
 
 static func split_pages(doc: Dictionary) -> Array:
 	var tl: Dictionary = doc.get("timeline", {})
-	var paged: bool = doc.get("mode", "message") == "trailer" and not (tl.get("scroll") is Dictionary)
+	var paged: bool = doc.get("mode", "message") == "trailer" and bool(tl.get("split_pages", true)) and not (tl.get("scroll") is Dictionary)
 	var mp := _split(str(doc.get("text", "")), paged)
 	var sp := _split(str(doc.get("sub_text", "")), paged)
 	var n := maxi(1, maxi(mp.size(), sp.size()))
@@ -110,7 +110,8 @@ static func _layout_at(doc: Dictionary, pages: Array, fonts: Dictionary, fs: int
 	var fit := INF
 	for p in pages.size():
 		var main_lines := _break_role(str(pages[p][0]), font_m, fs, ls * fs, limit, wrap, kinsoku, vertical)
-		var sub_lines := _break_role(str(pages[p][1]), font_s, sfs, ls * sfs, limit, wrap, kinsoku, vertical)
+		var sub_spacing := float(L["sub"].get("letter_spacing", ls))
+		var sub_lines := _break_role(str(pages[p][1]), font_s, sfs, sub_spacing * sfs, limit, wrap, kinsoku, vertical)
 		var step_m := lh * fs
 		var step_s := lh * sfs
 		var main_len := _max_len(main_lines)
@@ -194,6 +195,7 @@ static func _place(ctx: Dictionary, lines: Array, role: String, font: Font, size
 				"col": col, "word": ctx["word"], "pos": pos, "box": Vector2(hadv, box_h), "advance": adv,
 				"font_size": size, "vertical_rotate": rot, "base_rotation": PI * 0.5 if rot else 0.0,
 				"punct": Rules.is_pause_punct(c),
+				"separator_before": bool(gl.get("separator_before", false)),
 			})
 			col += 1
 		res["lines"].append({
@@ -211,11 +213,13 @@ static func _break_role(text: String, font: Font, size: int, spacing: float, lim
 	if text == "":
 		return lines
 	text = text.replace("\r\n", "\n").replace("\r", "\n")
+	var after_break := false
 	for para in text.split("\n"):
 		var chars := Rules.chars(para)
 		var n := chars.size()
 		if n == 0:
 			lines.append({"glyphs": [], "length": 0.0})
+			after_break = true
 			continue
 		var adv := PackedFloat32Array()
 		adv.resize(n)
@@ -240,8 +244,13 @@ static func _break_role(text: String, font: Font, size: int, spacing: float, lim
 					break
 				w += add
 				i += 1
-			lines.append(_make_line(chars, adv, start, end_i, spacing))
+			var made := _make_line(chars, adv, start, end_i, spacing)
+			if after_break and not made["glyphs"].is_empty():
+				made["glyphs"][0]["separator_before"] = true
+				after_break = false
+			lines.append(made)
 			start = end_i
+		after_break = true
 	return lines
 
 
@@ -282,7 +291,8 @@ static func _make_line(chars: PackedStringArray, adv: PackedFloat32Array, s: int
 	var glyphs: Array = []
 	for i in range(s, e2):
 		if not Rules.is_space(chars[i]):
-			glyphs.append({"c": chars[i], "off": off, "adv": adv[i], "wb": i == s or Rules.is_space(chars[i - 1])})
+			glyphs.append({"c": chars[i], "off": off, "adv": adv[i], "wb": i == s or Rules.is_space(chars[i - 1]),
+				"separator_before": i > 0 and Rules.is_space(chars[i - 1])})
 		off += adv[i] + spacing
 	var length := maxf(0.0, off - spacing) if e2 > s else 0.0
 	return {"glyphs": glyphs, "length": length}

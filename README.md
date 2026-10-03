@@ -112,6 +112,6 @@ tests/            헤드리스 테스트
 - 공용 모듈 `addons/game_base`, `addons/web_profiler`: [gosuni2025/godot-web-profiler](https://github.com/gosuni2025/godot-web-profiler)에서 가져왔고, revision과 파일 해시를 `addons/*.lock.json`에 기록한다. 출처는 `addons/game_base/SOURCES.md`.
 - `addons/godot_ai`(4.2.3): MIT License(`addons/godot_ai/LICENSE`). 개발용 에디터 연동 애드온이다.
 
-### 클린룸 메모
+### 참고 도구
 
-기능 아이디어는 기존 웹 도구(「文字画像APNGメーカー」)에서 얻었다. 그 도구의 소스 코드·프리셋·수치·문구·아이콘·UI 디자인은 열람하거나 옮기지 않았고, 효과·템플릿·문구는 이 프로젝트에서 새로 설계했다.
+「文字画像APNGメーカー」의 연출 기능을 참고한다. 연출 대조와 구현 현황은 `docs/EFFECT_PARITY.md`에 기록한다.

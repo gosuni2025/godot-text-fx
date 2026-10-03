@@ -4,7 +4,7 @@ extends RefCounted
 ## back/elastic 계열은 0..1 범위를 잠시 벗어날 수 있다. 알 수 없는 이름은 linear.
 
 const NAMES: PackedStringArray = [
-	"linear",
+	"auto", "linear",
 	"sine_in", "sine_out", "sine_in_out",
 	"quad_in", "quad_out", "quad_in_out",
 	"cubic_in", "cubic_out", "cubic_in_out",

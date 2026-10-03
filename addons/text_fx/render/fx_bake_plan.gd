@@ -8,6 +8,8 @@ extends RefCounted
 ## build(ev, fonts, bake_scale) → { jobs, glyph_keys: PackedStringArray(글자 번호 → 키), overlay_keys: {글자 번호: 키}, signature }
 
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
+const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
+const Timing := preload("res://addons/text_fx/core/fx_timing_helpers.gd")
 
 
 static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dictionary:
@@ -17,6 +19,12 @@ static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dicti
 	var keys := PackedStringArray()
 	keys.resize(glyphs.size())
 	var jobs: Array = []
+	var blur_em := maxf(Enter.max_blur_em(doc["timeline"]["enter"]), Enter.max_blur_em(doc["timeline"]["exit"]))
+	blur_em = maxf(blur_em, Enter.max_blur_em(Timing.sub_segment(doc)))
+	# 블록 효과는 보조 글자에도 본문의 em을 쓴다. 작은 sub 셀도 같은 반경을 수용해야 한다.
+	var max_font := 0.0
+	for glyph in glyphs:
+		max_font = maxf(max_font, float(glyph["font_size"]))
 	for role in ["main", "sub"]:
 		var style: Dictionary = Doc.style_for(doc, role)
 		var fill: Dictionary = style["fill"]
@@ -31,10 +39,12 @@ static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dicti
 			var key := "%s|%s|%d" % [role, g["char"], size_px]
 			var e := {"char": g["char"], "size_px": size_px}
 			if gradient:
-				if space == "block":
+				if space in ["block", "line"]:
 					key = "%s|#%d|%d" % [role, int(g["index"]), size_px]
 					var pg: Dictionary = layout["pages"][int(g["page"])]
 					var region: Rect2 = pg["main_rect"] if role == "main" else pg["sub_rect"]
+					if space == "line":
+						region = layout["lines"][int(g["line"])]["rect"]
 					var ab := block_coeffs(region, dir, g["pos"], float(g["base_rotation"]), bake_scale)
 					e["grad_a"] = ab[0]
 					e["grad_b"] = ab[1]
@@ -46,10 +56,18 @@ static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dicti
 			keys[int(g["index"])] = key
 			entries.append(e)
 		if not entries.is_empty():
-			jobs.append({"id": role, "font": fonts[role], "style": style, "scale": bake_scale, "gradient": gradient, "entries": entries})
+			jobs.append({"id": role, "font": fonts[role], "style": style, "scale": bake_scale, "gradient": gradient,
+				"entries": entries, "blur_em": blur_em, "blur_px": max_font * bake_scale * blur_em})
 	var overlay_keys := {}
 	if ev.timeline.stamp_enabled:
 		var big := float(doc["timeline"]["enter"]["params"].get("big_scale", 3.0))
+		var viewport_scale := float(doc["timeline"]["enter"]["params"].get("viewport_scale", 0.0))
+		if viewport_scale > 0.0:
+			var canvas: Vector2 = layout["canvas"]
+			for glyph in glyphs:
+				if glyph["role"] == "main":
+					big = minf(canvas.x, canvas.y) * viewport_scale / maxf(1.0, float(glyph["font_size"]))
+					break
 		var style: Dictionary = Doc.style_for(doc, "main")
 		var dir := Vector2.from_angle(deg_to_rad(float(style["fill"]["gradient"]["angle"])))
 		var entries: Array = []
@@ -64,7 +82,8 @@ static func build(ev: RefCounted, fonts: Dictionary, bake_scale: float) -> Dicti
 			overlay_keys[int(g["index"])] = key
 		if not entries.is_empty():
 			jobs.append({"id": "overlay", "font": fonts["main"], "style": style, "scale": sc,
-				"gradient": style["fill"]["type"] == "gradient", "entries": entries})
+				"gradient": style["fill"]["type"] == "gradient", "entries": entries, "blur_em": blur_em,
+				"blur_px": max_font * sc * blur_em})
 	return {"jobs": jobs, "glyph_keys": keys, "overlay_keys": overlay_keys, "signature": signature(doc, layout, bake_scale)}
 
 
@@ -98,7 +117,9 @@ static func _proj_range(r: Rect2, d: Vector2) -> Vector2:
 static func signature(doc: Dictionary, layout: Dictionary, bake_scale: float) -> String:
 	var parts: Array = [snappedf(bake_scale, 0.001), JSON.stringify(doc.get("style")), JSON.stringify(doc.get("sub_style")),
 		JSON.stringify(doc.get("font")), JSON.stringify(doc.get("sub_font")), doc["timeline"]["enter"]["effect"],
-		JSON.stringify(doc["timeline"]["enter"]["params"])]
+		JSON.stringify(doc["timeline"]["enter"]["params"]), doc["timeline"]["exit"]["effect"],
+		JSON.stringify(doc["timeline"]["exit"]["params"]), JSON.stringify(doc["timeline"].get("sub_enter")),
+		JSON.stringify(doc["canvas"])]
 	for g in layout["glyphs"]:
 		parts.append("%s%d%s" % [g["char"], int(g["font_size"]), str(g["pos"])])
 	return str(hash(parts))

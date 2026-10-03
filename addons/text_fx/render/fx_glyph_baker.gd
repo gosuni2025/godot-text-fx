@@ -3,14 +3,14 @@ extends Node
 ## 스타일을 모두 입힌 글자 스프라이트를 SubViewport 아틀라스에 굽는다(DESIGN §4).
 ##   1) 실루엣 뷰포트: 가장 바깥 테두리까지의 흰 실루엣
 ##   2) 가로 블러 뷰포트: R = 그림자 반경, G = 글로우 반경으로 흐린 값
-##   3) 합성: 뒤 아틀라스 = 세로 블러 글로우 → 그림자 → 2차 테두리 → 테두리, 그 위에서 채우기 모양을 지움(knockout)
-##            앞 아틀라스 = 채우기(단색 또는 그라데이션 셰이더)
+##   3) 합성: 뒤 아틀라스 = 그림자 → 2차 테두리 → 테두리, 그 위에서 채우기 모양을 지움(knockout)
+##            앞 아틀라스 = 채우기(단색 또는 그라데이션 셰이더), 글로우 = 독립 세로 블러 + knockout
 ##      플레이어는 모든 글자의 뒤 레이어를 먼저, 앞 레이어를 나중에 그린다. 이웃 글자의 테두리가 채우기를 가리지 않고,
 ##      한 글자 안에서는 테두리가 채우기 아래에서 지워져 있어 페이드 중에도 비치지 않는다.
 ## 단계마다 UPDATE_ONCE 한 프레임씩 렌더한 뒤 이미지로 읽어 ImageTexture로 바꾸고 뷰포트는 해제한다.
 ## 결과 텍스처는 투명 렌더 타깃이라 프리멀티플라이드 알파다(플레이어는 PREMULT_ALPHA 블렌드로 그린다).
 ##
-## bake(jobs) (await) → { key: { texture(뒤), texture_front(앞), region(Rect2), center(Vector2), inner(Rect2, center 기준), scale } }
+## bake(jobs) (await) → { key: { texture(뒤), texture_front(앞), texture_glow, region, center, inner, scale, blur?(격리 mipmap 셀) } }
 ## job = { id, font: Font, style: Dictionary(정규화 스타일, 캔버스 px), scale: float(스타일 px 배율),
 ##         gradient: bool, entries: [{ key, char, size_px, grad_a: Vector2, grad_b: float }] }
 ## 헤드리스(더미 렌더러)에서는 빈 결과를 돌려준다.
@@ -20,6 +20,7 @@ const BLUR_H := preload("res://addons/text_fx/render/shaders/fx_blur_h.gdshader"
 const BLUR_V := preload("res://addons/text_fx/render/shaders/fx_blur_v.gdshader")
 const GRADIENT := preload("res://addons/text_fx/render/shaders/fx_gradient_fill.gdshader")
 const KNOCKOUT := preload("res://addons/text_fx/render/shaders/fx_knockout.gdshader")
+const SpriteBlur := preload("res://addons/text_fx/render/fx_sprite_blur.gd")
 
 const MAX_ATLAS := 4096
 const ATLAS_WIDTH := 2048
@@ -61,20 +62,30 @@ func bake(jobs: Array) -> Dictionary:
 	for pg in pages:
 		(pg["comp"] as SubViewport).render_target_update_mode = SubViewport.UPDATE_ONCE
 		(pg["front"] as SubViewport).render_target_update_mode = SubViewport.UPDATE_ONCE
+		if pg["glow"] != null:
+			(pg["glow"] as SubViewport).render_target_update_mode = SubViewport.UPDATE_ONCE
 	await RenderingServer.frame_post_draw
 	for pg in pages:
 		var tex: Texture2D = null
+		var img: Image = null
 		if pg["has_back"]:
-			var img: Image = (pg["comp"] as SubViewport).get_texture().get_image()
+			img = (pg["comp"] as SubViewport).get_texture().get_image()
 			tex = ImageTexture.create_from_image(img) if img else null
 		var img_f: Image = (pg["front"] as SubViewport).get_texture().get_image()
 		var tex_f: Texture2D = ImageTexture.create_from_image(img_f) if img_f else null
+		var img_g: Image = (pg["glow"] as SubViewport).get_texture().get_image() if pg["glow"] != null else null
+		var tex_g: Texture2D = ImageTexture.create_from_image(img_g) if img_g else null
 		for cell in pg["cells"]:
-			result[cell["key"]] = {
-				"texture": tex, "texture_front": tex_f, "region": cell["region"], "center": cell["center"],
+			var sprite := {
+				"texture": tex, "texture_front": tex_f, "texture_glow": tex_g,
+				"region": cell["region"], "center": cell["center"],
 				"inner": cell["inner"], "scale": pg["scale"],
 			}
-		for k in ["sil", "bh", "comp", "front"]:
+			var radius := float(pg["job"].get("blur_px", 0.0))
+			if radius > 0.0:
+				sprite["blur"] = SpriteBlur.isolate(sprite, {"texture": img, "texture_front": img_f, "texture_glow": img_g}, radius)
+			result[cell["key"]] = sprite
+		for k in ["sil", "bh", "comp", "front", "glow"]:
 			if pg[k] != null:
 				(pg[k] as Node).queue_free()
 	return result
@@ -151,7 +162,7 @@ static func _code(c: String) -> int:
 
 func _new_page(job: Dictionary, ol: float, ol2: float, glow_r: float, sh_on: bool, sh_off: Vector2, sh_r: float) -> Dictionary:
 	return {"job": job, "cells": [], "ol": ol, "ol2": ol2, "glow_r": glow_r, "sh_on": sh_on, "sh_off": sh_off, "sh_r": sh_r,
-		"scale": float(job["scale"]), "sil": null, "bh": null, "comp": null, "front": null, "has_back": false}
+		"scale": float(job["scale"]), "sil": null, "bh": null, "comp": null, "front": null, "glow": null, "has_back": false}
 
 
 static func _px(d: Dictionary, k: String, sc: float) -> float:
@@ -207,7 +218,10 @@ func _build_page(pg: Dictionary) -> void:
 	pg["comp"] = comp
 	if glow_on:
 		var gl: Dictionary = style["glow"]
-		comp.add_child(_blur_layer(bh_tex, size, 1, float(pg["glow_r"]), Doc.parse_color(gl["color"]), float(gl["strength"]), Vector2.ZERO))
+		var glow := _make_vp(size, true)
+		pg["glow"] = glow
+		glow.add_child(_blur_layer(bh_tex, size, 1, float(pg["glow_r"]), Doc.parse_color(gl["color"]), float(gl["strength"]), Vector2.ZERO))
+		_add_knockout(glow, pg, font)
 	if pg["sh_on"]:
 		comp.add_child(_blur_layer(bh_tex, size, 0, float(pg["sh_r"]), Doc.parse_color(style["shadow"]["color"]), 1.0, pg["sh_off"]))
 	var ol_draw := Node2D.new()
@@ -223,14 +237,7 @@ func _build_page(pg: Dictionary) -> void:
 				ol_draw.draw_char_outline(font, base, cell["char"], cell["size"], int(round((ol + ol2) * OUTLINE_FACTOR)), ol2_col)
 			if ol > 0.0:
 				ol_draw.draw_char_outline(font, base, cell["char"], cell["size"], int(round(ol * OUTLINE_FACTOR)), ol_col))
-	var ko := Node2D.new()
-	var ko_mat := ShaderMaterial.new()
-	ko_mat.shader = KNOCKOUT
-	ko.material = ko_mat
-	comp.add_child(ko)
-	ko.draw.connect(func() -> void:
-		for cell in pg["cells"]:
-			ko.draw_char(font, _baseline(cell), cell["char"], cell["size"], Color.WHITE))
+	_add_knockout(comp, pg, font)
 	pg["has_back"] = glow_on or bool(pg["sh_on"]) or ol > 0.0 or ol2 > 0.0
 	var front := _make_vp(size, true)
 	pg["front"] = front
@@ -257,6 +264,17 @@ func _build_page(pg: Dictionary) -> void:
 		fill_draw.draw.connect(func() -> void:
 			for cell in pg["cells"]:
 				fill_draw.draw_char(font, _baseline(cell), cell["char"], cell["size"], fill_col))
+
+
+func _add_knockout(viewport: SubViewport, page: Dictionary, font: Font) -> void:
+	var ko := Node2D.new()
+	var ko_mat := ShaderMaterial.new()
+	ko_mat.shader = KNOCKOUT
+	ko.material = ko_mat
+	viewport.add_child(ko)
+	ko.draw.connect(func() -> void:
+		for cell in page["cells"]:
+			ko.draw_char(font, _baseline(cell), cell["char"], cell["size"], Color.WHITE))
 
 
 static func _baseline(cell: Dictionary) -> Vector2:

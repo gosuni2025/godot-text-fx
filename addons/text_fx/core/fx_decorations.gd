@@ -7,62 +7,129 @@ extends RefCounted
 ## 시간: 페이지 등장 시작(center_stamp는 내려찍기 시작) 기준 delay/duration, 퇴장 중에는 퇴장 진행만큼 투명해진다.
 
 const Easing := preload("res://addons/text_fx/core/fx_easing.gd")
+const Shapes := preload("res://addons/text_fx/core/fx_decoration_shapes.gd")
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
 
 
 ## 반환: [{ type, rects: Array[Rect2], color, outline(bool), outline_color, outline_size, alpha }]
 static func evaluate(doc: Dictionary, layout: Dictionary, timeline: RefCounted, s: Dictionary, offset: Vector2) -> Array:
 	var out: Array = []
-	var decos: Array = doc.get("decorations", [])
-	if decos.is_empty() or s["phase"] == "end" or s["phase"] == "gap":
+	if s["phase"] in ["end", "gap", "lead_in", "lead_out"]:
 		return out
-	var p: int = s["page"]
-	if p >= layout["pages"].size():
+	var page := int(s["page"])
+	if page >= layout["pages"].size():
 		return out
-	var pg: Dictionary = layout["pages"][p]
-	var tp: Dictionary = timeline.pages[p]
-	var area: Rect2 = pg["main_rect"]
-	area.position += offset
+	var pg: Dictionary = layout["pages"][page]
+	var tp: Dictionary = timeline.pages[page]
 	var fs := float(layout["font_size"])
 	var vertical: bool = layout["direction"] == "vertical"
-	var t := float(s["page_time"]) - float(tp.get("stamp_seq", 0.0))
-	var exit_alpha := 1.0
-	if s["phase"] == "exit":
-		var el := maxf(0.0001, float(tp["exit_len"]))
-		exit_alpha = 1.0 - Easing.apply(str(doc["timeline"]["exit"]["easing"]), float(s["local"]) / el)
 	var style: Dictionary = Doc.style_for(doc, "main")
-	for d in decos:
-		var dur := maxf(0.0, float(d["duration"]))
-		var prog := 1.0
-		if d["animate"] != "none":
-			prog = 1.0 if dur <= 0.0 else clampf((t - float(d["delay"])) / dur, 0.0, 1.0)
-			if dur <= 0.0 and t < float(d["delay"]):
-				prog = 0.0
-		prog = Easing.apply("cubic_out", prog)
-		var alpha := exit_alpha
+	for d: Dictionary in doc.get("decorations", []):
+		var type := str(d["type"])
+		var area: Rect2 = pg["rect"] if type == "box" or (type == "band" and d.get("full_span", false)) else pg["main_rect"]
+		area.position += offset
+		var time := float(s["page_time"]) - (0.0 if d.get("lead_text", false) else float(tp.get("stamp_seq", 0.0)))
+		var progress := _progress(time - float(d["delay"]), float(d["duration"]))
+		var leave := 0.0
+		if s["phase"] == "exit":
+			var exit_duration := float(d.get("exit_duration", 0.0))
+			if exit_duration <= 0.0:
+				exit_duration = float(tp["exit_len"])
+			leave = _progress(float(s["local"]) - float(d.get("exit_delay", 0.0)), exit_duration)
+		var animation := str(d["animate"])
+		var alpha := 1.0 - leave
 		var grow := 1.0
-		match str(d["animate"]):
-			"fade":
-				alpha *= prog
-			"grow_center", "grow_start":
-				grow = prog
+		if animation == "fade":
+			alpha *= progress
+		elif animation in ["grow_center", "grow_start"]:
+			grow = progress
+		elif animation == "shape":
+			alpha = 1.0 if progress > 0.0 and leave < 1.0 else 0.0
 		if alpha <= 0.0 or grow <= 0.0:
 			continue
-		var rects := geometry(str(d["type"]), area, fs, float(d["thickness"]), float(d["margin"]) * fs, float(d["length"]), vertical)
-		if grow < 1.0:
-			rects = _grow(rects, grow, d["animate"] == "grow_start")
-		out.append({
-			"type": d["type"], "rects": rects, "color": Doc.parse_color(d["color"]),
+		var thickness := float(d["thickness"])
+		var sub: Rect2 = pg["sub_rect"]
+		sub.position += offset
+		var margin := float(d["margin"]) * fs
+		var rects := geometry(type, area, fs, thickness, margin, float(d["length"]), vertical)
+		if type == "frame" and (d.get("protect_sub", false) or d.get("clamp_canvas", false)):
+			var extension := (area.size * (float(d["length"]) - 1.0) * 0.5).max(Vector2.ZERO)
+			var frame := area.grow_individual(margin + extension.x, margin + extension.y, margin + extension.x, margin + extension.y)
+			if d.get("protect_sub", false) and sub.has_area():
+				frame = _protect(frame, area, sub, vertical)
+			if d.get("clamp_canvas", false):
+				frame = frame.intersection(Rect2(Vector2.ZERO, layout["canvas"]))
+			rects = geometry(type, frame, fs, thickness, 0.0, 1.0, vertical)
+		if type == "underline" and d.get("protect_sub", false) and sub.has_area():
+			var r: Rect2 = rects[0]
+			if vertical and sub.end.x <= area.position.x:
+				r.position.x = (sub.end.x + area.position.x - thickness) * 0.5
+			elif not vertical and sub.position.y >= area.end.y:
+				r.position.y = (sub.position.y + area.end.y - thickness) * 0.5
+			rects[0] = r
+		if type in ["band", "tape"] and bool(d.get("full_span", false)):
+			for i in rects.size():
+				var r: Rect2 = rects[i]
+				if vertical:
+					r.position.y = 0.0
+					r.size.y = layout["canvas"].y
+				else:
+					r.position.x = 0.0
+					r.size.x = layout["canvas"].x
+				rects[i] = r
+		if type == "brackets":
+			for i in rects.size():
+				var r: Rect2 = rects[i]
+				var old := maxf(r.size.x, r.size.y)
+				var arm := minf(area.size.x, area.size.y) * float(d.get("arm_length", 0.3))
+				if r.size.x > r.size.y:
+					if i in [2, 6]: r.position.x += old - arm
+					r.size.x = arm
+				else:
+					if i in [5, 7]: r.position.y += old - arm
+					r.size.y = arm
+				rects[i] = r
+		var fill_rect := area.grow(float(d["margin"]) * fs)
+		if type == "frame" and rects.size() == 4:
+			fill_rect = Rect2(rects[0].position, Vector2(rects[0].size.x, rects[1].end.y - rects[0].position.y))
+		if type == "box" and not rects.is_empty():
+			fill_rect = rects[0]
+		if animation == "shape":
+			rects = Shapes.animate(rects, type, progress, leave, vertical, area)
+			if type == "box" and not rects.is_empty(): fill_rect = rects[0]
+		elif grow < 1.0:
+			rects = _grow(rects, grow, animation == "grow_start")
+		var blink := float(d.get("blink_period", 0.0))
+		var phase := int(floor(maxf(0.0, time) / maxf(0.001, blink))) % 2
+		out.append({"follow_block": bool(d.get("follow_block", false)), "type": type, "rects": rects, "color": Doc.parse_color(d["color"]),
 			"outline": bool(d["use_outline"]) and bool(style["outline"]["enabled"]),
-			"outline_color": Doc.parse_color(style["outline"]["color"]),
-			"outline_size": float(style["outline"]["size"]), "alpha": alpha,
-		})
+			"outline_color": Doc.parse_color(style["outline"]["color"]), "outline_size": float(style["outline"]["size"]),
+			"outline2": bool(d["use_outline"]) and bool(style["outline2"]["enabled"]),
+			"outline2_color": Doc.parse_color(style["outline2"]["color"]), "outline2_size": float(style["outline2"]["size"]),
+			"alpha": alpha, "fill_rect": fill_rect, "fill_color": Doc.parse_color(d.get("fill_color", "#18243CCC")),
+			"fill_opacity": float(d.get("fill_opacity", 0.0)) * (progress if animation == "shape" else 1.0),
+			"radius": float(d.get("radius", 0.0)), "thickness": thickness,
+			"softness": float(d.get("softness", 0.0)), "end_fade": float(d.get("end_fade", 0.0)),
+			"stripe_width": float(d.get("stripe_width", 24.0)), "stripe_phase": time * float(d.get("stripe_speed", 40.0)),
+			"blink_strength": float(d.get("blink_strength", 1.0)), "blink": blink > 0.0, "blink_phase": phase, "vertical": vertical})
 	return out
+
+
+static func _progress(time: float, duration: float) -> float:
+	if time < 0.0: return 0.0
+	return Easing.apply("cubic_out", 1.0 if duration <= 0.0 else clampf(time / duration, 0.0, 1.0))
 
 
 static func geometry(type: String, r: Rect2, fs: float, th: float, margin: float, length: float, vertical: bool) -> Array:
 	var c := r.get_center()
 	match type:
+		"box":
+			return [r.grow(margin)]
+		"bar":
+			return [Rect2(r.position.x, r.position.y - margin - th, r.size.x * length, th)] if vertical else [Rect2(r.position.x - margin - th, r.position.y, th, r.size.y * length)]
+		"lines", "tape":
+			var width := maxf(th, fs * 0.2) if type == "tape" else th
+			return geometry("underline", r, fs, width, margin, length, vertical) + geometry("overline", r, fs, width, margin, length, vertical)
 		"underline", "overline":
 			var under := type == "underline"
 			if vertical:
@@ -117,3 +184,19 @@ static func _grow(rects: Array, k: float, from_start: bool) -> Array:
 			var y := r.position.y if from_start else r.get_center().y - h * 0.5
 			out.append(Rect2(r.position.x, y, r.size.x, h))
 	return out
+
+
+static func _protect(frame: Rect2, main: Rect2, sub: Rect2, vertical: bool) -> Rect2:
+	var lo := frame.position
+	var hi := frame.end
+	if vertical:
+		if sub.end.x <= main.position.x:
+			lo.x = maxf(lo.x, (main.position.x + sub.end.x) * 0.5)
+		else:
+			hi.x = minf(hi.x, (main.end.x + sub.position.x) * 0.5)
+	else:
+		if sub.position.y >= main.end.y:
+			hi.y = minf(hi.y, (main.end.y + sub.position.y) * 0.5)
+		else:
+			lo.y = maxf(lo.y, (main.position.y + sub.end.y) * 0.5)
+	return Rect2(lo, (hi - lo).max(Vector2.ZERO))

@@ -8,11 +8,16 @@ extends RefCounted
 
 const Hash := preload("res://addons/text_fx/core/fx_hash.gd")
 const GlyphState := preload("res://addons/text_fx/core/fx_glyph_state.gd")
+const Block := preload("res://addons/text_fx/core/fx_effects_block.gd")
 
 const IDS: PackedStringArray = [
 	"fade", "slide", "zoom", "pop", "drop", "rise", "blur", "spin", "converge",
 	"tracking", "center_split", "scatter", "wipe", "typewriter", "glitch", "center_stamp",
+	"flip", "flicker", "slam", "block_zoom", "emerge", "shutter", "flash", "erase",
+	"block_wipe", "block_glitch", "bounce",
 ]
+
+const BLOCK_EFFECTS: PackedStringArray = ["slam", "block_zoom", "emerge", "shutter", "flash", "block_wipe", "block_glitch"]
 
 ## 거리 단위는 em(글자 크기 비율), 각도는 도.
 const DEFAULTS := {
@@ -26,21 +31,36 @@ const DEFAULTS := {
 	"spin": {"angle": 180.0},
 	"converge": {"distance": 1.0, "mode": "alternate"},
 	"tracking": {"spread": 1.2},
-	"center_split": {"jitter": 0.25},
+	"center_split": {"jitter": 0.25, "overlap_hold": 0.0},
 	"scatter": {"distance": 3.0, "angle": 120.0},
 	"wipe": {"dir": "right"},
 	"typewriter": {"pop": 0.25},
-	"glitch": {"intensity": 1.0},
-	"center_stamp": {"big_scale": 3.0, "hold_each": 0.28, "pause": 0.3, "slam_scale": 2.2},
+	"glitch": {"intensity": 1.0, "color_a": "#FF2A6DFF", "color_b": "#2AE0FFFF"},
+	"center_stamp": {"solo_animated": true, "viewport_scale": 0.0, "big_scale": 3.0, "hold_each": 0.28, "pause": 0.3, "slam_scale": 2.2,
+		"space_pause": 0.0, "impact_duration": 0.0, "impact_brightness": 0.0, "impact_shake": 0.0},
+	"flip": {"axis": "auto"},
+	"flicker": {"rate": 20.0, "min_alpha": 0.08},
+	"slam": {"from_scale": 2.4, "impact": 0.4, "shake": 0.06, "brightness": 0.7, "blur": 0.08},
+	"block_zoom": {"from_scale": 2.0, "blur": 0.16},
+	"emerge": {"from_scale": 0.25},
+	"shutter": {"axis": "vertical"},
+	"flash": {"brightness": 1.0, "glow": 1.8},
+	"erase": {},
+	"block_wipe": {"dir": "right", "feather": 0.12},
+	"block_glitch": {"intensity": 1.0, "slices": 5, "color_a": "#FF2A6DFF", "color_b": "#2AE0FFFF"},
+	"bounce": {"distance": 1.2},
 }
 
 ## 모든 효과 공통 params(순서 관련).
-const COMMON := {"punct_pause": 0.0}
+const COMMON := {"punct_pause": 0.0, "punct_long_pause": 0.0, "line_pause": 0.0, "line_stagger": 0.65, "sweep_duration": 0.5,
+	"cursor": false, "cursor_blink": 0.6, "cursor_color": null}
 
 ## 효과별 권장 이징(에디터 템플릿용 힌트).
 const SUGGESTED_EASING := {
 	"pop": "back_out", "drop": "bounce_out", "typewriter": "linear", "glitch": "linear",
 	"center_stamp": "cubic_in", "scatter": "quart_out", "spin": "back_out",
+	"bounce": "bounce_out", "flip": "back_out", "flicker": "linear", "erase": "linear",
+	"slam": "linear", "block_glitch": "linear", "shutter": "expo_out", "block_wipe": "cubic_in_out",
 }
 
 const DIRS := {"up": Vector2(0, -1), "down": Vector2(0, 1), "left": Vector2(-1, 0), "right": Vector2(1, 0)}
@@ -55,9 +75,36 @@ static func default_params(id: String) -> Dictionary:
 	return d
 
 
+## auto만 효과별 곡선으로 해석한다. v1의 명시 이징은 바꾸지 않는다.
+static func resolve_easing(id: String, selected: String, is_exit: bool = false) -> String:
+	if selected != "auto":
+		return selected
+	if is_exit:
+		if id in ["flicker", "erase", "typewriter", "glitch", "block_glitch", "slam"]:
+			return "linear"
+		if id == "block_wipe":
+			return "cubic_in_out"
+		return "expo_in" if id == "shutter" else "cubic_in"
+	return str(SUGGESTED_EASING.get(id, "cubic_out"))
+
+
+## 렌더러가 아틀라스 주변 여백을 확보할 때 쓰는 최대 blur(em).
+static func max_blur_em(seg: Dictionary) -> float:
+	var id := str(seg.get("effect", ""))
+	var params: Dictionary = seg.get("params", {})
+	if id == "blur":
+		return maxf(0.0, float(params.get("radius", 0.18)))
+	if id in ["rise", "slam", "block_zoom"]:
+		return maxf(0.0, float(params.get("blur", DEFAULTS[id]["blur"])))
+	return 0.0
+
+
 ## ctx: { seed, em, params, is_exit, vertical, line_center(Vector2), local(이 글자 애니메이션 경과 초) }
 ## g: 레이아웃 글자 Dictionary.
 static func apply(id: String, st: GlyphState, k: float, g: Dictionary, ctx: Dictionary) -> void:
+	if BLOCK_EFFECTS.has(id):
+		Block.apply(id, st, k, ctx)
+		return
 	var kc := clampf(k, 0.0, 1.0)
 	var params: Dictionary = ctx.get("params", {})
 	var em: float = ctx.get("em", 32.0)
@@ -78,7 +125,7 @@ static func apply(id: String, st: GlyphState, k: float, g: Dictionary, ctx: Dict
 		"pop":
 			st.scale *= maxf(0.0, lerpf(1.0, float(params.get("from_scale", 0.2)), k))
 			st.alpha *= clampf((1.0 - k) * 3.0, 0.0, 1.0)
-		"drop":
+		"drop", "bounce":
 			var dist := float(params.get("distance", 1.2)) * em
 			st.pos.y += (dist if is_exit else -dist) * k
 			st.alpha *= clampf((1.0 - k) * 4.0, 0.0, 1.0)
@@ -117,12 +164,32 @@ static func apply(id: String, st: GlyphState, k: float, g: Dictionary, ctx: Dict
 			else:
 				st.pos.x += (st.pos.x - lc.x) * spread * k
 			st.alpha *= 1.0 - kc
+		"flip":
+			var axis := str(params.get("axis", "auto"))
+			var x_axis := axis == "horizontal" or (axis == "auto" and vertical)
+			if x_axis:
+				st.scale.x *= maxf(0.0, 1.0 - k)
+			else:
+				st.scale.y *= maxf(0.0, 1.0 - k)
+			st.alpha *= clampf((1.0 - kc) * 3.0, 0.0, 1.0)
+		"flicker":
+			var step := int(floor(float(ctx.get("local", 0.0)) * maxf(1.0, float(params.get("rate", 20.0)))))
+			var visible := Hash.f(seed, idx + 4101, step) >= kc
+			st.alpha *= 0.0 if kc >= 0.999 else (1.0 if visible else clampf(float(params.get("min_alpha", 0.08)), 0.0, 1.0))
+		"erase":
+			st.alpha *= 0.0 if (is_exit and k >= 0.5) or (not is_exit and k > 0.5) else 1.0
 		"center_split":
 			var lc: Vector2 = ctx.get("line_center", st.pos)
 			var j := float(params.get("jitter", 0.25)) * em
 			var hidden := lc + Vector2(Hash.signed(seed, idx, SALT_SPLIT), Hash.signed(seed, idx, SALT_SPLIT + 1)) * j
 			st.pos += (hidden - st.pos) * k
-			st.alpha *= clampf((1.0 - kc) * 3.0, 0.0, 1.0)
+			var overlap := maxf(0.0, float(params.get("overlap_hold", 0.0)))
+			if overlap > 0.0 and not is_exit:
+				var appearance := clampf(float(ctx.get("local", 0.0)) / minf(0.2, overlap), 0.0, 1.0)
+				st.alpha *= appearance
+				st.scale *= 1.0 + 0.2 * (1.0 - appearance)
+			else:
+				st.alpha *= clampf((1.0 - kc) * 3.0, 0.0, 1.0)
 		"scatter":
 			var ang := Hash.f(seed, idx, SALT_SCATTER) * TAU
 			var r := float(params.get("distance", 3.0)) * em * (0.6 + 0.4 * Hash.f(seed, idx, SALT_SCATTER + 1))
@@ -141,6 +208,8 @@ static func apply(id: String, st: GlyphState, k: float, g: Dictionary, ctx: Dict
 			else:
 				st.scale *= 1.0 + float(params.get("pop", 0.25)) * kc
 		"glitch":
+			st.split_color_a = Color.from_string(str(params.get("color_a", "#FF2A6DFF")), st.split_color_a)
+			st.split_color_b = Color.from_string(str(params.get("color_b", "#2AE0FFFF")), st.split_color_b)
 			var inten := float(params.get("intensity", 1.0))
 			var step := int(floor(float(ctx.get("local", 0.0)) * 24.0))
 			var jit := inten * em * 0.45 * kc

@@ -42,7 +42,7 @@ unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
 alignment = 0
-text = "Scroll the whole block upward (no pages)"
+text = "Scroll along the writing direction (no pages)"
 
 [node name="EffectsTitle" type="Label" parent="Body/Hold/Rows"]
 layout_mode = 2
@@ -67,5 +67,15 @@ text = "Add hold effect"
 icon = ExtResource("3_add")
 
 [node name="Exit" parent="Body" instance=ExtResource("2_seg")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SubIndependent" type="Button" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+text = "Independent sub text entrance"
+
+[node name="SubEnter" parent="Body" instance=ExtResource("2_seg")]
 unique_name_in_owner = true
 layout_mode = 2

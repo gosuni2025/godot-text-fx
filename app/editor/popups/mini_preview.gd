@@ -1,14 +1,13 @@
 extends Control
-## 효과·이징 카드의 작은 미리보기. TextFxPlayer 대신 런타임 계산기(TextFxEvaluator) 결과를
-## draw_string으로 바로 그린다(굽기 없음). active일 때만 시간이 흐르고, 아니면 효과가 드러나는 한 장면에 멈춘다.
+## 효과 카드도 실제 TextFxPlayer 렌더 경로를 사용한다. 보이는 카드만 늦게 굽고,
+## hover/키보드 포커스 때만 seek 시간을 진행한다. 비활성 카드는 대표 시점에 멈춘다.
 
 const Doc := preload("res://addons/text_fx/core/fx_doc.gd")
-const Layout := preload("res://addons/text_fx/core/fx_layout.gd")
-const Evaluator := preload("res://addons/text_fx/core/fx_evaluator.gd")
+const PlayerScene := preload("res://app/editor/popups/mini_player.tscn")
+const Player := preload("res://addons/text_fx/render/text_fx_player.gd")
 const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
 const Hold := preload("res://addons/text_fx/core/fx_effects_hold.gd")
 const Easing := preload("res://addons/text_fx/core/fx_easing.gd")
-const Drawer := preload("res://addons/text_fx/render/fx_glyph_drawer.gd")
 
 const CANVAS := Vector2i(420, 160)
 const BG := Color(0.07, 0.075, 0.095, 1)
@@ -22,33 +21,35 @@ var active := false:
 		if active == v:
 			return
 		active = v
-		set_process(v)
 		_t = 0.0 if v else _static_t
+		_seek()
 		queue_redraw()
 
-var _ev: Evaluator = null
-var _fonts: Dictionary = {}
+var _player: Player = null
+var _doc: Dictionary = {}
+var _visibility_poll := 0.0
 var _cycle := 1.0
 var _t := 0.0
 var _static_t := 0.0
 
 
 func _ready() -> void:
-	set_process(active)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	clip_contents = true
+	visibility_changed.connect(_visibility_changed)
+	resized.connect(_request_visible_player)
+	_visibility_changed()
 
 
 func configure(p_kind: String, p_value: String, sample: String) -> void:
 	kind = p_kind
 	value = p_value
-	_ev = null
-	if kind in ["enter", "exit", "hold", "deco"]:
-		var doc := _doc_for(sample)
-		_fonts = Layout.resolve_fonts(doc)
-		_ev = Evaluator.new(doc, {}, _fonts)
-		_cycle = maxf(0.6, _ev.get_duration() + 0.5) if kind not in ["hold", "deco"] else 3.0
-	else:
-		_cycle = 1.6
+	if is_instance_valid(_player):
+		remove_child(_player)
+		_player.queue_free()
+		_player = null
+	_doc = _doc_for(sample) if kind in ["enter", "exit", "hold", "deco"] else {}
+	_cycle = 3.0 if kind in ["hold", "deco"] else 1.6
 	match kind:
 		"enter": _static_t = 0.3
 		"exit": _static_t = 0.5 + 0.3
@@ -56,6 +57,7 @@ func configure(p_kind: String, p_value: String, sample: String) -> void:
 		"deco": _static_t = 2.0
 		_: _static_t = 1.0
 	_t = _static_t
+	_request_visible_player()
 	queue_redraw()
 
 
@@ -71,7 +73,7 @@ func _doc_for(sample: String) -> Dictionary:
 	match kind:
 		"enter":
 			tl["enter"] = {"effect": value, "order": "forward", "duration": 0.5, "stagger": 0.09,
-				"easing": Enter.SUGGESTED_EASING.get(value, "cubic_out"), "params": Enter.default_params(value)}
+				"easing": "auto", "params": Enter.default_params(value)}
 			tl["hold"] = {"duration": 0.8, "effects": []}
 			tl["exit"]["enabled"] = false
 		"exit":
@@ -79,7 +81,7 @@ func _doc_for(sample: String) -> Dictionary:
 				"params": {}}
 			tl["hold"] = {"duration": 0.5, "effects": []}
 			tl["exit"] = {"enabled": true, "effect": value, "order": "forward", "duration": 0.5, "stagger": 0.09,
-				"easing": "cubic_in", "params": Enter.default_params(value)}
+				"easing": "auto", "params": Enter.default_params(value)}
 		"hold", "deco":
 			tl["enter"] = {"effect": "fade", "order": "all", "duration": 0.0, "stagger": 0.0, "easing": "linear",
 				"params": {}}
@@ -89,42 +91,81 @@ func _doc_for(sample: String) -> Dictionary:
 				d["layout"]["font_size"] = 56
 				d["decorations"] = [Doc.default_decoration(value)]
 				d["decorations"][0]["thickness"] = 6.0
+	if kind in ["enter", "exit"]:
+		if value in ["typewriter", "erase"]:
+			tl[kind]["duration"] = 0.0
+			if value == "typewriter":
+				tl[kind]["params"]["pop"] = 0.0
+		if value == "center_split":
+			tl[kind]["params"]["overlap_hold"] = 0.3
+	if kind == "hold" and value == "glow_pulse":
+		d["style"]["glow"]["enabled"] = true
+		d["style"]["glow"]["size"] = 16.0
 	return Doc.normalize(d)
 
 
 func _process(delta: float) -> void:
+	_visibility_poll -= delta
+	if _visibility_poll <= 0.0:
+		_visibility_poll = 0.15
+		_request_visible_player()
+	if not active or not _on_screen():
+		return
+	if is_instance_valid(_player) and not _player.is_baked():
+		return
 	_t = fmod(_t + delta, _cycle)
-	queue_redraw()
+	_seek()
+	if kind == "easing":
+		queue_redraw()
+
+
+func _visibility_changed() -> void:
+	set_process(is_visible_in_tree())
+	if is_instance_valid(_player):
+		_player.process_mode = Node.PROCESS_MODE_INHERIT if is_visible_in_tree() else Node.PROCESS_MODE_DISABLED
+	if is_visible_in_tree():
+		_request_visible_player.call_deferred()
+
+
+## Control.visible은 ScrollContainer의 잘린 영역을 고려하지 않으므로 조상 clip도 검사한다.
+func _on_screen() -> bool:
+	if not is_inside_tree() or not is_visible_in_tree() or size.x <= 1.0 or size.y <= 1.0:
+		return false
+	var rect := get_global_rect().intersection(get_viewport_rect())
+	var parent := get_parent()
+	while parent is CanvasItem:
+		if parent is Control and (parent as Control).clip_contents:
+			rect = rect.intersection((parent as Control).get_global_rect())
+		parent = parent.get_parent()
+	return rect.has_area()
+
+
+func _request_visible_player() -> void:
+	if _doc.is_empty() or is_instance_valid(_player) or not _on_screen():
+		return
+	_player = PlayerScene.instantiate() as Player
+	add_child(_player)
+	_player.baked.connect(_seek)
+	_player.set_document(_doc)
+	_cycle = maxf(0.6, _player.get_duration() + 0.5) if kind not in ["hold", "deco"] else 3.0
+	if value == "center_stamp" and kind == "enter":
+		_static_t = 0.1
+	if value == "slam" and kind == "enter":
+		_static_t = 0.22
+	if not active:
+		_t = _static_t
+	_seek()
+
+
+func _seek() -> void:
+	if is_instance_valid(_player):
+		_player.seek(_t + (0.001 if kind == "hold" else 0.0))
 
 
 func _draw() -> void:
 	draw_rect(Rect2(Vector2.ZERO, size), BG)
 	if kind == "easing":
 		_draw_easing()
-	elif _ev != null:
-		_draw_glyphs()
-
-
-func _draw_glyphs() -> void:
-	var canvas := Vector2(CANVAS)
-	var s := minf(size.x / canvas.x, size.y / canvas.y)
-	var origin := (size - canvas * s) * 0.5
-	var glyphs: Array = _ev.layout["glyphs"]
-	var t := _t + (0.001 if kind == "hold" else 0.0)
-	var frame := _ev.evaluate_frame(t)
-	for deco in frame["decorations"]:
-		Drawer.draw_decoration(self, deco, origin, s)
-	for st in frame["glyphs"]:
-		if not st.visible or st.character.strip_edges() == "" or st.index >= glyphs.size():
-			continue
-		var font: Font = _fonts.get(st.role, _fonts.get("main"))
-		var fsz := maxi(6, roundi(float(glyphs[st.index]["font_size"]) * s * (st.overlay_scale if st.overlay else 1.0)))
-		var w := font.get_string_size(st.character, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz).x
-		var baseline := (font.get_ascent(fsz) - font.get_descent(fsz)) * 0.5
-		var col := Color(INK.r * st.tint.r, INK.g * st.tint.g, INK.b * st.tint.b, st.alpha * clampf(st.clip, 0.0, 1.0))
-		draw_set_transform(origin + st.pos * s, st.rotation, st.scale)
-		draw_string(font, Vector2(-w * 0.5, baseline), st.character, HORIZONTAL_ALIGNMENT_LEFT, -1, fsz, col)
-	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 func _draw_easing() -> void:

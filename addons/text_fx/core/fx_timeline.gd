@@ -9,6 +9,8 @@ extends RefCounted
 ## exit.enabled = false 이면 finish 시 즉시 끝난다.
 
 const Hash := preload("res://addons/text_fx/core/fx_hash.gd")
+const Enter := preload("res://addons/text_fx/core/fx_effects_enter.gd")
+const Timing := preload("res://addons/text_fx/core/fx_timing_helpers.gd")
 
 const SALT_RANDOM := 7001
 
@@ -24,6 +26,9 @@ var loop_mode := "once"
 var exit_enabled := true
 var scroll_speed := 0.0
 var stamp_enabled := false
+var lead_in := 0.0
+var lead_out := 0.0
+var content_end := 0.0
 
 
 func _init(p_doc: Dictionary, p_layout: Dictionary) -> void:
@@ -42,6 +47,8 @@ func _build() -> void:
 	var exit: Dictionary = tl["exit"]
 	var hold_len := maxf(0.0, float(tl["hold"]["duration"]))
 	var gap := maxf(0.0, float(tl["page_gap"]))
+	lead_in = maxf(0.0, float(tl.get("lead_in", 0.0)))
+	lead_out = maxf(0.0, float(tl.get("lead_out", 0.0)))
 	exit_enabled = bool(exit["enabled"])
 	loop_mode = str(tl["loop"])
 	stamp_enabled = enter["effect"] == "center_stamp"
@@ -54,14 +61,22 @@ func _build() -> void:
 	if tl.get("scroll") is Dictionary:
 		scroll_speed = maxf(1.0, float(tl["scroll"]["speed"]))
 		var rect: Rect2 = layout["pages"][0]["rect"] if layout["pages"].size() > 0 else Rect2()
-		total = (float(layout["canvas"].y) + rect.size.y) / scroll_speed
+		var vertical: bool = layout["direction"] == "vertical"
+		var length := (float(layout["canvas"].x) + rect.size.x) if vertical else (float(layout["canvas"].y) + rect.size.y)
+		var scroll_duration := length / scroll_speed
+		content_end = lead_in + scroll_duration
+		total = content_end + lead_out
 		if loop_mode == "loop_hold":
 			loop_mode = "loop_all"
 		stamp_enabled = false
-		pages.append({"start": 0.0, "enter_end": 0.0, "hold_end": total, "exit_end": total, "next_start": total,
-			"enter_len": 0.0, "exit_len": 0.0, "exit_performed": false, "stamp_seq": 0.0, "stamp_count": 0})
+		pages.append({"start": lead_in, "enter_end": lead_in, "hold_end": content_end, "exit_end": content_end, "next_start": total,
+			"enter_len": 0.0, "exit_len": 0.0, "text_exit_len": 0.0, "exit_performed": false,
+			"text_start": 0.0, "stamp_seq": 0.0, "stamp_count": 0})
 		return
-	var t := 0.0
+	var t := lead_in
+	var text_start := _decoration_lead()
+	var independent_sub: bool = tl.get("sub_enter") is Dictionary
+	var sub := Timing.sub_segment(doc)
 	for p in page_count:
 		var pg: Dictionary = layout["pages"][p] if p < layout["pages"].size() else {"glyph_first": 0, "glyph_count": 0}
 		var first := int(pg["glyph_first"])
@@ -69,39 +84,90 @@ func _build() -> void:
 		var enter_len := 0.0
 		var stamp_seq := 0.0
 		var stamp_count := 0
+		var slots: Array = []
+		var main_count := Timing.main_count(glyphs, first, count)
+		var timed_main := main_count if independent_sub else count
 		if stamp_enabled:
 			var params: Dictionary = enter["params"]
-			for i in range(first, first + count):
-				if glyphs[i]["role"] == "main":
-					stamp_count += 1
-			stamp_seq = float(stamp_count) * maxf(0.0, float(params.get("hold_each", 0.28))) + maxf(0.0, float(params.get("pause", 0.3)))
-			for i in range(first, first + count):
+			var seq := Timing.stamp_slots(glyphs, first, count, params)
+			slots = seq["slots"]
+			stamp_count = slots.size()
+			stamp_seq = float(seq["duration"]) + text_start
+			for i in range(first, first + timed_main):
 				enter_delay[i] = stamp_seq
-			enter_len = stamp_seq + maxf(0.0, float(enter["duration"])) if count > 0 else 0.0
+			enter_len = stamp_seq + maxf(0.0, float(enter["duration"])) if count > 0 else text_start
 		else:
-			enter_len = _assign_delays(enter_delay, glyphs, first, count, enter, seed)
-		var exit_len := _assign_delays(exit_delay, glyphs, first, count, exit, seed + 1)
+			enter_len = text_start + _assign_delays(enter_delay, glyphs, first, timed_main, enter, seed)
+			_shift_delays(enter_delay, first, timed_main, text_start)
+		var main_enter_len := enter_len
+		var sub_start := 0.0
+		if independent_sub and count > main_count:
+			var same_block: bool = tl["sub_enter"].get("effect", "same") == "same" and enter["effect"] in Enter.BLOCK_EFFECTS
+			sub_start = text_start if same_block else maxf(text_start, main_enter_len + float(tl["sub_enter"].get("delay", 0.0)))
+			var sub_len := _assign_delays(enter_delay, glyphs, first + main_count, count - main_count, sub, seed)
+			_shift_delays(enter_delay, first + main_count, count - main_count, sub_start)
+			enter_len = maxf(enter_len, sub_start + sub_len)
+		var text_exit_len := _assign_delays(exit_delay, glyphs, first, count, exit, seed + 1, true)
+		var exit_len := maxf(text_exit_len, _decoration_exit())
 		var last := p == page_count - 1
-		var performed := (not last) or exit_enabled
+		var performed := ((not last) and bool(tl.get("exit_between_pages", true))) or exit_enabled
 		var page := {
 			"start": t, "enter_end": t + enter_len, "hold_end": t + enter_len + hold_len,
-			"enter_len": enter_len, "exit_len": exit_len, "exit_performed": performed,
-			"stamp_seq": stamp_seq, "stamp_count": stamp_count,
+			"enter_len": enter_len, "main_enter_len": main_enter_len, "sub_enter_start": sub_start,
+			"exit_len": exit_len, "text_exit_len": text_exit_len, "exit_performed": performed,
+			"text_start": text_start, "stamp_seq": stamp_seq, "stamp_count": stamp_count, "stamp_slots": slots,
 		}
 		page["exit_end"] = float(page["hold_end"]) + (exit_len if performed else 0.0)
 		page["next_start"] = float(page["exit_end"]) + (gap if not last else 0.0)
 		pages.append(page)
 		t = page["next_start"]
-	total = t
+	content_end = t
+	total = content_end + lead_out
+
+
+func _decoration_lead() -> float:
+	var lead := 0.0
+	for deco in doc.get("decorations", []):
+		if bool(deco.get("lead_text", false)):
+			lead = maxf(lead, maxf(0.0, float(deco.get("delay", 0.0))) + maxf(0.0, float(deco.get("duration", 0.0))))
+	return lead
+
+
+func _decoration_exit() -> float:
+	var length := 0.0
+	for deco in doc.get("decorations", []):
+		if float(deco.get("exit_duration", 0.0)) > 0.0:
+			length = maxf(length, maxf(0.0, float(deco.get("exit_delay", 0.0))) + float(deco["exit_duration"]))
+	return length
+
+
+static func _shift_delays(out: PackedFloat32Array, first: int, count: int, delay: float) -> void:
+	for i in range(first, first + count):
+		out[i] += delay
 
 
 ## 페이지 안 글자 지연을 채우고 구간 길이(마지막 지연 + duration)를 돌려준다.
-func _assign_delays(out: PackedFloat32Array, glyphs: Array, first: int, count: int, seg: Dictionary, seed: int) -> float:
+func _assign_delays(out: PackedFloat32Array, glyphs: Array, first: int, count: int, seg: Dictionary, seed: int, is_exit: bool = false) -> float:
 	if count <= 0:
 		return 0.0
 	var dur := maxf(0.0, float(seg["duration"]))
+	if seg["effect"] == "erase":
+		dur = 0.0
+	var params: Dictionary = seg.get("params", {})
+	var extra := Timing.overlap_hold(seg, is_exit)
+	if seg["effect"] in Enter.BLOCK_EFFECTS:
+		for i in range(first, first + count):
+			out[i] = 0.0
+		return dur + extra
 	var stagger := maxf(0.0, float(seg["stagger"]))
-	var pause := maxf(0.0, float(seg.get("params", {}).get("punct_pause", 0.0)))
+	if seg["order"] == "sweep":
+		var delays := Timing.sweep_delays(glyphs, layout["lines"], first, count, params, layout["direction"] == "vertical")
+		var last := 0.0
+		for i in count:
+			out[first + i] = delays[i]
+			last = maxf(last, delays[i])
+		return last + dur + extra
+	var line_pause := maxf(0.0, float(params.get("line_pause", 0.0)))
 	var ranks := compute_ranks(glyphs, first, count, str(seg["order"]), seed)
 	var order: Array = []
 	for i in count:
@@ -110,21 +176,24 @@ func _assign_delays(out: PackedFloat32Array, glyphs: Array, first: int, count: i
 	var acc := 0.0
 	var max_delay := 0.0
 	var k := 0
+	var previous_line := -1
 	while k < order.size():
 		var r: int = order[k][0]
-		var group_punct := false
+		var first_line := int(glyphs[first + int(order[k][1])]["line"])
+		if previous_line >= 0 and first_line != previous_line and seg["order"] in ["forward", "reverse", "line", "word"]:
+			acc += line_pause
+		var group_pause := 0.0
 		var j := k
 		while j < order.size() and int(order[j][0]) == r:
 			var gi: int = first + int(order[j][1])
 			out[gi] = float(r) * stagger + acc
 			max_delay = maxf(max_delay, out[gi])
-			if bool(glyphs[gi].get("punct", false)):
-				group_punct = true
+			group_pause = maxf(group_pause, Timing.punctuation_pause(glyphs[gi], params))
 			j += 1
-		if group_punct:
-			acc += pause
+		acc += group_pause
+		previous_line = first_line
 		k = j
-	return max_delay + dur
+	return max_delay + dur + extra
 
 
 ## 순서별 rank(DESIGN §2.1). 페이지 안 count개 글자에 대해 0부터.
@@ -146,6 +215,10 @@ static func compute_ranks(glyphs: Array, first: int, count: int, order: String, 
 				ranks[i] = int(glyphs[first + i]["word"])
 		"center_out", "edges_in":
 			ranks = _center_ranks(glyphs, first, count, order == "edges_in")
+		"center_index", "edges_index":
+			for i in count:
+				var distance := mini(i, count - 1 - i)
+				ranks[i] = (count - 1) / 2 - distance if order == "center_index" else distance
 		"random":
 			var perm := Hash.permutation(seed, count, SALT_RANDOM)
 			for r in count:
@@ -239,7 +312,7 @@ func _sample_open(t: float) -> Dictionary:
 				return _make(last, "hold", t - h0, t - float(pages[last]["start"]))
 			return _linear(t)
 	if t >= total:
-		if bool(pages[last]["exit_performed"]):
+		if bool(pages[last]["exit_performed"]) or lead_out > 0.0 or scroll_speed > 0.0:
 			return _end()
 		var s := _make(last, "hold", t - float(pages[last]["enter_end"]), t - float(pages[last]["start"]))
 		s["done"] = true
@@ -249,6 +322,10 @@ func _sample_open(t: float) -> Dictionary:
 
 func _linear(t: float) -> Dictionary:
 	var last := page_count - 1
+	if t < lead_in:
+		return _make(0, "gap", t, t - lead_in)
+	if t >= content_end and lead_out > 0.0:
+		return _make(last, "gap", t - content_end, t - float(pages[last]["start"]))
 	for p in page_count:
 		var pg: Dictionary = pages[p]
 		var st: float = pg["start"]

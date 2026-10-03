@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://dof1v2pye06ak"
+
+[deps]
+
+files=["res://app/i18n/effects.ko.translation", "res://app/i18n/effects.ja.translation", "res://app/i18n/effects.en.translation"]
+
+source_file="res://app/i18n/effects.csv"
+dest_files=["res://app/i18n/effects.ko.translation", "res://app/i18n/effects.ja.translation", "res://app/i18n/effects.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

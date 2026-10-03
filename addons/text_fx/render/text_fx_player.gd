@@ -2,7 +2,7 @@ class_name TextFxPlayer
 extends Control
 ## 문자 연출 JSON을 읽어 재생하는 노드(DESIGN §4).
 ## 시간 t의 글자 상태는 TextFxEvaluator가 계산하고, 이 노드는 구운 스프라이트를 그리기만 한다.
-## 글자마다 글로우·그림자·테두리·채우기를 먼저 합성해 구우므로 페이드 중에 테두리가 비치지 않는다.
+## 글자마다 스타일을 구운 뒤 독립 글로우·블러·마스크 셰이더로 그린다. 페이드 중에 테두리가 채우기 안으로 비치지 않는다.
 ##
 ## 사용: load_file(path) 또는 set_document(dict) → set_text(main, sub) → play().
 ## loop = "loop_hold"인 문서는 유지 구간을 반복하다가 finish() 호출 시 퇴장하고 finished를 보낸다.
@@ -22,6 +22,9 @@ const GlyphState := preload("res://addons/text_fx/core/fx_glyph_state.gd")
 const Baker := preload("res://addons/text_fx/render/fx_glyph_baker.gd")
 const Plan := preload("res://addons/text_fx/render/fx_bake_plan.gd")
 const Drawer := preload("res://addons/text_fx/render/fx_glyph_drawer.gd")
+const GlyphRenderer := preload("res://addons/text_fx/render/fx_glyph_renderer.gd")
+const BackgroundDrawer := preload("res://addons/text_fx/render/fx_background_drawer.gd")
+const DecorationDrawer := preload("res://addons/text_fx/render/fx_decoration_drawer.gd")
 
 ## 다시 굽는 배율 변화 임계값(축소 쪽)과 크기 변경 후 대기 시간. 확대는 흐려지므로 한 단계(0.05)만 커져도 다시 굽는다.
 const REBAKE_RATIO := 0.12
@@ -60,6 +63,8 @@ var _bake_sig := ""
 var _baking := false
 var _bake_again := false
 var _rebake_timer := -1.0
+var _glyph_renderer := GlyphRenderer.new()
+var _background_drawer := BackgroundDrawer.new()
 
 
 func _init() -> void:
@@ -82,6 +87,10 @@ func _ready() -> void:
 		_request_bake()
 		if autoplay and not _playing:
 			play()
+
+
+func _exit_tree() -> void:
+	_glyph_renderer.clear()
 
 
 # ---- 공개 API ----
@@ -305,15 +314,21 @@ func _update_events() -> void:
 
 
 func _draw() -> void:
+	_glyph_renderer.begin(get_canvas_item())
 	if _ev == null:
+		_glyph_renderer.end()
 		return
 	var frame := _ev.evaluate_frame(_time, _finish_at)
 	var ft := _fit_transform()
 	var origin: Vector2 = ft[0]
 	var s: float = ft[1]
+	draw_set_transform(origin, 0.0, Vector2(s, s))
+	_background_drawer.draw(self, frame.get("background", {}))
 	for deco in frame["decorations"]:
-		Drawer.draw_decoration(self, deco, origin, s)
+		DecorationDrawer.draw(self, deco)
+	draw_set_transform_matrix(Transform2D.IDENTITY)
 	if _sprites.is_empty():
+		_glyph_renderer.end()
 		return
 	var keys: PackedStringArray = _plan.get("glyph_keys", PackedStringArray())
 	var okeys: Dictionary = _plan.get("overlay_keys", {})
@@ -331,4 +346,5 @@ func _draw() -> void:
 	for group in [normal, over]:
 		for front in [false, true]:
 			for item in group:
-				Drawer.draw_glyph(self, item[0], item[1], origin, s, front)
+				_glyph_renderer.draw_glyph(item[0], item[1], origin, s, front)
+	_glyph_renderer.end()

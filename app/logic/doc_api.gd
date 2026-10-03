@@ -35,7 +35,10 @@ static func validate(doc: Dictionary) -> PackedStringArray:
 
 ## 정규화 전 원본 문서 검사(불러오기용). 런타임이 조용히 교정할 값도 오류로 알린다.
 static func validate_source(doc: Dictionary) -> PackedStringArray:
-	return TextFxDoc.validate(doc)
+	# 부분 문서도 존재하는 필드의 schema는 검사한다. normalize 전에 잘못된 enum/색을 잡는다.
+	var errors := DocSchema.validate_doc(doc)
+	errors.append_array(TextFxDoc.validate(doc))
+	return errors
 
 
 ## base 위에 over를 깊게 덮는다(사전만 재귀, 배열·값은 교체). 템플릿 패치용. 둘 다 복사한다.

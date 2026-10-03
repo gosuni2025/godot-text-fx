@@ -50,6 +50,21 @@ func _motion(t, ed) -> void:
 	ed.picker.pick("zoom")
 	ed.picker.hide()
 	t.eq(ed.model.get_value("timeline.exit.effect"), "zoom", "exit effect picker targets exit")
+	t.eq(ed.model.get_value("timeline.exit.easing"), "auto", "effect selection enables recommended easing")
+	mp.get_node("%SubIndependent").button_pressed = true
+	await t.tree.process_frame
+	t.ok(mp.get_node("%SubEnter").visible, "sub entrance section shown")
+	mp.get_node("%SubEnter").open_effect_picker()
+	ed.picker.pick("rise")
+	ed.picker.hide()
+	t.eq(ed.model.get_value("timeline.sub_enter.effect"), "rise", "sub effect command targets sub")
+	t.ok(mp.field_for("timeline.sub_enter.delay") != null, "signed sub delay exposed")
+	t.ok(mp.field_for("timeline.enter.params.cursor_color") != null, "inherited cursor color exposed")
+	var cursor_color: Node = mp.field_for("timeline.enter.params.cursor_color")
+	cursor_color.get_node("%Picker").color_changed.emit(Color.RED)
+	t.eq(ed.model.get_value("timeline.enter.params.cursor_color"), "#FF0000FF", "cursor custom color")
+	cursor_color.get_node("%Inherit").pressed.emit()
+	t.eq(ed.model.get_value("timeline.enter.params.cursor_color"), null, "cursor color returns to inherited")
 
 
 func _hold(t, ed) -> void:
@@ -88,7 +103,7 @@ func _decor(t, ed) -> void:
 	var n: int = (ed.model.get_value("decorations") as Array).size()
 	dp.open_add_picker()
 	await t.tree.process_frame
-	t.eq(ed.picker.get_node("%Grid").get_child_count(), 6, "decoration picker lists the types")
+	t.eq(ed.picker.get_node("%Grid").get_child_count(), preload("res://addons/text_fx/core/fx_doc.gd").DECORATION_TYPES.size(), "decoration picker lists the types")
 	ed.picker.pick("frame")
 	dp.add_decoration("band")
 	await t.tree.process_frame

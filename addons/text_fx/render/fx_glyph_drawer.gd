@@ -13,7 +13,7 @@ static func premul(c: Color, a: float) -> Color:
 	return Color(c.r * aa, c.g * aa, c.b * aa, aa)
 
 
-static func draw_glyph(ci: CanvasItem, st: GlyphState, spr: Dictionary, origin: Vector2, fit: float, front: bool) -> void:
+static func draw_glyph(ci, st: GlyphState, spr: Dictionary, origin: Vector2, fit: float, front: bool) -> void:
 	var tex: Texture2D = spr["texture_front"] if front else spr["texture"]
 	if tex == null:
 		return
@@ -24,17 +24,14 @@ static func draw_glyph(ci: CanvasItem, st: GlyphState, spr: Dictionary, origin: 
 	var center: Vector2 = spr["center"]
 	var local := Rect2(region.position - center, region.size)
 	var inner: Rect2 = spr["inner"]
-	# 잔상 흐림
-	if st.ghost > 0.05:
-		var g := st.ghost * sscale
-		var offs: Array = []
-		if st.ghost_dir == Vector2.ZERO:
-			offs = [Vector2(-g, 0), Vector2(g, 0), Vector2(0, -g), Vector2(0, g)]
-		else:
-			offs = [st.ghost_dir * g, st.ghost_dir * g * 0.5, -st.ghost_dir * g * 0.5, -st.ghost_dir * g]
-		var gc := premul(st.tint, st.alpha * 0.22)
-		for o: Vector2 in offs:
-			ci.draw_texture_rect_region(tex, Rect2(local.position + o, local.size), region, gc)
+	# 블러·밝기·페이지 마스크는 글자별 프리멀티플라이드 셰이더가 처리한다.
+	if st.slices_global and not st.slices.is_empty():
+		var spread := 0.0
+		for offset in st.slices:
+			spread = maxf(spread, absf(offset))
+		var pad := spread * sscale / maxf(0.01, minf(absf(st.scale.x), absf(st.scale.y)))
+		region = region.grow(pad)
+		local = local.grow(pad)
 	# 색수차
 	if st.split > 0.05:
 		var sp := st.split * sscale
@@ -44,8 +41,8 @@ static func draw_glyph(ci: CanvasItem, st: GlyphState, spr: Dictionary, origin: 
 	ci.draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
-static func _draw_body(ci: CanvasItem, st: GlyphState, tex: Texture2D, region: Rect2, local: Rect2, inner: Rect2, shift: Vector2, col: Color, sscale: float) -> void:
-	if st.slices.size() > 0:
+static func _draw_body(ci, st: GlyphState, tex: Texture2D, region: Rect2, local: Rect2, inner: Rect2, shift: Vector2, col: Color, sscale: float) -> void:
+	if st.slices.size() > 0 and not st.slices_global:
 		var n := st.slices.size()
 		var bh := region.size.y / float(n)
 		for i in n:
