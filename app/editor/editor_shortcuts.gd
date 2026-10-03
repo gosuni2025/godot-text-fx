@@ -16,6 +16,12 @@ func _typing() -> bool:
 	return f is LineEdit or f is TextEdit
 
 
+## 셸 옵션 화면이 열려 있으면 편집기 단축키를 쓰지 않는다(옵션 버튼이 Space/방향키를 받는다).
+func _blocked() -> bool:
+	var shell: Node = ed.get_node_or_null("/root/AppShell")
+	return shell != null and shell.options.visible
+
+
 static func _key(event: InputEvent) -> InputEventKey:
 	var k := event as InputEventKey
 	return k if k != null and k.pressed and not k.echo else null
@@ -26,7 +32,7 @@ func handle_input(event: InputEvent) -> bool:
 	var k := _key(event)
 	if k == null or k.physical_keycode != KEY_SPACE or k.is_command_or_control_pressed() or k.alt_pressed:
 		return false
-	if _typing():
+	if _typing() or _blocked():
 		return false
 	ed.preview.toggle_play()
 	return true
@@ -34,6 +40,8 @@ func handle_input(event: InputEvent) -> bool:
 
 ## GUI 다음: 문자 입력 칸이 쓰는 키(Home, Ctrl+Z 등)는 그 칸이 먼저 처리한다.
 func handle_shortcut(event: InputEvent) -> bool:
+	if _blocked():
+		return false
 	if event is InputEventJoypadButton and event.pressed:
 		match event.button_index:
 			JOY_BUTTON_LEFT_SHOULDER:

@@ -144,6 +144,15 @@ func _shortcuts(t, ed) -> void:
 	await U.key(tree, KEY_SPACE)
 	t.eq(ed.model.playing, playing_before, "Space types into the text field instead of playing")
 	ed.get_node("%Tab_text").grab_focus()
+	var shell: Node = tree.root.get_node_or_null("AppShell")
+	if shell:
+		ed.open_options()
+		await tree.process_frame
+		var was: bool = ed.model.playing
+		await U.key(tree, KEY_SPACE)
+		t.eq(ed.model.playing, was, "Space is left to the options screen while it is open")
+		shell.options.hide()
+		await tree.process_frame
 	# 패드 LB/RB 탭 이동, 방향키 포커스 이동
 	for pressed in [true, false]:
 		var jb := InputEventJoypadButton.new()
