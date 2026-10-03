@@ -1,0 +1,61 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/editor/editor_placeholder.gd" id="1_script"]
+[ext_resource type="Theme" path="res://addons/game_base/ui/theme.tres" id="2_theme"]
+
+[node name="Editor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.1, 0.1, 0.12, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Rows" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Heading" type="Label" parent="Center/Rows"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Editor"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="Center/Rows"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.72, 1)
+text = "The editor screen is not built yet."
+horizontal_alignment = 1
+
+[node name="Options" type="Button" parent="Center/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Options"
+
+[node name="Title" type="Button" parent="Center/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "Return to title"

@@ -1,0 +1,7 @@
+[gd_resource type="Theme" format=3]
+
+[ext_resource type="FontFile" path="res://addons/game_base/fonts/Galmuri11.ttf" id="1_bwuq1"]
+
+[resource]
+default_font = ExtResource("1_bwuq1")
+default_font_size = 20

@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/game_base/ui/option_row.gd" id="1_23ilf"]
+
+[node name="OptionRow" type="HBoxContainer" unique_id=349378289]
+custom_minimum_size = Vector2(0, 52)
+script = ExtResource("1_23ilf")
+
+[node name="Caption" type="Label" parent="." unique_id=1966240306]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 20
+text = "Option"
+autowrap_mode = 3
+
+[node name="Toggle" type="CheckButton" parent="." unique_id=1490855284]
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2
+
+[node name="Range" type="HBoxContainer" parent="." unique_id=27143157]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="Slider" type="HSlider" parent="Range" unique_id=1991073862]
+custom_minimum_size = Vector2(150, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Value" type="Label" parent="Range" unique_id=1175839381]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "1.0"
+
+[node name="Choice" type="OptionButton" parent="." unique_id=257277215]
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2

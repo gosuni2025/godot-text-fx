@@ -1,0 +1,72 @@
+[gd_resource type="Resource" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://addons/game_base/project_config.gd" id="1"]
+[ext_resource type="Script" path="res://addons/game_base/option_definition.gd" id="2"]
+[ext_resource type="Material" path="res://app/shell/title_material.tres" id="3"]
+
+[sub_resource type="Resource" id="FPS"]
+script = ExtResource("2")
+id = &"fps_limit"
+label = "Frame limit (FPS)"
+category = "Display"
+kind = 1
+default_number = 60.0
+minimum = 30.0
+maximum = 240.0
+step = 30.0
+
+[sub_resource type="Resource" id="MasterVolume"]
+script = ExtResource("2")
+id = &"master_volume"
+label = "Master volume"
+category = "Audio"
+kind = 1
+default_number = 0.85
+
+[sub_resource type="Resource" id="BgmEnabled"]
+script = ExtResource("2")
+id = &"bgm_enabled"
+label = "Music"
+category = "Audio"
+default_toggle = true
+
+[sub_resource type="Resource" id="BgmVolume"]
+script = ExtResource("2")
+id = &"bgm_volume"
+label = "Music volume"
+category = "Audio"
+kind = 1
+default_number = 0.6
+
+[sub_resource type="Resource" id="SfxVolume"]
+script = ExtResource("2")
+id = &"sfx_volume"
+label = "Sound effects volume"
+category = "Audio"
+kind = 1
+default_number = 0.8
+
+[sub_resource type="Resource" id="Language"]
+script = ExtResource("2")
+id = &"language"
+label = "Interface language"
+category = "Language"
+kind = 2
+choices = PackedStringArray("auto", "ko", "ja", "en")
+choice_labels = PackedStringArray("System default", "한국어", "日本語", "English")
+default_choice = "auto"
+
+[resource]
+script = ExtResource("1")
+project_id = "godot-text-fx"
+title = "Godot Text FX"
+subtitle = "Text animation editor"
+tagline = "글자에 등장과 퇴장을 준다."
+loading_subtitle = "Text animation editor"
+accent = Color(0.88, 0.63, 0.31, 1)
+menu_size_multiplier = 0.8
+title_material = ExtResource("3")
+game_scene = "res://app/shell/title_screen.tscn"
+options = Array[Resource]([SubResource("FPS"), SubResource("MasterVolume"), SubResource("BgmEnabled"), SubResource("BgmVolume"), SubResource("SfxVolume"), SubResource("Language")])
+profiler_enabled = false
+profiler_endpoint = ""

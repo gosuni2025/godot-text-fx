@@ -1,0 +1,42 @@
+keys,ko,ja,en
+Text animation editor,문자 애니메이션 편집기,文字アニメーション編集ツール,Text animation editor
+글자에 등장과 퇴장을 준다.,글자에 등장과 퇴장을 준다.,文字に登場と退場を与える。,Give letters an entrance and an exit.
+Start game,편집 시작,編集を始める,Start editing
+Options,옵션,オプション,Options
+Quit,종료,終了,Quit
+BUILD %s,빌드 %s,ビルド %s,BUILD %s
+Loading...,불러오는 중...,読み込み中...,Loading...
+Loading scene resources...,장면 리소스를 불러오는 중...,シーンのリソースを読み込み中...,Loading scene resources...
+Constructing the scene...,장면을 구성하는 중...,シーンを構築中...,Constructing the scene...
+Initializing game systems...,시스템을 초기화하는 중...,システムを初期化中...,Initializing systems...
+Preparing lighting and effects...,효과를 준비하는 중...,エフェクトを準備中...,Preparing effects...
+Displaying the first frame...,첫 화면을 표시하는 중...,最初の画面を表示中...,Displaying the first frame...
+Retry,다시 시도,再試行,Retry
+OPTIONS,옵션,オプション,OPTIONS
+Display,화면,画面,Display
+Audio,소리,サウンド,Audio
+Language,언어,言語,Language
+System,시스템,システム,System
+Frame limit (FPS),프레임 제한 (FPS),フレーム制限 (FPS),Frame limit (FPS)
+Master volume,전체 음량,全体の音量,Master volume
+Music,배경 음악,BGM,Music
+Music volume,배경 음악 음량,BGMの音量,Music volume
+Sound effects volume,효과음 음량,効果音の音量,Sound effects volume
+Interface language,표시 언어,表示言語,Interface language
+System default,시스템 설정,システム設定,System default
+Return to title,타이틀로 돌아가기,タイトルに戻る,Return to title
+Quit to desktop,바탕화면으로 종료,デスクトップに戻る,Quit to desktop
+Changes save automatically.,변경 사항은 자동으로 저장됩니다.,変更は自動で保存されます。,Changes save automatically.
+Saved.,저장했습니다.,保存しました。,Saved.
+"Applied, but settings could not be saved.","적용했지만 설정을 저장하지 못했습니다.","適用しましたが、設定を保存できませんでした。","Applied, but settings could not be saved."
+Reset defaults,기본값으로,初期設定に戻す,Reset defaults
+Send profile,프로파일 보내기,プロファイルを送信,Send profile
+Back,뒤로,戻る,Back
+Return to title?,타이틀로 돌아갈까요?,タイトルに戻りますか？,Return to title?
+Quit to desktop?,바탕화면으로 종료할까요?,デスクトップに戻りますか？,Quit to desktop?
+Are you sure you want to leave?,정말 나갈까요?,本当に終了しますか？,Are you sure you want to leave?
+Yes,예,はい,Yes
+Cancel,취소,キャンセル,Cancel
+Preparing to leave...,나갈 준비 중...,終了の準備中...,Preparing to leave...
+Editor,편집기,エディタ,Editor
+The editor screen is not built yet.,편집 화면은 아직 준비 중입니다.,編集画面はまだ準備中です。,The editor screen is not built yet.

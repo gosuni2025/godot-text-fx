@@ -1,0 +1,42 @@
+[gd_resource type="Resource" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://addons/game_base/project_config.gd" id="1"]
+[ext_resource type="Script" path="res://addons/game_base/option_definition.gd" id="2"]
+
+[sub_resource type="Resource" id="FPS"]
+script = ExtResource("2")
+id = &"fps_limit"
+label = "Frame limit"
+category = "Display"
+kind = 2
+choices = PackedStringArray("30", "60", "120", "0")
+choice_labels = PackedStringArray("30 FPS", "60 FPS", "120 FPS", "Unlimited")
+default_choice = "0"
+
+[sub_resource type="Resource" id="Volume"]
+script = ExtResource("2")
+id = &"master_volume"
+label = "Master volume"
+category = "Audio"
+kind = 1
+default_number = 0.85
+
+[sub_resource type="Resource" id="Fullscreen"]
+script = ExtResource("2")
+id = &"fullscreen"
+label = "Fullscreen"
+category = "Display"
+
+[sub_resource type="Resource" id="Controller"]
+script = ExtResource("2")
+id = &"controller_type"
+label = "Button display"
+category = "Controls"
+kind = 2
+choices = PackedStringArray("auto", "xbox", "playstation", "switch")
+choice_labels = PackedStringArray("Auto", "Type A", "Type B", "Type C")
+default_choice = "auto"
+
+[resource]
+script = ExtResource("1")
+options = Array[Resource]([SubResource("FPS"), SubResource("Volume"), SubResource("Fullscreen"), SubResource("Controller")])

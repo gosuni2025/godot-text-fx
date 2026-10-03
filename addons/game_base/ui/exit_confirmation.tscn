@@ -1,0 +1,81 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/game_base/ui/exit_confirmation.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://addons/game_base/fonts/Galmuri11.ttf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.07, 0.09, 0.10, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.65, 0.58, 0.39, 1)
+
+[node name="ExitConfirmation" type="Control"]
+visible = false
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("PanelStyle")
+
+[node name="Padding" type="MarginContainer" parent="Center/Panel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Center/Panel/Padding"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Panel/Padding/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "Return to title?"
+autowrap_mode = 3
+
+[node name="Message" type="Label" parent="Center/Panel/Padding/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "Save before leaving? Previously saved progress will be kept."
+autowrap_mode = 3
+
+[node name="SaveExit" type="Button" parent="Center/Panel/Padding/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "Save and exit"
+
+[node name="DiscardExit" type="Button" parent="Center/Panel/Padding/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "Exit without saving"
+
+[node name="Cancel" type="Button" parent="Center/Panel/Padding/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "Cancel"

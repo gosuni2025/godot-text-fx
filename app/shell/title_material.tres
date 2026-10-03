@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+
+[ext_resource type="Shader" path="res://addons/game_base/ui/title_run_sweep.gdshader" id="1"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1")
+shader_parameter/deep_metal_color = Color(0.09, 0.08, 0.1, 1)
+shader_parameter/mid_metal_color = Color(0.55, 0.5, 0.44, 1)
+shader_parameter/light_metal_color = Color(0.95, 0.91, 0.82, 1)
+shader_parameter/rift_color = Color(0.86, 0.52, 0.16, 1)
+shader_parameter/flare_color = Color(1, 0.86, 0.55, 1)
+shader_parameter/glow_color = Color(0.42, 0.22, 0.04, 1)
+shader_parameter/fragment_strength = 0.3
+shader_parameter/tear_strength = 0.35

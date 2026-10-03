@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" path="res://addons/game_base/fonts/Galmuri11.ttf" id="1_5xcjx"]
+[ext_resource type="Script" path="res://addons/game_base/ui/title.gd" id="2_esjnp"]
+[ext_resource type="PackedScene" path="res://addons/game_base/ui/wordmark.tscn" id="3_u5da5"]
+[ext_resource type="Script" path="res://addons/game_base/ui/wordmark.gd" id="4_n7hu3"]
+
+[sub_resource type="Theme" id="Theme_ptjyb"]
+default_font = ExtResource("1_5xcjx")
+default_font_size = 20
+
+[sub_resource type="Theme" id="Theme_2pmqh"]
+default_font = ExtResource("1_5xcjx")
+default_font_size = 20
+
+[node name="Title" type="Control" unique_id=1303720787]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource("Theme_ptjyb")
+script = ExtResource("2_esjnp")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=67248446]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.08235294, 0.105882354, 0.13333334, 1)
+
+[node name="Background" type="TextureRect" parent="." unique_id=1472952336]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SafeArea" type="MarginContainer" parent="." unique_id=973526020]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Rows" type="VBoxContainer" parent="SafeArea" unique_id=1705610588]
+layout_mode = 2
+
+[node name="Eyebrow" type="Label" parent="SafeArea/Rows" unique_id=1398684052]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="Title" type="Control" parent="SafeArea/Rows" unique_id=1991753086 instance=ExtResource("3_u5da5")]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+mouse_filter = 2
+theme = SubResource("Theme_2pmqh")
+script = ExtResource("4_n7hu3")
+font_size = 52
+
+[node name="Tagline" type="Label" parent="SafeArea/Rows" unique_id=1787464263]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="Space" type="Control" parent="SafeArea/Rows" unique_id=468917531]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Actions" type="VBoxContainer" parent="SafeArea/Rows" unique_id=923529567]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Start" type="Button" parent="SafeArea/Rows/Actions" unique_id=360601567]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Start game"
+
+[node name="Options" type="Button" parent="SafeArea/Rows/Actions" unique_id=1960015389]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Options"
+
+[node name="Quit" type="Button" parent="SafeArea/Rows/Actions" unique_id=1472731956]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Quit"
+
+[node name="Build" type="Label" parent="SafeArea/Rows" unique_id=1233487893]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "BUILD DEV"

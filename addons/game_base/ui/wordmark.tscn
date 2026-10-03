@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" path="res://addons/game_base/fonts/Galmuri11.ttf" id="1_rh6hj"]
+[ext_resource type="Script" path="res://addons/game_base/ui/wordmark.gd" id="2_mkpk4"]
+[ext_resource type="Material" path="res://addons/game_base/ui/title_material.tres" id="3_jjvi7"]
+
+[sub_resource type="Theme" id="Theme_ptjyb"]
+default_font = ExtResource("1_rh6hj")
+default_font_size = 20
+
+[node name="Wordmark" type="Control" unique_id=1991753086]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme = SubResource("Theme_ptjyb")
+script = ExtResource("2_mkpk4")
+
+[node name="Effect" type="CanvasGroup" parent="." unique_id=219553648]
+material = ExtResource("3_jjvi7")
+fit_margin = 52.0
+clear_margin = 52.0
+
+[node name="Title" type="Label" parent="Effect" unique_id=1768340912]
+theme_override_fonts/font = ExtResource("1_rh6hj")
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.96, 0.96, 0.96, 1)
+text = "MY GAME"
+vertical_alignment = 1

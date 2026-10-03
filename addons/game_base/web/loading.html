@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<title>$GODOT_PROJECT_NAME</title>
+		<style>
+:root{--safe-left:env(safe-area-inset-left,0px);--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body,#canvas{margin:0;padding:0;border:0;width:100%;height:100%}
+body{color:#efe8d8;background:#181612;overflow:hidden}
+#canvas{display:block;touch-action:none}#canvas:focus{outline:none}
+#status{position:fixed;inset:0;background:$GODOT_SPLASH_COLOR;visibility:visible;display:flex;align-items:center;justify-content:flex-end;box-sizing:border-box;padding:max(24px,env(safe-area-inset-top)) max(5vw,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left))}
+#status-splash{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#status-panel{position:relative;box-sizing:border-box;width:440px;max-width:100%;max-height:100%;overflow:auto;padding:18px;background:#1d1c19;border:1px solid #706754;border-radius:8px;padding:28px;text-align:center}
+.eyebrow{font:11px Arial,sans-serif;letter-spacing:.28em;color:var(--loading-accent,#c8a876)}
+h1{font:normal clamp(22px,3vw,32px) Georgia,serif;letter-spacing:.06em;margin:12px 0;color:#efe8d8}
+#loading-build{margin:-4px 0 10px;font:11px/1.5 "Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;color:#c7bda9;overflow-wrap:anywhere;user-select:text}
+#loading-graphics{white-space:pre-line;overflow-wrap:anywhere;margin:8px 0;text-align:left;font:11px/1.5 "Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;color:#c7bda9}
+#loading-caption{font:13px/1.5 "Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;color:#c7bda9}
+#status-progress{appearance:none;display:none;width:100%;height:5px;margin:10px auto 0;border:0;background:#24211c;accent-color:var(--loading-accent,#c8a876)}
+#status-progress::-webkit-progress-bar{background:#24211c}#status-progress::-webkit-progress-value{background:var(--loading-accent,#c8a876)}#status-progress::-moz-progress-bar{background:var(--loading-accent,#c8a876)}
+#status-notice{display:none;font:13px/1.5 Arial,sans-serif;color:#e2bdab;overflow-wrap:anywhere}
+#loading-steps{list-style:none;margin:14px 0 0;padding:0;text-align:left;font:13px/1.4 "Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;counter-reset:step}
+#loading-steps li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:center;min-height:32px;border-bottom:1px solid #494237;color:#c7bda9;counter-increment:step}
+#loading-steps li::before{content:attr(data-number);font-size:11px;color:#a59c8b}
+#loading-steps .state{font-size:11px;text-align:right;white-space:nowrap}
+#loading-steps [data-state=active],#loading-steps [data-state=active]::before{color:var(--loading-accent,#c8a876)}
+#loading-steps [data-state=done] .state{color:#c7bda9}
+#loading-steps [data-state=error] .state{color:#e2a392}
+#loading-meta{display:flex;justify-content:space-between;gap:12px;margin-top:12px;font:11px/1.5 Arial,sans-serif;color:#b7ae9d}
+#loading-percent{white-space:nowrap;color:var(--loading-accent,#c8a876)}
+#loading-details{margin-top:14px;padding-top:12px;border-top:1px solid #494237;text-align:left;font:12px/1.5 "Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif}
+#loading-task{color:var(--loading-accent,#c8a876)}#loading-item{white-space:pre-line;min-height:18px;overflow-wrap:anywhere;color:#efe8d8;font-size:11px}
+#loading-count{float:right;color:var(--loading-accent,#c8a876)}#loading-task-progress{width:100%;height:4px;accent-color:var(--loading-accent,#c8a876)}
+#loading-times{color:#c7bda9;font-size:11px;margin-top:6px}#loading-stalled{color:var(--loading-accent,#c8a876);margin:8px 0}
+#loading-history{margin-top:8px;color:#c7bda9}#loading-history summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+#loading-log{white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto;user-select:text;font:11px/1.5 monospace;color:#efe8d8}
+#loading-copy{min-height:44px;padding:6px 12px;border:6px solid #706754;border-image-slice:36 fill;border-image-width:6px;background:#24211c;color:var(--loading-accent,#c8a876);font:inherit;cursor:pointer}
+#loading-copy:focus-visible,#loading-history summary:focus-visible{outline:2px solid var(--loading-accent,#c8a876);outline-offset:3px}
+
+#status-panel[data-failed=true] #loading-steps [data-state=done],#status-panel[data-failed=true] #loading-steps [data-state=waiting]{display:none}
+#status-panel[data-failed=true] #loading-log{max-height:80px}
+@media(max-height:640px){#status-panel{padding:16px 22px}h1{margin:8px 0;font-size:24px}#loading-steps{margin-top:8px}#loading-steps li{min-height:26px}}
+@media(max-width:600px){#status{justify-content:center;align-items:flex-end;padding-bottom:max(32px,env(safe-area-inset-bottom))}#status-panel{padding:22px 20px;width:340px}}
+		</style>
+		$GODOT_HEAD_INCLUDE
+	</head>
+	<body>
+        <svg width="0" height="0" aria-hidden="true" style="position:absolute"><filter id="loading-background-tone" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0  0 .78 0 0 0  0 0 .58 0 0  0 0 0 1 0"/></filter></svg>
+		<canvas id="canvas">
+			Your browser does not support the canvas tag.
+		</canvas>
+
+		<noscript>
+			Your browser does not support JavaScript.
+		</noscript>
+
+		<div id="status">
+			<img id="status-splash" class="$GODOT_SPLASH_CLASSES" src="$GODOT_SPLASH" alt="">
+			<section id="status-panel" aria-label="Loading MY GAME">
+                <div class="eyebrow"></div>
+                <h1>MY GAME</h1>
+                <div id="loading-build"></div>
+                <div id="loading-graphics"></div>
+                <div id="status-notice" role="alert"></div>
+                <div id="loading-caption" role="status">Checking browser support...</div>
+                <ol id="loading-steps">
+                    <li id="step-browser" data-state="active"><span class="label">Browser support</span><span class="state">Checking</span></li>
+                    <li id="step-engine" data-state="waiting"><span class="label">Engine loading / initialization</span><span class="state">Waiting</span></li>
+                    <li id="step-data" data-state="waiting"><span class="label">Game data download</span><span class="state">Waiting</span></li>
+                    <li id="step-runtime" data-state="waiting"><span class="label">Game files / startup</span><span class="state">Waiting</span></li>
+                    <li id="step-resources" data-state="waiting"><span class="label">Scene resource loading</span><span class="state">Waiting</span></li>
+                    <li id="step-scene" data-state="waiting"><span class="label">Scene construction</span><span class="state">Waiting</span></li>
+                    <li id="step-systems" data-state="waiting"><span class="label">Game system initialization</span><span class="state">Waiting</span></li>
+                    <li id="step-graphics" data-state="waiting"><span class="label">Lighting / effect preparation</span><span class="state">Waiting</span></li>
+                    <li id="step-frame" data-state="waiting"><span class="label">First frame</span><span class="state">Waiting</span></li>
+                </ol>
+                <div id="loading-meta"><span id="loading-bytes"></span><span id="loading-percent">0%</span></div>
+                <progress id="status-progress" aria-label="Download progress"></progress>
+                <div id="loading-details">
+                    <span id="loading-count"></span><div id="loading-task"></div>
+                    <div id="loading-item"></div>
+                    <progress id="loading-task-progress" aria-label="Current task progress" hidden></progress>
+                    <div id="loading-times"></div>
+                    <p id="loading-stalled" role="status" hidden></p>
+                    <details id="loading-history"><summary id="loading-log-title">Details</summary>
+                        <pre id="loading-log"></pre><button id="loading-copy" type="button">Copy diagnostics</button>
+                    </details>
+                </div>
+            </section>
+		</div>
+
+		<!-- GODOT_WEB_PROFILER -->
+		<script src="$GODOT_URL"></script>
+		<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
+
+
+		</script>
+        <!-- GODOT_BASE_LOADING -->
+	</body>
+</html>

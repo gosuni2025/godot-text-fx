@@ -1,0 +1,38 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://app/shell/app_shell.gd" id="1_shell"]
+[ext_resource type="AudioStream" path="res://assets/audio/bgm/above_the_clouds_loop.ogg" id="2_bgm"]
+[ext_resource type="PackedScene" path="res://addons/game_base/ui/options.tscn" id="3_options"]
+[ext_resource type="Theme" path="res://addons/game_base/ui/theme.tres" id="4_theme"]
+
+[node name="AppShell" type="Node"]
+script = ExtResource("1_shell")
+
+[node name="Bgm" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_bgm")
+bus = &"BGM"
+
+[node name="OptionsLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Options" parent="OptionsLayer" instance=ExtResource("3_options")]
+
+[node name="Build" type="Label" parent="OptionsLayer"]
+visible = false
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -480.0
+offset_top = -44.0
+offset_right = -24.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("4_theme")
+theme_override_colors/font_color = Color(0.7, 0.7, 0.72, 1)
+theme_override_font_sizes/font_size = 16
+text = "BUILD DEV"
+horizontal_alignment = 2

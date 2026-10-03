@@ -1,0 +1,116 @@
+[gd_scene format=3]
+
+[ext_resource type="FontFile" path="res://addons/game_base/fonts/Galmuri11.ttf" id="1_6d07n"]
+[ext_resource type="Script" path="res://addons/game_base/ui/options.gd" id="2_mwp1l"]
+
+[ext_resource type="PackedScene" path="res://addons/game_base/ui/exit_confirmation.tscn" id="3_exit"]
+
+[sub_resource type="Theme" id="Theme_ptjyb"]
+default_font = ExtResource("1_6d07n")
+default_font_size = 20
+
+[node name="Options" type="Control" unique_id=1818052568]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource("Theme_ptjyb")
+script = ExtResource("2_mwp1l")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=70210910]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.08235294, 0.105882354, 0.13333334, 1)
+
+[node name="Background" type="TextureRect" parent="." unique_id=666139746]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SafeArea" type="MarginContainer" parent="." unique_id=2050720820]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Column" type="VBoxContainer" parent="SafeArea" unique_id=45501547]
+layout_mode = 2
+
+[node name="Heading" type="Label" parent="SafeArea/Column" unique_id=1218297560]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "OPTIONS"
+
+[node name="Categories" type="TabBar" parent="SafeArea/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+focus_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="SafeArea/Column" unique_id=1398895933]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="Pages" type="VBoxContainer" parent="SafeArea/Column/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Rows" type="VBoxContainer" parent="SafeArea/Column/Scroll/Pages" unique_id=1726106487]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SystemPage" type="VBoxContainer" parent="SafeArea/Column/Scroll/Pages"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="ReturnTitle" type="Button" parent="SafeArea/Column/Scroll/Pages/SystemPage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Return to title"
+
+[node name="QuitDesktop" type="Button" parent="SafeArea/Column/Scroll/Pages/SystemPage"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Quit to desktop"
+
+[node name="Status" type="Label" parent="SafeArea/Column" unique_id=141215129]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Changes save automatically."
+
+[node name="Actions" type="HBoxContainer" parent="SafeArea/Column" unique_id=33588834]
+layout_mode = 2
+
+[node name="Reset" type="Button" parent="SafeArea/Column/Actions" unique_id=1284969069]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Reset defaults"
+
+[node name="Report" type="Button" parent="SafeArea/Column/Actions" unique_id=135192001]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Send profile"
+
+[node name="Back" type="Button" parent="SafeArea/Column/Actions" unique_id=2105968800]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "Back"
+
+[node name="ExitConfirmation" parent="." instance=ExtResource("3_exit")]

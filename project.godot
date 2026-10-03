@@ -12,10 +12,14 @@ config_version=5
 
 config/name="Godot Text FX"
 config/description="문자 애니메이션 연출을 만들고 게임용 JSON으로 내보내는 도구"
+run/main_scene="res://app/shell/boot.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="godot-text-fx"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
 
+AppShell="*res://app/shell/app_shell.tscn"
 _mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
 
 [display]
@@ -25,7 +29,11 @@ window/size/viewport_height=900
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg", "res://addons/game_base/plugin.cfg", "res://addons/web_profiler/plugin.cfg")
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://app/i18n/ui.ko.translation", "res://app/i18n/ui.ja.translation", "res://app/i18n/ui.en.translation")
 
 [rendering]
 
