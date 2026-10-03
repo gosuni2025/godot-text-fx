@@ -14,3 +14,19 @@
   - `raw_sheet4_battle_v2.png` (1024×1024, 3×3) — 전투 재생성. sheet2·sheet3을 참조 이미지(`-i`)로 넣어 굵은 획과 단순도를 맞췄다. 채택: defeat, engage, turn, victory, clue(7번 칸, 발가락 점이 있는 발자국으로 재작성), ambush(8번 칸 두건+단검), boss(9번 칸 작은 사람 뒤에 드리운 뿔 달린 거대 실루엣). 1번 칸(초승달+단검)과 2번 칸(뿔 달린 얼굴, 귀여워 보임)은 미채택.
 - 가공(`templates_a/slice_icons.py`): 알파 ≤12 잡음 제거 → 알파 투영의 빈 띠로 행·열 분리 → 아이콘별 알파 경계 상자 잘라내기 → 긴 변을 128×(1−2×0.12)≈97px로 LANCZOS 축소 → 128×128 투명 캔버스 가운데 배치 → RGB를 순백(255)으로 정규화하고 알파 유지, 축소 후 알파 ≤4는 0. 덧그리기 없음.
 - 검증: 19개 모두 128×128 RGBA, 가장자리 알파 0, RGB 최솟값 255, 내용 여백 약 12%. 어두운 배경 대조표에서 128/32/24px와 색조(modulate) 적용 상태로 가독성·세트 일관성을 확인했다.
+
+## 에디터 UI 아이콘 (`ui/`)
+
+- 대상(47개): `assets/icons/ui/` 의 transport(`play, pause, stop, to_start, loop_once, loop_all, loop_hold, exit_on, exit_off`), edit(`undo, redo, add, remove, duplicate, move_up, move_down, close, back, search, randomize, settings, fullscreen`), file(`save, open, export, import, copy, paste`), tabs(`tab_mode, tab_text, tab_motion, tab_style, tab_font, tab_decor, tab_layout, tab_export`), modes(`mode_message, mode_trailer, mode_caption`), groups(`group_battle, group_explore, group_narrator, group_scene_time, group_check`), 미리보기 배경(`bg_checker, bg_color, bg_image`) (.png, 각 `.png.import` 포함)
+- 생성 도구: pixeltamer v0.6.0 스킬, codex 백엔드(codex CLI 0.160.0, ChatGPT 로그인)의 내장 `image_gen` 도구. 이미지 모델은 서비스 측에서 선택(GPT Image 계열). 옵션 `--background transparent --quality high`, 크기 `1024x1024`(3×3 시트) 또는 `1536x1024`(3×2·3×1 시트). 2026-10-03 생성.
+- 프롬프트: 시트별 전체 프롬프트를 `ui/prompts/sheet_{a..g}.txt`에 그대로 보존. 모두 `STYLE.md`의 공통 스타일 문단을 그대로 포함한다. pixeltamer codex 백엔드가 프롬프트 끝에 다음 투명 배경 지시문을 자동으로 덧붙인다: "Output the subject as an isolated element on a fully transparent background with a real PNG alpha channel. No backdrop, no background colour, no rectangle, no plinth, no surface, no cast shadow, no vignette, no watermark. Crisp alpha edges, no halo, no matte fringe."
+- 원본 시트(`ui/sheets/`, 실제 알파 채널이 있는 RGBA PNG, 배경 알파 0):
+  - `sheet_a.png` (3×3) — transport 9종 모두 채택.
+  - `sheet_b.png` (3×3) — undo, redo, add, remove, duplicate, move_up, move_down, close, back 채택.
+  - `sheet_c.png` (3×3) — search, randomize, settings, fullscreen, save, open, export, import, copy 채택.
+  - `sheet_d.png` (3×3) — paste, tab_mode, tab_style, tab_decor, tab_export 채택. tab_text(캐럿이 작아 글자 I처럼 보이고 32px에서 사라짐), tab_motion·tab_font(획이 세트보다 가늘고 깃털 세부가 많음), tab_layout(점선이 가늘어 24px에서 뭉개짐)은 미채택.
+  - `sheet_e.png` (3×3) — mode_message, mode_trailer, mode_caption, group_explore, group_narrator, group_scene_time, group_check, bg_checker 채택. group_battle(검 획이 가늘어 세트와 불일치)은 미채택.
+  - `sheet_f.png` (3×2) — bg_color, bg_image 신규 생성과 tab_text, tab_font(깃털 없는 정면 펜촉), group_battle, tab_motion 재생성(굵은 획 지시 추가). 6종 모두 채택.
+  - `sheet_g.png` (3×1) — tab_layout 재생성 3안. 1번 안(사각형을 지나는 굵은 가로·세로 가이드) 채택. 2번 안(왼쪽 정렬 막대)은 tab_text와 비슷하고 글자처럼 읽혀 미채택, 3번 안은 미채택.
+- 가공(`ui/slice_icons.py`): 알파 8 미만 잔여 픽셀을 0으로 → 시트를 균등 격자로 잘라 칸별 알파 경계 상자 잘라내기(칸 경계 접촉 없음 확인) → 긴 변을 128×(1−2×0.12)≈97px로 LANCZOS 축소 → 128×128 투명 캔버스 가운데 배치 → RGB를 순백(255)으로 정규화하고 알파 유지. 덧그리기 없음.
+- 검증: 47개 모두 128×128 RGBA, 네 모서리 알파 0, 불투명 픽셀 RGB 전부 (255,255,255), 내용 여백 약 12%. 어두운 배경 대조표에서 128/64/32/24px로 가독성·글자 미포함·세트 일관성을 확인했다.
