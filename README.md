@@ -10,7 +10,7 @@
 
 ## 웹 에디터
 
-[브라우저에서 바로 실행](https://gosuni2025.github.io/godot-text-fx/) → 템플릿·문장·연출 편집 → **내보내기 → 문서 JSON 저장**. JSON 파일이 다운로드된다. 베이크 JSON도 같은 탭에서 받는다.
+[브라우저에서 바로 실행](https://gosuni.com/godot-text-fx/) → 템플릿·문장·연출 편집 → **내보내기 → 문서 저장 (JSON)**. JSON 파일이 다운로드된다. 베이크 JSON도 같은 탭에서 받는다.
 
 ## 에디터 실행
 
