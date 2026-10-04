@@ -326,7 +326,15 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
    **베이크 포맷 1은 위치·축척·회전·alpha만 기록한다.** 블러·색수차·조각·와이프 마스크·밝기·글로우·배경·장식·커서·틴트는
    이 숫자 프레임에 포함되지 않는다. 포맷 3의 조각·잔상·입자·재질 왜곡도 포함되지 않는다. 연출 전체를 재생하려면 문서 포맷 3과 TextFxPlayer를 사용한다.
    문서 버전 상승을 베이크 버전 상승으로 오해하지 않도록 두 format_version을 독립 관리한다.
+   텍스트로 낼 때는 키 정렬 JSON에서 프레임마다 줄을 나눈다(공백만 다르며 JSON 값은 같다).
 3. 클립보드 문자열: `TFX1:` + base64(deflate(JSON)) 한 줄. 문서·조작 기록 모두 같은 방식.
+4. **LLM 프롬프트**(엔진 비의존): `app/logic/llm_prompt.gd`가 문서를 다른 엔진에서 다시 구현하도록 LLM에게 줄 영어 Markdown 명세로 만든다.
+   구현 요구(순수 `evaluate(t)`·결정적 해시·play/seek/finish), 개요, 배치·스타일, 페이지 구간 표, evaluator로 계산한 글자 표(위치·크기·등장/퇴장 지연, 최대 400자),
+   장식·결과 배경, 사용한 효과만의 수식 참조(`llm_prompt_reference.gd`), 이징 수식, 해시 함수, 원본 문서 JSON 부록 순서다. 같은 문서·폰트면 같은 문자열이다.
+
+편집기 내보내기 탭은 형식 토글(문서 JSON 기본 / 베이크 JSON / LLM 프롬프트)과 읽기 전용 텍스트 영역으로 결과를 바로 보여 주고,
+복사하기·파일로 저장(웹은 다운로드) 버튼을 둔다. 결과는 `export` 명령으로 만들고, 문서 해시·형식·fps가 같으면 다시 계산하지 않는다.
+20만 자를 넘으면 텍스트 영역에는 앞부분만 보이며 복사·저장은 전체를 쓴다. 조작 기록에서 연속 `export`는 seek처럼 마지막 하나로 합친다.
 
 ## 6. 에디터 로직 (app/logic)
 
@@ -363,7 +371,7 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 | set_locale | locale(ko/ja/en) | 견본 교체가 있으면 그 문서 변경만 O |
 | seek | t(0~3600) / play from? / pause / select path | X |
 | undo / redo | – | – |
-| export | kind: doc_json · doc_string · baked_json(fps? 1~120, 기본 30, `TextFxBakedExport.bake` 호출) | X |
+| export | kind: doc_json · doc_string · baked_json(fps? 1~120, 기본 30, `TextFxBakedExport.bake` 호출) · llm_prompt | X |
 
 - 경로: `.` 구분, 배열은 번호(`decorations.0.color`, `timeline.hold.effects.1.amplitude`). 없는 키는 거부(오타 방지).
   목록 명령 경로: `decorations`(최대 12), `timeline.hold.effects`(최대 8), `style.fill.gradient.stops`·`sub_style.fill.gradient.stops`(2~8).
@@ -392,7 +400,7 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
   - 효과 카드는 TextFxPlayer를 지연 인스턴싱해 실제 블러·전체 마스크·글로우를 보여준다. 보이는 카드만 굽고, hover/포커스 때 seek 시간이 진행한다.
     비활성 카드는 대표 시점에 멈추며 팝업이 숨겨지면 처리도 멈춘다. 이징 카드는 곡선 그래프를 유지한다.
 - 글꼴: 번들 글꼴, 시스템 글꼴 목록(검색), 사용자 글꼴 파일 불러오기(user://fonts 에 복사, 경로 참조).
-- 단축키(물리 키): Space 재생/정지, Home 처음으로, Ctrl+Z / Ctrl+Shift+Z 실행 취소/다시, Ctrl+S 저장, Ctrl+E 내보내기, Ctrl+Shift+C 문서 문자열 복사.
+- 단축키(물리 키): Space 재생/정지, Home 처음으로, Ctrl+Z / Ctrl+Shift+Z 실행 취소/다시, Ctrl+S 저장, Ctrl+E 현재 내보내기 형식을 파일로 저장, Ctrl+Shift+C 문서 문자열 복사.
 - UI 문자열은 `tr()` + `app/i18n/ui.csv`(ko, ja, en).
 - 상태 자동 저장: `user://autosave.json`.
 
@@ -402,4 +410,4 @@ shutter는 expo, 순간 표시·명멸·전체 글리치는 linear를 사용한�
 - 옵션: 프레임 제한(기본 60), 마스터/효과음 음량, 언어(ko/ja/en). 공개 소스와 웹 빌드에는 BGM을 포함하지 않는다.
 - 프로파일러: 공용 운영 서버의 `/v1/reports`에 프로젝트 `godot-text-fx`로 수동 전송한다. `base_project.tres`에서 활성화·endpoint를 설정하며, 비활성 또는 유효하지 않은 설정이면 연결하지 않는다. 보고서 조회는 `tools/profile_reports.py` 래퍼를 사용한다(`docs/PROFILE_REPORTS.md`).
 - 빌드 정보: `addons/game_base/tools/stamp_build.py`로 `build_info.json` 생성, 로딩·옵션에 표시.
-- 웹 배포: GitHub Actions에서 Web 프리셋(단일 스레드)을 빌드해 Pages에 배포한다. 문서/베이크 JSON 저장은 브라우저 파일 다운로드로 전달한다.
+- 웹 배포: GitHub Actions에서 Web 프리셋(단일 스레드)을 빌드해 Pages에 배포한다. 문서/베이크 JSON·LLM 프롬프트 저장은 브라우저 파일 다운로드로 전달하며, 내보내기 탭의 텍스트 영역과 복사하기로 파일 없이도 받을 수 있다.

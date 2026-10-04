@@ -91,10 +91,10 @@ func _init_model() -> void:
 	op_log = OpLog.create(0, model.doc, model.locale)
 
 
-## UI의 모든 조작은 여기로 온다. 조작 기록에 남기고(연속 seek는 하나로) 모델에 적용한다.
+## UI의 모든 조작은 여기로 온다. 조작 기록에 남기고(연속 seek·export는 마지막 하나로) 모델에 적용한다.
 func send(cmd: Dictionary) -> bool:
 	var last: Dictionary = op_log.commands[-1] if not op_log.commands.is_empty() else {}
-	if cmd.get("op") == "seek" and last.get("op") == "seek":
+	if cmd.get("op") in ["seek", "export"] and last.get("op") == cmd.get("op"):
 		op_log.commands[-1] = JsonUtil.canon(cmd)
 	else:
 		op_log.append(cmd)

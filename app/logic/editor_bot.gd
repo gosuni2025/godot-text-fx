@@ -110,7 +110,7 @@ func random_command() -> Dictionary:
 		"locale": return {"op": "set_locale", "locale": pick(DocSchema.LOCALES)}
 		"mode": return {"op": "set_mode", "mode": pick(DocSchema.MODES)}
 		"export":
-			var kind: String = pick(["doc_json", "doc_string", "baked_json"])
+			var kind: String = pick(["doc_json", "doc_string", "baked_json", "llm_prompt"])
 			return {"op": "export", "kind": kind, "fps": 10} if kind == "baked_json" else {"op": "export", "kind": kind}
 		"select": return {"op": "select", "path": pick(DocSchema.TWEAKABLE)}
 	return {"op": "pause"}

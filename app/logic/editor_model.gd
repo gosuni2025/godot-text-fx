@@ -11,11 +11,12 @@ const DocCommands := preload("res://app/logic/doc_commands.gd")
 const JsonUtil := preload("res://app/logic/json_util.gd")
 const Serialization := preload("res://app/logic/serialization.gd")
 const Templates := preload("res://app/logic/templates.gd")
+const LlmPrompt := preload("res://app/logic/llm_prompt.gd")
 
 const BAKED_EXPORT_PATH := "res://addons/text_fx/core/fx_baked_export.gd"
 const MAX_UNDO := 200
 const MAX_TIME := 3600.0
-const EXPORT_KINDS := ["doc_json", "baked_json", "doc_string"]
+const EXPORT_KINDS := ["doc_json", "baked_json", "doc_string", "llm_prompt"]
 ## 언어 전환 시 템플릿 견본과 같으면 새 언어 값으로 바꾸는 필드.
 const LOCALE_SAMPLE_KEYS := ["name", "text", "sub_text", "font", "sub_font"]
 
@@ -221,6 +222,13 @@ func _export(cmd: Dictionary) -> bool:
 			text = JSON.stringify(doc, "\t", true)
 		"doc_string":
 			text = Serialization.encode(doc)
+		"llm_prompt":
+			var prompt := LlmPrompt.build(doc)
+			if not prompt.ok:
+				last_export = {"ok": false, "kind": kind, "text": "", "hash": "", "error": prompt.error}
+				_emit(["$export"])
+				return _reject(prompt.error)
+			text = prompt.text
 		"baked_json":
 			var fps = cmd.get("fps", 30)
 			if not JsonUtil.is_number(fps) or fps < 1 or fps > 120:
@@ -231,7 +239,8 @@ func _export(cmd: Dictionary) -> bool:
 				_emit(["$export"])
 				return _reject(baked.error)
 			data = baked.data
-			text = JsonUtil.canonical_json(data)
+			# 정규 JSON에서 프레임마다 줄을 나눠 텍스트 영역에서도 가볍게 보이게 한다(공백만 다름).
+			text = JsonUtil.canonical_json(data).replace("]],[[", "]],\n[[")
 	last_export = {"ok": true, "kind": kind, "text": text, "hash": text.sha256_text()}
 	if data != null:
 		last_export["data"] = data

@@ -1,6 +1,7 @@
 extends RefCounted
 ## 내보내기·리플레이·봇·단축키·자동 저장·재생 바.
 ## - 문서 문자열 복사/붙여넣기, 조작 기록 리플레이 → 같은 문서 해시
+## - 결과 텍스트 영역(문서 JSON 기본·베이크·LLM 프롬프트)과 복사
 ## - EditorBot이 편집기 모델을 직접 조작해도 UI가 모델을 따라가는지
 ## - 물리 키 단축키(Space/Home/Ctrl+Z/Ctrl+Shift+Z)가 명령이 되는지
 ## - 자동 저장 → 새 편집기에서 복원
@@ -12,6 +13,7 @@ const OpLog := preload("res://app/logic/op_log.gd")
 const AUTOSAVE := "user://test_ui_autosave.json"
 const DOC_FILE := "user://test_ui_doc.json"
 const BAKED_FILE := "user://test_ui_baked.json"
+const PROMPT_FILE := "user://test_ui_prompt.md"
 
 
 func run(t) -> void:
@@ -24,7 +26,7 @@ func run(t) -> void:
 	await _transport(t, ed)
 	await _shortcuts(t, ed)
 	await _autosave(t, ed)
-	for p in [AUTOSAVE, DOC_FILE, BAKED_FILE]:
+	for p in [AUTOSAVE, DOC_FILE, BAKED_FILE, PROMPT_FILE]:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(p))
 
 
@@ -50,6 +52,37 @@ func _export(t, ed) -> void:
 	t.ok(xp.export_baked_to(BAKED_FILE), "baked export writes a file")
 	var baked = JSON.parse_string(FileAccess.get_file_as_string(BAKED_FILE))
 	t.ok(baked is Dictionary and baked.get("format") == "text_fx_baked" and int(baked.get("fps")) == 24, "baked JSON has the chosen fps")
+	await _output(t, ed, xp)
+
+
+## 결과 텍스트 영역: 기본은 문서 JSON, 형식 토글·복사·LLM 프롬프트.
+func _output(t, ed, xp) -> void:
+	await t.tree.process_frame
+	var box: TextEdit = xp.get_node("%Output")
+	t.eq(xp.format, "doc_json", "document JSON is the default output")
+	var doc = JSON.parse_string(box.text)
+	t.ok(doc is Dictionary and doc.get("format") == "text_fx", "text area shows the document JSON without saving")
+	t.ok(not xp.get_node("%FpsRow").visible, "fps row hidden for document JSON")
+	xp.get_node("%Fmt_baked_json").pressed.emit()
+	await t.tree.process_frame
+	t.ok(xp.get_node("%FpsRow").visible, "fps row shown for baked JSON")
+	var baked = JSON.parse_string(box.text)
+	t.ok(baked is Dictionary and int(baked.get("fps")) == 24, "text area shows baked JSON with the chosen fps")
+	xp.get_node("%Fmt_llm_prompt").pressed.emit()
+	await t.tree.process_frame
+	t.ok(box.text.begins_with("# Text animation spec"), "text area shows the LLM prompt")
+	t.ok(box.text.contains(str(ed.model.get_value("text")).split("\n")[0]), "prompt contains the text")
+	t.ok(box.text.contains("```json"), "prompt embeds the document JSON")
+	var copied: String = xp.copy_output()
+	t.eq(copied, box.text, "copy returns the shown output")
+	t.eq(ed.model.last_export.get("kind"), "llm_prompt", "output goes through the export command")
+	var n: int = ed.op_log.commands.size()
+	xp.update_output()
+	t.eq(ed.op_log.commands.size(), n, "unchanged output is not exported again")
+	t.ok(xp.save_output_to(PROMPT_FILE), "prompt saves to a file")
+	t.eq(FileAccess.get_file_as_string(PROMPT_FILE), copied, "saved prompt equals the output")
+	xp.set_format("doc_json")
+	await t.tree.process_frame
 
 
 func _replay(t, ed) -> void:

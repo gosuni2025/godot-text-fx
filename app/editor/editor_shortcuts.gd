@@ -79,7 +79,7 @@ func handle_shortcut(event: InputEvent) -> bool:
 		KEY_E:
 			if not cmd:
 				return false
-			ed.panel("export").export_baked()
+			ed.panel("export").save_output()
 			return true
 		KEY_C:
 			if not (cmd and k.shift_pressed):

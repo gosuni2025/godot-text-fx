@@ -19,6 +19,108 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
+[node name="OutputSection" type="PanelContainer" parent="Body"]
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Body/OutputSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Body/OutputSection/Rows"]
+layout_mode = 2
+theme_type_variation = &"SectionTitle"
+text = "Export output"
+
+[node name="FormatRow" type="HBoxContainer" parent="Body/OutputSection/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Fmt_doc_json" type="Button" parent="Body/OutputSection/Rows/FormatRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Document JSON"
+
+[node name="Fmt_baked_json" type="Button" parent="Body/OutputSection/Rows/FormatRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Baked JSON"
+
+[node name="Fmt_llm_prompt" type="Button" parent="Body/OutputSection/Rows/FormatRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "LLM prompt"
+
+[node name="FormatHint" type="Label" parent="Body/OutputSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+autowrap_mode = 3
+
+[node name="FpsRow" type="HBoxContainer" parent="Body/OutputSection/Rows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Body/OutputSection/Rows/FpsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Frame rate"
+
+[node name="Fps_24" type="Button" parent="Body/OutputSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "24"
+
+[node name="Fps_30" type="Button" parent="Body/OutputSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "30"
+
+[node name="Fps_60" type="Button" parent="Body/OutputSection/Rows/FpsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+auto_translate_mode = 2
+text = "60"
+
+[node name="Output" type="TextEdit" parent="Body/OutputSection/Rows"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 360)
+layout_mode = 2
+auto_translate_mode = 2
+theme_override_colors/font_readonly_color = Color(0.88, 0.91, 0.96, 1)
+editable = false
+wrap_mode = 1
+
+[node name="OutputButtons" type="HBoxContainer" parent="Body/OutputSection/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CopyOutput" type="Button" parent="Body/OutputSection/Rows/OutputButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Copy"
+icon = ExtResource("5_copy")
+
+[node name="SaveOutput" type="Button" parent="Body/OutputSection/Rows/OutputButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ctrl/Cmd+E"
+text = "Save as file"
+icon = ExtResource("4_export")
+
 [node name="DocSection" type="PanelContainer" parent="Body"]
 layout_mode = 2
 
@@ -29,7 +131,7 @@ theme_override_constants/separation = 8
 [node name="Title" type="Label" parent="Body/DocSection/Rows"]
 layout_mode = 2
 theme_type_variation = &"SectionTitle"
-text = "Document JSON"
+text = "Document file"
 
 [node name="SaveDoc" type="Button" parent="Body/DocSection/Rows"]
 unique_name_in_owner = true
@@ -44,61 +146,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Open document (JSON)"
 icon = ExtResource("3_open")
-alignment = 0
-
-[node name="BakedSection" type="PanelContainer" parent="Body"]
-layout_mode = 2
-
-[node name="Rows" type="VBoxContainer" parent="Body/BakedSection"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="Title" type="Label" parent="Body/BakedSection/Rows"]
-layout_mode = 2
-theme_type_variation = &"SectionTitle"
-text = "Baked frames (other engines)"
-
-[node name="Scope" type="Label" parent="Body/BakedSection/Rows"]
-layout_mode = 2
-text = "Baked frames contain movement and opacity only. Save document JSON to preserve all effects."
-autowrap_mode = 2
-
-[node name="FpsRow" type="HBoxContainer" parent="Body/BakedSection/Rows"]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="Label" type="Label" parent="Body/BakedSection/Rows/FpsRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Frame rate"
-
-[node name="Fps_24" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-toggle_mode = true
-auto_translate_mode = 2
-text = "24"
-
-[node name="Fps_30" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-toggle_mode = true
-auto_translate_mode = 2
-text = "30"
-
-[node name="Fps_60" type="Button" parent="Body/BakedSection/Rows/FpsRow"]
-unique_name_in_owner = true
-layout_mode = 2
-toggle_mode = true
-auto_translate_mode = 2
-text = "60"
-
-[node name="ExportBaked" type="Button" parent="Body/BakedSection/Rows"]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Ctrl/Cmd+E"
-text = "Export baked JSON"
-icon = ExtResource("4_export")
 alignment = 0
 
 [node name="ClipSection" type="PanelContainer" parent="Body"]

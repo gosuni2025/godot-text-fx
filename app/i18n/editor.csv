@@ -281,3 +281,15 @@ Saturation,채도,彩度,Saturation
 Off,꺼짐,オフ,Off
 Enabled,사용,有効,Enabled
 Baked frames contain movement and opacity only. Save document JSON to preserve all effects.,베이크는 움직임과 투명도만 저장합니다. 모든 연출을 보존하려면 문서 JSON을 저장하세요.,ベイクは動きと不透明度のみ保存します。すべての演出を保つにはドキュメントJSONを保存してください。,Baked frames contain movement and opacity only. Save document JSON to preserve all effects.
+Export output,내보내기 결과,書き出し結果,Export output
+Baked JSON,베이크 JSON,ベイクJSON,Baked JSON
+LLM prompt,LLM 프롬프트,LLMプロンプト,LLM prompt
+Copy,복사하기,コピー,Copy
+Save as file,파일로 저장,ファイルに保存,Save as file
+Document file,문서 파일,ドキュメントファイル,Document file
+Plays in Godot with the TextFxPlayer node and keeps every effect.,Godot에서 TextFxPlayer 노드로 재생하며 모든 연출을 보존합니다.,GodotのTextFxPlayerノードで再生し、すべての演出を保持します。,Plays in Godot with the TextFxPlayer node and keeps every effect.
+A spec for an LLM: paste it with your engine name to reimplement this animation in any engine.,LLM에게 줄 명세입니다. 사용할 엔진 이름과 함께 붙여 넣으면 어느 엔진에서든 이 연출을 다시 구현할 수 있습니다.,LLM向けの仕様です。使うエンジン名と一緒に貼り付けると、どのエンジンでもこの演出を再実装できます。,A spec for an LLM: paste it with your engine name to reimplement this animation in any engine.
+The preview is cut off; Copy and Save use the full text.,미리보기는 일부만 보입니다. 복사·저장은 전체 내용을 사용합니다.,プレビューは一部のみ表示しています。コピー・保存は全文を使います。,The preview is cut off; Copy and Save use the full text.
+Copied the output (%d characters).,결과를 복사했습니다 (%d자).,結果をコピーしました (%d 文字)。,Copied the output (%d characters).
+Saved: %s,저장했습니다: %s,保存しました: %s,Saved: %s
+Could not export: %s,내보낼 수 없습니다: %s,書き出せません: %s,Could not export: %s
